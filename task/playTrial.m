@@ -19,7 +19,7 @@ pleasure = getLikertResponse(pleasureQuestion, likert);
 
 end
 
-function playAudio(fname, stimType, trigType, ioObj, address)
+function playAudio(fname, trigType, ioObj, address)
 fprintf('Loading file... ')
 [y, Fs] = audioread(fname);
 obj = audioplayer(y, Fs);
@@ -30,7 +30,7 @@ pause
 fprintf('\nPlaying... ')
 
 if strcmpi(trigType, 'eeg')
-    portcode = getPortcode(fname, stimType);
+    portcode = getPortcode(fname);
     io64(ioObj, address, portcode); % send portcode
     playblocking(obj)
     % sendPortcode(code) % TODO send portcode at end of trial?
