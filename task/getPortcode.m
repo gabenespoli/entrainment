@@ -8,18 +8,11 @@
 % This means that filenames must be a number and in the range 1-99.
 % If the filename is not a number, the portcode 255 is returned.
 
-function portcode = getPortcode(fname, stimType)
+function portcode = getPortcode(fname)
 [~,name,~] = fileparts(fname);
 
 try
     portcode = str2num(name);
-
-    switch stimType
-        case 'mir'
-            portcode = 100 + portcode;
-        case 'sync'
-            portcode = 200 + portcode;
-    end
 
 catch, me
     portcode = 255;
