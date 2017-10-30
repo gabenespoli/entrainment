@@ -10,12 +10,13 @@ end
 
 % these questions from Witek2014 (with 'rhythm' as the rhythmWord)
 moveQuestion = ['To what extent does this ', rhythmWord, ' make you want to move?'];
-pleasureQuestion = ['How much pleasure do you experience listening to this ', rhythmWord, '?'];
+% pleasureQuestion = ['How much pleasure do you experience listening to this ', rhythmWord, '?'];
 
 %% play audio
 playAudio(fname, trigType, ioObj, address)
 move = getLikertResponse(moveQuestion, likert);
-pleasure = getLikertResponse(pleasureQuestion, likert);
+% pleasure = getLikertResponse(pleasureQuestion, likert);
+pleasure = NaN;
 
 end
 
