@@ -1,5 +1,5 @@
-function trialList = getStimFilenames(stimFolder, stimType, trialListFile)
-% stimFilenames:    Cell array of filenames in randomized order. If certain 
+function trialList = getTrialList(stimFolder, stimType, trialListFile, stimExt)
+% trialList:        Cell array of filenames in randomized order. If certain 
 %                   files are to be repeated, they are present multiple times.
 %                   If 'currentTime' is given, this list is written to a
 %                   trialListFile in the current directory.
@@ -8,75 +8,47 @@ function trialList = getStimFilenames(stimFolder, stimType, trialListFile)
 % stimType:         'mir' or 'sync'
 % trialListFile:    string of file to save the list to
 
-% convert stimFolder to an absolute path
-% currentDir = pwd;
-% cd(stimFolder)
-% stimFolder = pwd;
-% cd(currentDir)
+% filenames
+%   mir         tempo       sync
+%   101-130      90         11-16
+%   131-160      96         21-26
+%   161-190      102        31-36
+%   191-220      108        41-46
+%   221-250      114        51-56
 
-% get stimulus filenames
-switch stimType
+if nargin < 3 || isempty(trialListFile)
+    trialListFile = ['trialList_', datestr(now, 'yyyy-mm-dd_HH-MM-SS')];
+end
+if nargin < 4
+    stimExt = '.wav';
+end
+
+%% add tempo jitter
+switch lower(stimType)
     case 'mir'
-        stimFolder = fullfile(stimFolder, 'mir');
-        searchStr = fullfile(stimFolder, '*.wav');
+        jitter = randi(5, 30, 1);
+        jitter = jitter * 30 + 70;
+        trialList = transpose(1:30);
+        trialList = trialList + jitter;
+
     case 'sync'
-        stimFolder = fullfile(stimFolder, 'sync');
-        searchStr = fullfile(stimFolder, '*.wav');
-    otherwise
-        error(['''', stimType, ''' is not a valid stimulus type.'])
-end
-
-files = dir(searchStr);
-stimFilenames = {files.name};
-
-% remove files starting with a dot
-rmind = [];
-for i = 1:length(stimFilenames)
-    [~,name,~] = fileparts(stimFilenames{i});
-    if strcmp(name(1), '.')
-        rmind = [rmind, i]; %#ok<AGROW>
-    end
-end
-if ~isempty(rmind)
-    stimFilenames(rmind) = [];
-end
-
-trialList = stimFilenames(randperm(length(stimFilenames))); % randomize order
-
-% tweak random order so that the sync portcode indicates order
-% i.e., stims 101-105 are the same excerpt, so order the files so that
-%   the portcode indicates the order of presentation for each unique excerpt
-% if strcmpi(stimType, 'sync')
-%     trialList = tweakSyncOrder(trialList);
-% end
-
-% make absolute path
-trialList = fullfile(stimFolder, trialList);
-
-if nargin > 2
-    fid = fopen(trialListFile, 'w');
-    fprintf(fid, '%s\n', trialList{:});
-    fclose(fid);
-end
+        jitter = randi(5, 30, 1);
+        jitter = jitter * 10;
+        trialList = repmat([1 2 3 4 5 6]', 5, 1);
+        trialList = trialList + jitter;
 
 end
 
-function newTrialList = tweakSyncOrder(trialList)
+%% make filenames
+trialList = cellfun(@num2str, num2cell(trialList), 'UniformOutput', false);
+trialList = cellfun(@(x) fullfile(stimFolder, [x, stimExt]), trialList, 'UniformOutput', false);
 
-newTrialList = trialList;
-allTweakFiles = {...
-    '111.mp3', '112.mp3', '113.mp3', '114.mp3', '115.mp3'; ...
-    '121.mp3', '122.mp3', '123.mp3', '124.mp3', '125.mp3'; ...
-    '131.mp3', '132.mp3', '133.mp3', '134.mp3', '135.mp3'; ...
-    '141.mp3', '142.mp3', '143.mp3', '144.mp3', '145.mp3'; ...
-    '151.mp3', '152.mp3', '153.mp3', '154.mp3', '155.mp3'; ...
-    '161.mp3', '162.mp3', '163.mp3', '164.mp3', '165.mp3'; ...
-    };
+%% randomize order
+trialList = trialList(randperm(length(trialList)));
 
-for i = 1:size(allTweakFiles,1)
-    tweakFiles = allTweakFiles(i,:);
-    ind = ismember(trialList, tweakFiles);
-    newTrialList(ind) = tweakFiles;
-end
+%% write trial list to file
+fid = fopen(trialListFile, 'w');
+fprintf(fid, '%s\n', trialList{:});
+fclose(fid);
 
 end
