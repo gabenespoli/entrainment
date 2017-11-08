@@ -21,7 +21,7 @@ switch stimType
         searchStr = fullfile(stimFolder, '*.wav');
     case 'sync'
         stimFolder = fullfile(stimFolder, 'sync');
-        searchStr = fullfile(stimFolder, '*.mp3');
+        searchStr = fullfile(stimFolder, '*.wav');
     otherwise
         error(['''', stimType, ''' is not a valid stimulus type.'])
 end
@@ -46,9 +46,9 @@ trialList = stimFilenames(randperm(length(stimFilenames))); % randomize order
 % tweak random order so that the sync portcode indicates order
 % i.e., stims 101-105 are the same excerpt, so order the files so that
 %   the portcode indicates the order of presentation for each unique excerpt
-if strcmpi(stimType, 'sync')
-    trialList = tweakSyncOrder(trialList);
-end
+% if strcmpi(stimType, 'sync')
+%     trialList = tweakSyncOrder(trialList);
+% end
 
 % make absolute path
 trialList = fullfile(stimFolder, trialList);
