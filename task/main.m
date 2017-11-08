@@ -15,7 +15,7 @@ logfileHeaders = {'id', 'stimType', 'trigType', 'trial', 'filename', 'move', 'pl
 % clear screen before starting to ask user for input
 clc
 
-%% try/catch block around everything so we can exit gracefull (i.e., close all files)
+%% try/catch block around everything so we can exit graceful (i.e., close all files)
 try
 
     %% get stuff needed to run the task
