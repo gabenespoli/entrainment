@@ -1,4 +1,5 @@
-function [trialList, startTrial, logfile_fid] = getTrialList(logFolder, logfileHeaders, stimFolder, stimType, trigType, currentTime)
+function [trialList, startTrial, logfile_fid] = getTrialList(logFolder, ...
+    logfileHeaders, stimFolder, stimType, trigType, currentTime)
 % trialList:        Cell array of filenames in randomized order. If certain 
 %                   files are to be repeated, they are present multiple times.
 %                   If 'currentTime' is given, this list is written to a
@@ -32,11 +33,14 @@ logfile       = fullfile(logFolder, [idStr,'.txt']);
 trialListFile = fullfile(logFolder, [idStr,'_trialList','.txt']);
 
 % deal with the case where a logfile already exists
-continuePreviousLogfile = checkIfLogfileExists(logfile, trialListFile, currentTime);
+continuePreviousLogfile = checkIfLogfileExists(logfile, trialListFile, ...
+                                               currentTime);
 
 if continuePreviousLogfile
     % get trial list from before as a cell array
-    temp = readtable(trialListFile, 'Delimiter','\n', 'ReadVariableNames',false);
+    temp = readtable(trialListFile, ...
+                     'Delimiter','\n', ...
+                     'ReadVariableNames',false);
     trialList = temp{:,1};
 
     % use logfile to figure out what trial we're on, then append to the file
@@ -66,14 +70,18 @@ else % make new logfile and trial list
             trialList = trialList + jitter;
     end
 
-    %% make filenames
-    trialList = cellfun(@num2str, num2cell(trialList), 'UniformOutput', false);
-    trialList = cellfun(@(x) fullfile(stimFolder, [x, stimExt]), trialList, 'UniformOutput', false);
+    % make filenames
+    trialList = cellfun(@num2str, ...
+                        num2cell(trialList), ...
+                        'UniformOutput', false);
+    trialList = cellfun(@(x) fullfile(stimFolder, [x, stimExt]), ...
+                        trialList, ...
+                        'UniformOutput', false);
 
-    %% randomize order
+    % randomize order
     trialList = trialList(randperm(length(trialList)));
 
-    %% write trial list to file
+    % write trial list to file
     trialList_fid = fopen(trialListFile, 'w');
     fprintf(trialList_fid, '%s\n', trialList{:});
     fclose(trialList_fid);
@@ -88,7 +96,8 @@ else % make new logfile and trial list
 end
 end
 
-function continuePrevious = checkIfLogfileExists(logfile, trialListFile, currentTime)
+function continuePrevious = checkIfLogfileExists(logfile, trialListFile, ...
+                                                 currentTime)
 if exist(logfile, 'file')
 
     % prompt for whether to continue previous file
