@@ -89,6 +89,7 @@ catch err
 
 end
 
+fclose('all');
 end % end function
 
 function logResponse(fid, id, stimType, trigType, trial, fname, move, pleasure)
