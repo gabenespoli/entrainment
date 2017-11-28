@@ -15,10 +15,10 @@ logfileHeaders = {'id', 'stimType', 'trigType', 'trial', 'filename', 'move', 'pl
 % clear screen before starting to ask user for input
 clc
 
-%% try/catch block around everything so we can exit graceful (i.e., close all files)
+% try/catch block around everything so we can exit graceful (i.e., close all files)
 try
 
-    %% get stuff needed to run the task
+    % get id, stimtype, trigtype
     if (ischar(test) && strcmp(test,'test')) || test
         id = '99';
         stimType = 'mir';
@@ -35,8 +35,9 @@ try
     end
 
     [trialList, startTrial, logfile_fid] = getTrialList(logFolder, logfileHeaders, stimFolder, stimType, trigType, currentTime);
+    fprintf('Starting at trial %i\n', startTrial)
 
-    %% loop trials
+    % loop trials
     nTrials = length(trialList);
     for trial = startTrial:length(trialList)
         stimfile = trialList{trial};
