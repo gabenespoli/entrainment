@@ -27,15 +27,11 @@ try
         [id, stimType, trigType] = promptForTaskInfo; % id is a string
     end
 
-    % if this is an eeg block, initalize port codes
-    if strcmpi(trigType, 'eeg')
-        ioObj = io64();
-        ioObj_status = io64(ioObj);
-        if ioObj_status ~= 0
-            disp('inp/outp installation failed!')
-        end
-    else
-        ioObj = [];
+    % initalize eeg port codes
+    ioObj = io64();
+    ioObj_status = io64(ioObj);
+    if ioObj_status ~= 0
+        disp('inp/outp installation failed!')
     end
 
     idStr = [id,'_',stimType,'_',trigType];
