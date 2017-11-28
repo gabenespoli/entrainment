@@ -1,5 +1,5 @@
 function [move, pleasure] = playTrial(fname, stimType, trigType, ioObj, address)
-%% prepare questions
+% prepare questions
 % Witek2014 used 5-point likert; Janata2011 used 7-point
 likert= 1:7;
 
@@ -12,7 +12,7 @@ end
 moveQuestion = ['To what extent does this ', rhythmWord, ' make you want to move?'];
 % pleasureQuestion = ['How much pleasure do you experience listening to this ', rhythmWord, '?'];
 
-%% play audio
+% play audio
 playAudio(fname, trigType, ioObj, address)
 move = getLikertResponse(moveQuestion, likert);
 % pleasure = getLikertResponse(pleasureQuestion, likert);
