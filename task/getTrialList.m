@@ -17,19 +17,19 @@ function [trialList, startTrial, logfile_fid] = getTrialList(logFolder, ...
 
 % filenames
 %   mir         tempo       sync
-%   101-130      90         11-16
-%   131-160      96         21-26
-%   161-190      102        31-36
-%   191-220      108        41-46
-%   221-250      114        51-56
+%   101-130      90         11,21,31,41,51,61
+%   131-160      96         12,22,32,42,52,62
+%   161-190      102        13,23,33,43,53,63
+%   191-220      108        14,24,34,44,54,64
+%   221-250      114        15,25,35,45,55,65
 
 % sync order
-%   LR3     11,21,31,41,51
-%   LR6     12,22,32,42,52
-%   MR1     13,23,33,43,53
-%   MR2     14,24,34,44,54
-%   HR1     15,25,35,45,55
-%   HR3     16,26,36,46,56
+%   LR3     11,12,13,14,15
+%   LR6     21,22,23,24,25
+%   MR1     31,32,33,34,35
+%   MR2     41,42,43,44,45
+%   HR1     51,52,53,54,55
+%   HR3     61,62,63,64,65
 
 % if nargin < 3 || isempty(trialListFile)
     % trialListFile = ['trialList_', datestr(now, 'yyyy-mm-dd_HH-MM-SS')];
@@ -73,9 +73,8 @@ else % make new logfile and trial list
 
         case 'sync'
             jitter = randi(5, 30, 1);
-            jitter = jitter * 10;
             trialList = repmat([1 2 3 4 5 6]', 5, 1);
-            trialList = trialList + jitter;
+            trialList = (trialList * 10) + jitter;
     end
 
     % make filenames
