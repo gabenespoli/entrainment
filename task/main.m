@@ -12,30 +12,18 @@ stimFolder = '../stimuli';
 makeSureFoldersExist(logFolder, stimFolder)
 logfileHeaders = {'id', 'stimType', 'trigType', 'trial', 'filename', 'move', 'pleasure', 'filepath', 'timestamp'};
 
-% clear screen before starting to ask user for input
-clc
-
 % try/catch block around everything so we can exit graceful (i.e., close all files)
 try
 
-    % get id, stimtype, trigtype
-    if (ischar(test) && strcmp(test,'test')) || test
-        id = '99';
-        stimType = 'mir';
-        trigType = 'tapping';
-    else
-        [id, stimType, trigType] = promptForTaskInfo; % id is a string
-    end
-
-    % initalize eeg port codes
-    ioObj = io64();
+    % prepare
+    ioObj = io64(); % initalize eeg port codes
     ioObj_status = io64(ioObj);
     if ioObj_status ~= 0
         disp('inp/outp installation failed!')
     end
-
-    [trialList, startTrial, logfile_fid] = getTrialList(logFolder, logfileHeaders, stimFolder, stimType, trigType, currentTime);
-    fprintf('Starting at trial %i\n', startTrial)
+    [id, stimType, trigType] = promptForTaskInfo(test); % id is a string
+    [trialList, startTrial, logfile_fid] = getTrialList(logFolder, ...
+        logfileHeaders, stimFolder, stimType, trigType, currentTime);
 
     % loop trials
     nTrials = length(trialList);
@@ -67,10 +55,7 @@ function logResponse(logfile_fid, id, stimType, trigType, trial, fname, move, pl
 [pathstr, name, ext] = fileparts(fname);
 name = [name, ext];
 timestamp = datestr(now, 'yyyy-mm-dd HH:MM:SS');
-
 data = {id, stimType, trigType, trial, name, move, pleasure, pathstr, timestamp};
 formatSpec = '%s,%s,%s,%i,%s,%i,%i,%s,%s\n';
-
 fprintf(logfile_fid, formatSpec, data{:});
-
 end
