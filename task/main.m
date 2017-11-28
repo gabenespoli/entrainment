@@ -61,8 +61,7 @@ try
         fid = fopen(logfile, 'a');
 
     else
-
-        trialList = getStimFilenames(stimFolder, stimType, trialListFile);
+        trialList = getTrialList(stimFolder, stimType, trialListFile);
         nHeaders = length(logfileHeaders);
         fid = fopen(logfile, 'w');
         formatSpec = [repmat('%s,',[1,nHeaders-1]),'%s\n'];
