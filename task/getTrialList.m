@@ -23,6 +23,14 @@ function [trialList, startTrial, logfile_fid] = getTrialList(logFolder, ...
 %   191-220      108        41-46
 %   221-250      114        51-56
 
+% sync order
+%   LR3     11,21,31,41,51
+%   LR6     12,22,32,42,52
+%   MR1     13,23,33,43,53
+%   MR2     14,24,34,44,54
+%   HR1     15,25,35,45,55
+%   HR3     16,26,36,46,56
+
 % if nargin < 3 || isempty(trialListFile)
     % trialListFile = ['trialList_', datestr(now, 'yyyy-mm-dd_HH-MM-SS')];
 % end
