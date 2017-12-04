@@ -13,7 +13,7 @@ makeSureFoldersExist(logFolder, stimFolder)
 logfileHeaders = {'id', 'stimType', 'trigType', 'trial', 'filename', ...
                   'move', 'pleasure', 'filepath', 'timestamp'};
 
-% try block around everything so we can exit graceful (i.e., close all files)
+% try block around everything so we can exit gracefully (i.e., close all files)
 try
 
     % prepare
