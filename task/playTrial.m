@@ -1,45 +1,48 @@
 function [move, pleasure] = playTrial(fname, stimType, trigType, ioObj, address)
-% prepare questions
-% Witek2014 used 5-point likert; Janata2011 used 7-point
-likert= 1:7;
+
+likertRange= 1:7; % Witek2014 used 5-point likert; Janata2012 used 7-point
 
 if nargin > 1, stimType = 'sync'; end
 if strcmp(stimType, 'mir'),         rhythmWord = 'beat';
 elseif strcmp(stimType, 'sync'),    rhythmWord = 'rhythm';
 end
 
-% these questions from Witek2014 (with 'rhythm' as the rhythmWord)
+% this question from Witek2014 (with 'rhythm' as the rhythmWord)
 moveQuestion = ['To what extent does this ', rhythmWord, ' make you want to move?'];
-% pleasureQuestion = ['How much pleasure do you experience listening to this ', rhythmWord, '?'];
 
-% play audio
-playAudio(fname, trigType, ioObj, address)
-move = getLikertResponse(moveQuestion, likert);
-% pleasure = getLikertResponse(pleasureQuestion, likert);
-pleasure = NaN;
+audioObj = loadAudio(fname);
+portcode = getPortcode(fname);
+fprintf('Press enter to play the trial.\n')
+pause
+
+fprintf('\nPlaying... ')
+io64(ioObj, address, portcode); % send portcode
+playblocking(obj)
+fprintf('Done.\n')
+
+move = getLikertResponse(moveQuestion, likertRange);
 
 end
 
-function playAudio(fname, trigType, ioObj, address)
+function audioObj = loadAudio(fname)
 fprintf('Loading file... ')
 [y, Fs] = audioread(fname);
 obj = audioplayer(y, Fs);
 fprintf('Done.\n\n')
-
-fprintf('Press enter to play the trial.\n')
-pause
-fprintf('\nPlaying... ')
-
-if strcmpi(trigType, 'eeg')
-    portcode = getPortcode(fname);
-    io64(ioObj, address, portcode); % send portcode
-    playblocking(obj)
-    % sendPortcode(code) % TODO send portcode at end of trial?
-else
-    playblocking(obj)
 end
 
-fprintf('Done.\n')
+function portcode = getPortcode(fname)
+% getPorcode: function to get a portcode for a stimulus filename
+% portcode = getPortcode(fname) 
+% fname: [string] absolute or local path to a file. Filename should be a number
+%           e.g. '1.mp3' or '01.wav'
+% If the filename is not a number, the portcode 255 is returned.
+[~,name,~] = fileparts(fname);
+try
+    portcode = str2num(name);
+catch, me
+    portcode = 255;
+end
 end
 
 function resp = getLikertResponse(question, likert)
@@ -58,3 +61,4 @@ while ~ismember(resp, likert)
     end
 end
 end
+
