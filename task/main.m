@@ -23,7 +23,7 @@ try
         disp('inp/outp installation failed!')
     end
     [id, stimType, trigType] = promptForTaskInfo(test); % id is a string
-    [trialList, startTrial, logfile_fid] = getTrialList(logFolder, ...
+    [trialList, startTrial, logfileFid] = getTrialList(logFolder, ...
         logfileHeaders, stimFolder, stimType, trigType, currentTime);
 
     % loop trials
@@ -32,10 +32,8 @@ try
         stimfile = trialList{trial};
         clc
         fprintf('Trial %i / %i\n', trial, nTrials)
-        [move, pleasure] = playTrial(stimfile, stimType, trigType, ...
-                                     ioObj, address);
-        logResponse(logfile_fid, id, stimType, trigType, trial, stimfile, ...
-                    move, pleasure);
+        move = playTrial(stimfile, stimType, trigType, ioObj, address);
+        logResponse(logfileFid, id, stimType, trigType, trial, stimfile, move);
     end
 
 catch err
@@ -64,13 +62,12 @@ for i = 1:length(varargin)
 end
 end
 
-function logResponse(logfile_fid, id, stimType, trigType, trial, fname, ...
-                     move, pleasure)
+function logResponse(logfileFid, id, stimType, trigType, trial, fname, move)
 [pathstr, name, ext] = fileparts(fname);
 name = [name, ext];
 timestamp = datestr(now, 'yyyy-mm-dd HH:MM:SS');
 data = {id, stimType, trigType, trial, name, ...
-        move, pleasure, pathstr, timestamp};
-formatSpec = '%s,%s,%s,%i,%s,%i,%i,%s,%s\n';
-fprintf(logfile_fid, formatSpec, data{:});
+        move, pathstr, timestamp};
+formatSpec = '%s,%s,%s,%i,%s,%i,%s,%s\n';
+fprintf(logfileFid, formatSpec, data{:});
 end
