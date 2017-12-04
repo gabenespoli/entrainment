@@ -66,6 +66,7 @@ if continuePreviousLogfile
 
 else % make new logfile and trial list
     % add tempo jitter
+    % trialList is a numeric vector of filenames/portcodes
     switch lower(stimType)
         case 'mir'
             jitter = randi(5, 30, 1);
@@ -77,9 +78,13 @@ else % make new logfile and trial list
             jitter = randi(5, 30, 1);
             trialList = repmat([1 2 3 4 5 6]', 5, 1);
             trialList = (trialList * 10) + jitter;
+
+        case 'tempo'
+            triallist = [90:1:114, 190:1:214];
     end
 
     % make filenames
+    % turn list of numbers into a cell array of filepaths
     trialList = cellfun(@num2str, ...
                         num2cell(trialList), ...
                         'UniformOutput', false);
