@@ -1,19 +1,21 @@
-function [trialList, startTrial, logfile_fid] = getTrialList(logFolder, ...
+function [trialList, startTrial, logfileFid] = getTrialList(logFolder, ...
     logfileHeaders, stimFolder, stimType, trigType, currentTime)
-% trialList:        Cell array of filenames in randomized order. If certain 
+% INPUT
+%   logFolder:      String 
+%   logFileHeaders: Cell of strings with headers for a new logfile.
+%   stimFolder:     String 
+%   stimType:       'mir' or 'sync'
+%   trigType:       'eeg' or 'tapping'
+%   currentTime:    String with a date string for appending to an old file.
+%
+% OUTPUT
+%   trialList:      Cell array of filenames in randomized order. If certain 
 %                   files are to be repeated, they are present multiple times.
 %                   If 'currentTime' is given, this list is written to a
 %                   trialListFile in the current directory.
-% startTrial:       Number of the trial to start on. Will be 1 if a new
+%   startTrial:     Number of the trial to start on. Will be 1 if a new
 %                   logfile is created.
-% logfile_fid:      File id of logfile.
-%                   
-% logFolder:        String 
-% logFileHeaders:   Cell of strings with headers for a new logfile.
-% stimFolder:       String 
-% stimType:         'mir' or 'sync'
-% trigType:         'eeg' or 'tapping'
-% currentTime:      String with a date string for appending to an old file.
+%   logfileFid:    File id of logfile.
 
 % filenames
 %   mir         tempo       sync
@@ -59,7 +61,7 @@ if continuePreviousLogfile
         startTrial = temp.trial(end) + 1;
     end
 
-    logfile_fid = fopen(logfile, 'a');
+    logfileFid = fopen(logfile, 'a');
 
 
 else % make new logfile and trial list
@@ -95,9 +97,9 @@ else % make new logfile and trial list
 
     % start logfile
     nHeaders = length(logfileHeaders);
-    logfile_fid = fopen(logfile, 'w');
+    logfileFid = fopen(logfile, 'w');
     formatSpec = [repmat('%s,',[1,nHeaders-1]),'%s\n'];
-    fprintf(logfile_fid, formatSpec, logfileHeaders{:});
+    fprintf(logfileFid, formatSpec, logfileHeaders{:});
     startTrial = 1;
 
 end
