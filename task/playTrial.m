@@ -1,4 +1,4 @@
-function [move, pleasure] = playTrial(fname, stimType, trigType, ioObj, address)
+function move = playTrial(fname, stimType, trigType, ioObj, address)
 
 likertRange= 1:7; % Witek2014 used 5-point likert; Janata2012 used 7-point
 
@@ -8,7 +8,8 @@ elseif strcmp(stimType, 'sync'),    rhythmWord = 'rhythm';
 end
 
 % this question from Witek2014 (with 'rhythm' as the rhythmWord)
-moveQuestion = ['To what extent does this ', rhythmWord, ' make you want to move?'];
+moveQuestion = ['To what extent does this ', rhythmWord, ...
+                ' make you want to move?'];
 
 audioObj = loadAudio(fname);
 portcode = getPortcode(fname);
