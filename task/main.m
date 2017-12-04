@@ -1,6 +1,19 @@
-function main(test)
+function main(varargin)
 
-if nargin < 1, test = false; end
+% defaults
+test = false;
+stimFolder = 'stimuli'; % relative to en/task/
+
+% user-defined
+for i = 1:length(varargin)
+    if islogical(varargin{i}) || isnumeric(varargin{i})}
+        test = varargin{i};
+    elseif ischar(varargin{i})
+        stimFolder = varargin{i};
+    else
+        warning('Unknown input variable.')
+    end
+end
 
 % this is used to tag logfiles and datafiles for matching later
 currentTime = datestr(now, 'yyyy-mm-dd_HH-MM-SS');
@@ -8,7 +21,7 @@ address = hex2dec('d050'); % for eeg port codes using io64.mexw64
 
 % define files and folders
 logFolder = 'logfiles';
-stimFolder = '../stimuli';
+stimFolder = fullfile('..', stimFolder);
 makeSureFoldersExist(logFolder, stimFolder)
 logfileHeaders = {'id', 'stimType', 'trigType', 'trial', 'filename', ...
                   'move', 'pleasure', 'filepath', 'timestamp'};
