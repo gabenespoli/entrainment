@@ -18,7 +18,7 @@ pause
 
 fprintf('\nPlaying... ')
 io64(ioObj, address, portcode); % send portcode
-playblocking(obj)
+playblocking(audioObj)
 fprintf('Done.\n')
 
 move = getLikertResponse(moveQuestion, likertRange);
@@ -28,7 +28,7 @@ end
 function audioObj = loadAudio(fname)
 fprintf('Loading file... ')
 [y, Fs] = audioread(fname);
-obj = audioplayer(y, Fs);
+audioObj = audioplayer(y, Fs);
 fprintf('Done.\n\n')
 end
 
