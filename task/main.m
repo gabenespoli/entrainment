@@ -8,7 +8,7 @@ address = hex2dec('d050'); % for eeg port codes using io64.mexw64
 
 % define files and folders
 logFolder = 'logfiles';
-stimFolder = '../stimuli';
+stimFolder = '../stimuli/tempo';
 makeSureFoldersExist(logFolder, stimFolder)
 logfileHeaders = {'id', 'stimType', 'trigType', 'trial', 'filename', ...
                   'move', 'pleasure', 'filepath', 'timestamp'};
