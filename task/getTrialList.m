@@ -37,6 +37,8 @@ function [trialList, startTrial, logfileFid] = getTrialList(logFolder, ...
     % trialListFile = ['trialList_', datestr(now, 'yyyy-mm-dd_HH-MM-SS')];
 % end
 
+stimExt = '.wav';
+
 % make filenames
 idStr         = [id,'_',stimType,'_',trigType];
 logfile       = fullfile(logFolder, [idStr,'.txt']);
