@@ -1,0 +1,6 @@
+.DS_Store
+task/io64*
+task/logfiles
+*.xlsx
+*.csv
+*.tsv
