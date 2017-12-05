@@ -1,0 +1,4 @@
+id,type,sonaid,experimenters,bdffile,order,rmchans,notes
+1,pilot,NA,GN,20171009A,,"A15, D12","Sean pilot, C16? A10? D12 was on the right ear"
+2,pilot,NA,"GN, ES",20171027A,,,Frank pilot
+3,pilot,NA,"GN, ES, SG",20171205A,,D25,Huiwen sync tempo pilot; D25 bridged with DRL; also 20171205B (batter died on trial 21/25 of first block); C6 got weird at 700s in 20171205B
