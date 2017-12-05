@@ -23,7 +23,7 @@ try
         disp('inp/outp installation failed!')
     end
     [id, stimType, trigType] = promptForTaskInfo(test); % id is a string
-    [trialList, startTrial, logfileFid] = getTrialList(logFolder, ...
+    [trialList, startTrial, logfileFid] = getTrialList(id, logFolder, ...
         logfileHeaders, stimFolder, stimType, trigType, currentTime);
 
     % loop trials
