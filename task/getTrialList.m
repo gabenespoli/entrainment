@@ -60,6 +60,7 @@ if continuePreviousLogfile
     if isempty(temp)
         startTrial = 1;
     else
+      % TODO: trial field wasn't found during huiwen's pilot
         startTrial = temp.trial(end) + 1;
     end
 
@@ -119,7 +120,7 @@ if exist(logfile, 'file')
     % prompt for whether to continue previous file
     fprintf('\nLogfile ''%s'' already exists.\n', logfile)
 
-    % TODO check to see if the existing logfile has already been completed?
+    % TODO: check to see if the existing logfile has already been completed?
     goodResp = false;
     while ~goodResp
 
