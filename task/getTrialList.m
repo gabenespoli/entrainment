@@ -80,7 +80,7 @@ else % make new logfile and trial list
             trialList = (trialList * 10) + jitter;
 
         case 'tempo'
-            triallist = [90:1:114, 190:1:214];
+            trialList = 90:1:114;
     end
 
     % make filenames
