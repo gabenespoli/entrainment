@@ -4,3 +4,5 @@ task/logfiles
 *.xlsx
 *.csv
 *.tsv
+*.svg
+stimuli/*
