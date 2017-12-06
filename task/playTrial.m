@@ -1,4 +1,4 @@
-function move = playTrial(fname, stimType, trigType, ioObj, address)
+function move = playTrial(fname, stimType, ioObj, address)
 
 likertRange= 1:7; % Witek2014 used 5-point likert; Janata2012 used 7-point
 

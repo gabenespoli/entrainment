@@ -32,7 +32,7 @@ try
         stimfile = trialList{trial};
         clc
         fprintf('Trial %i / %i\n', trial, nTrials)
-        move = playTrial(stimfile, stimType, trigType, ioObj, address);
+        move = playTrial(stimfile, stimType, ioObj, address);
         logResponse(logfileFid, id, stimType, trigType, trial, stimfile, move);
     end
 
