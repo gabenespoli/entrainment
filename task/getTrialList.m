@@ -50,18 +50,21 @@ continuePreviousLogfile = checkIfLogfileExists(logfile, trialListFile, ...
 
 if continuePreviousLogfile
     % get trial list from before as a cell array
-    temp = readtable(trialListFile, ...
-                     'Delimiter','\n', ...
-                     'ReadVariableNames',false);
-    trialList = temp{:,1};
+    tempTrialList = readtable(trialListFile, ...
+                              'Delimiter','\n', ...
+                              'ReadVariableNames',false);
+    trialList = tempTrialList{:,1};
 
     % use logfile to figure out what trial we're on, then append to the file
-    temp = readtable(logfile);
-    if isempty(temp)
+    tempLogfile = readtable(logfile);
+    if isempty(tempLogfile)
         startTrial = 1;
     else
-      % TODO: trial field wasn't found during huiwen's pilot
-        startTrial = temp.trial(end) + 1;
+        if ismember('trial', fieldnames(tempLogfile))
+            startTrial = tempLogfile.trial(end) + 1;
+        else
+            error('Can''t find trial to continue from.')
+        end
     end
 
     logfileFid = fopen(logfile, 'a');
