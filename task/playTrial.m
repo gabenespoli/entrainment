@@ -1,21 +1,26 @@
 function move = playTrial(fname, stimType, ioObj, address)
 
+% defaults
+if nargin < 2, stimType = 'sync'; end
 likertRange= 1:7; % Witek2014 used 5-point likert; Janata2012 used 7-point
 
-if nargin > 1, stimType = 'sync'; end
-if strcmp(stimType, 'mir'),         rhythmWord = 'beat';
-elseif strcmp(stimType, 'sync'),    rhythmWord = 'rhythm';
-end
-
+% get correct wording for question
 % this question from Witek2014 (with 'rhythm' as the rhythmWord)
+switch lower(stimType)
+    case 'mir',     rhythmWord = 'beat ';
+    case 'sync',    rhythmWord = 'rhythm ';
+    otherwise,      rhythmWord = '';
+end
 moveQuestion = ['To what extent does this ', rhythmWord, ...
-                ' make you want to move?'];
+                'make you want to move?'];
 
+% prepare for trial
 audioObj = loadAudio(fname);
 portcode = getPortcode(fname);
 fprintf('Press enter to play the trial.\n')
 pause
 
+% play trial
 fprintf('\nPlaying... ')
 io64(ioObj, address, portcode); % send portcode
 playblocking(audioObj)
