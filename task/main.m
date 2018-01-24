@@ -22,6 +22,7 @@ try
     if ioObj_status ~= 0
         disp('inp/outp installation failed!')
     end
+    io64(ioObj, address, 0); % send a 0 portcode to make sure it's zeroed
     [id, stimType, trigType] = promptForTaskInfo(test); % id is a string
     [trialList, startTrial, logfileFid] = getTrialList(id, logFolder, ...
         logfileHeaders, stimFolder, stimType, trigType, currentTime);
