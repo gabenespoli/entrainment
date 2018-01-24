@@ -11,7 +11,7 @@ logFolder = 'logfiles';
 stimFolder = '../stimuli/tempo';
 makeSureFoldersExist(logFolder, stimFolder)
 logfileHeaders = {'id', 'stimType', 'trigType', 'trial', 'filename', ...
-                  'move', 'pleasure', 'filepath', 'timestamp'};
+                  'move', 'filepath', 'timestamp'};
 
 % try block around everything so we can exit gracefully (i.e., close all files)
 try
