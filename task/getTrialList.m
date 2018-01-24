@@ -41,7 +41,7 @@ stimExt = '.wav';
 
 % make filenames
 idStr         = [id,'_',stimType,'_',trigType];
-logfile       = fullfile(logFolder, [idStr,'.txt']);
+logfile       = fullfile(logFolder, [idStr,'.csv']);
 trialListFile = fullfile(logFolder, [idStr,'_trialList','.txt']);
 
 % deal with the case where a logfile already exists
