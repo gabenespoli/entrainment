@@ -21,7 +21,7 @@ function C = convertToCells(T, suffix, delim)
 % convert delimiter-separated lists into cells so we can loop through them
 if nargin < 2, suffix = ''; end
 if nargin < 3, delim = ','; end
-C = cellfun(@(x) regexp(x, delim, 'split'), cellstr(T), 'UniformOutput', false);
+C = cellfun(@(x) strtrim(regexp(x, delim, 'split')), cellstr(T), 'UniformOutput', false);
 if ~isempty(suffix)
     for i = 1:length(C)
         C{i} = cellfun(@(x) strtrim(cat(2, x, suffix)), C{i}, 'UniformOutput', false);
