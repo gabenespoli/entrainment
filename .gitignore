@@ -5,3 +5,6 @@ task/logfiles
 *.tsv
 *.svg
 stimuli/*
+forms/*
+todo.txt
+notes.md
