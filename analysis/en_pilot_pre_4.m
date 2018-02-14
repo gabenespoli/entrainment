@@ -6,24 +6,46 @@ function EEG = en_pilot_pre_4
 % addpath('~/bin/matlab/eeglab13_5_4b')
 % eeglab
 
-%% filenames and set paths
-d = en_log(4);
+%% get filenames and recording info
+id = 4;
+d = en_log(id);
+rawdir  = fullfile('~','local','en','data','raw');
+procdir = fullfile('~','local','en','data','preproc');
 
-idA = '20171205A';
-idB = '20171205B';
-rawfolder  = '~/local/en/data/raw';
-procfolder = '~/local/en/data/preproc';
-logfolder = '~/local/en/data/logfiles';
-bdffileA = fullfile(rawfolder, [idA, '.bdf']);
-bdffileB = fullfile(rawfolder, [idB, '.bdf']);
-logA = fullfile(logfolder, '3_tempo_eeg.csv');
-logB = fullfile(logfolder, '4_tempo_eeg.csv');
-chanlocsfile = 'biosemi128.elp';
-infofile = '../en_info.csv';
-setname = '20171205AB';
+%% load and merge bdf files
+file_ids = d.file_ids{1}(2);
+eventchans = d.eventchans{1}(2);
+for i = 1:length(file_ids)
+    bdffile = fullfile(rawdir, [file_ids{i}, '.bdf']);
+    logfile = fullfile(rawdir, [file_ids{i}, '_tempo_eeg.csv']);
+    TMPEEG = pop_readbdf(bdffile, [], eventchans(i), []);
+    TMPLOG = en_loadLogfile(logfile);
+    TMPLOG.id = repmat(id, height(TMPLOG), 1);
+    TMPLOG.block = ones(height(TMPLOG), 1) * i;
+    if i == 1
+        EEG = TMPEEG;
+        LOG = TMPLOG;
+    else
+        EEG = pop_mergeset(EEG, TMPEEG);
+        LOG = cat(1, LOG, TMPLOG);
+    end
+end
+LOG = LOG(:, [1 end 4 end-1 6 2:3 5 7:end-2]);
+EEG.setname = num2str(id);
 
-%% settings
-epochlim = [4 25];
+%% channel locations
+EEG = eeg_ABCDto5percent(EEG, false);
+EEG = pop_chanedit(EEG, 'changefield', {129 'labels' 'M1'});
+EEG = pop_chanedit(EEG, 'changefield', {130 'labels' 'M2'});
+EEG = pop_chanedit(EEG, 'changefield', {131 'labels' 'LO1'});
+EEG = pop_chanedit(EEG, 'changefield', {132 'labels' 'LO2'});
+EEG = pop_chanedit(EEG, 'changefield', {133 'labels' 'IO1'});
+EEG = pop_chanedit(EEG, 'changefield', {134 'labels' 'IO2'});
+EEG = pop_select(EEG, 'nochannel', 135:136);
+EEG = pop_chanedit(EEG, 'lookup', 'chanlocs/sphere_1005_and_exg_besa.sfp');
+
+%% save
+EEG = pop_saveset(EEG, 'filename', [setname,'.set'], 'filepath', procdir);
 
 %% load raw data
 logA = en_loadLogfile(logA);
