@@ -1,12 +1,22 @@
 function [d,T] = en_log(ids)
 if nargin < 1, ids = []; end
 
+% read the raw log
 fname = fullfile('~','projects','archive','2017','en','en_log.csv');
 T = readtable(fname, 'Delimiter', ',');
 
+% start creating output table
 d               = table(T.id, 'VariableNames', {'id'});
 d.file_ids      = convertToCells(T.file_ids);
 d.order         = T.order;
+
+d.eventchans    = convertToCells(T.eventchans);
+% convert eventchans to numeric
+for i = 1:height(d)
+    temp = cellfun(@str2num, d.eventchans{i}(1), 'UniformOutput', false);
+    d.eventchans{i} = temp{1};
+end
+
 d.rmchans       = convertToCells(T.rmchans);
 d.experimenters = T.experimenters;
 
