@@ -20,7 +20,7 @@ try
     ioObj = io64(); % initalize eeg port codes
     ioObj_status = io64(ioObj);
     if ioObj_status ~= 0
-        disp('inp/outp installation failed!')
+        error('io64 installation failed. Please try restarting the task.')
     end
     io64(ioObj, address, 0); % send a 0 portcode to make sure it's zeroed
     [id, stimType, trigType] = promptForTaskInfo(test); % id is a string
