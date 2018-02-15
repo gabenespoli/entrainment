@@ -60,10 +60,15 @@ fprintf('\n')
 fprintf(likertFormat, likert);
 fprintf('\n')
 fprintf('\n')
-resp = nan;
-while ~ismember(resp, likert)
+badResp = true;
+while badResp
     try
         resp = input('Response: ');
+        if ismember(resp, likert)
+            badResp = false;
+        else
+            disp('Invalid response. Please try again.')
+        end
     catch, me
     end
 end
