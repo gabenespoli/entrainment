@@ -23,6 +23,7 @@ pause
 % play trial
 fprintf('\nPlaying... ')
 io64(ioObj, address, portcode); % send portcode
+pause(1)
 io64(ioObj, address, 0); % send a zero portcode
 playblocking(audioObj)
 fprintf('Done.\n')
