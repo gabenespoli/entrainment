@@ -63,32 +63,26 @@ EEG.data = averageReference(EEG.data);
 %% run two pipelines
 portcodes = unique(LOG.portcode);
 
-% pipeline 1
-tmp = EEG;
-tmp = pop_eegfiltnew(tmp,1);
+% pipeline 1 (1 Hz HP and ICA)
+tmp             = EEG;
+tmp             = pop_eegfiltnew(tmp, 1);
 % find bad channels and remove
-tmp = clean_artifacts(tmp, 'Highpass','off', 'BurstCriterion','off', 'WindowCriterion','off');    
-% tmp = clean_rawdata(tmp,... % find bad channels and remove
-%     [],...    % max tolerated flatline on any channel (in s) (5)
-%     'off',... % transition band for high-pass filter ([0.25 0.75])
-%     [],...    % min channel correlation to be considered normal (0.8)
-%     [],...    % max line noise to be considered normal (4 stdev)
-%     'off',... % min variance before repairing bursts w/ASR (5 stdev)
-%     'off');   % max proportion of repaired channels tolerated to keep a given window (0.3)
-tmp.data = averageReference(tmp.data);
-% tmp = pop_cleanline(tmp,'LineFrequencies',[60 120],'PlotFigures',false); close all;
-tmp = doEpoching(tmp, portcodes);
-tmp = pop_runica(tmp, 'extended', 1);
-EEG = pop_saveset(EEG, 'filename', [EEG.setname,'_ICAweights.set'], 'filepath', procdir);
+% tmp             = clean_artifacts(tmp, 'Highpass','off', 'BurstCriterion','off', 'WindowCriterion','off');
+tmp             = clean_artifacts(tmp);
+tmp.data        = averageReference(tmp.data);
+tmp             = doEpoching(tmp, portcodes);
+tmp             = pop_runica(tmp, 'extended', 1);
+tmp             = pop_saveset(tmp, 'filename', [EEG.setname,'_ICAweights.set'], 'filepath', procdir);
 
-% pipeline 2
-EEG = pop_eegfiltnew(EEG, 0.1);
-EEG = pop_select(EEG, 'channel', find(tmp.etc.clean_channel_mask));
-EEG.data = averageReference(EEG.data);
-EEG = doEpoching(EEG, portcodes);
-EEG.icaweights = tmp.icaweights;
-EEG.icasphere = tmp.icasphere;
-EEG = pop_saveset(EEG, 'filename', [EEG.setname,'_ICA.set'], 'filepath', procdir);
+% pipeline 2 (0.1 Hz HP)
+EEG             = pop_eegfiltnew(EEG, 0.1);
+% remove bad channels found in pipeline 1
+EEG             = pop_select(EEG, 'channel', find(tmp.etc.clean_channel_mask));
+EEG.data        = averageReference(EEG.data);
+EEG             = doEpoching(EEG, portcodes);
+EEG.icaweights  = tmp.icaweights; % import ICA from pipeline 1
+EEG.icasphere   = tmp.icasphere;
+EEG             = pop_saveset(EEG, 'filename', [EEG.setname,'_ICA.set'], 'filepath', procdir);
 
 end
 
