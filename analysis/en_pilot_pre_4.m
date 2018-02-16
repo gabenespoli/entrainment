@@ -58,7 +58,7 @@ EEG = pop_saveset(EEG, 'filename', [EEG.setname,'.set'], 'filepath', procdir);
 %% preprocessing
 rmchans = eeg_ABCDto5percent(d.rmchans{1}, false);
 EEG = pop_select(EEG, 'nochannel', rmchans); % remove bad channels before changing to 5pct
-EEG.data = bsxfun(@minus, EEG.data, sum(EEG.data,1) / (EEG.nbchan + 1)); % avg ref
+EEG.data = averageReference(EEG.data);
 
 %% run two pipelines
 portcodes = unique(LOG.portcode);
@@ -76,7 +76,7 @@ tmp = clean_artifacts(tmp, 'Highpass','off', 'BurstCriterion','off', 'WindowCrit
 %     [],...    % max line noise to be considered normal (4 stdev)
 %     'off',... % min variance before repairing bursts w/ASR (5 stdev)
 %     'off');   % max proportion of repaired channels tolerated to keep a given window (0.3)
-tmp.data = bsxfun(@minus, tmp.data, sum(tmp.data,1) / (tmp.nbchan + 1)); % avg ref
+tmp.data = averageReference(tmp.data);
 % tmp = pop_cleanline(tmp,'LineFrequencies',[60 120],'PlotFigures',false); close all;
 tmp = pop_epoch(tmp, portcodes, epochlim); 
 tmp = pop_runica(tmp, 'extended', 1);
@@ -85,10 +85,15 @@ EEG = pop_saveset(EEG, 'filename', [EEG.setname,'_ICAweights.set'], 'filepath', 
 % pipeline 2
 EEG = pop_eegfiltnew(EEG, 0.1);
 EEG = pop_select(EEG, 'channel', find(tmp.etc.clean_channel_mask));
-EEG.data = bsxfun(@minus, EEG.data, sum(EEG.data,1) / (EEG.nbchan + 1));
-EEG = pop_epoch(EEG, portcodes, epochlim);
+EEG.data = averageReference(EEG.data);
+EEG = pop_epoch(EEG, portcodes, epochlim, 'newname', EEG.setname);
 EEG.icaweights = tmp.icaweights;
 EEG.icasphere = tmp.icasphere;
 EEG = pop_saveset(EEG, 'filename', [EEG.setname,'_ICA.set'], 'filepath', procdir);
 
+end
+
+function data = averageReference(data)
+% data should be chan x time x epochs
+data = bsxfun(@minus, data, sum(data,1) / (size(data,1) + 1));
 end
