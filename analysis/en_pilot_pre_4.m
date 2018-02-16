@@ -62,7 +62,6 @@ EEG.data = averageReference(EEG.data);
 
 %% run two pipelines
 portcodes = unique(LOG.portcode);
-epochlim = [5 26]; % 1 second of silence after portcode, then 4 seconds to start entraining; shortest stim is 25 seconds
 
 % pipeline 1
 tmp = EEG;
@@ -78,7 +77,7 @@ tmp = clean_artifacts(tmp, 'Highpass','off', 'BurstCriterion','off', 'WindowCrit
 %     'off');   % max proportion of repaired channels tolerated to keep a given window (0.3)
 tmp.data = averageReference(tmp.data);
 % tmp = pop_cleanline(tmp,'LineFrequencies',[60 120],'PlotFigures',false); close all;
-tmp = pop_epoch(tmp, portcodes, epochlim); 
+tmp = doEpoching(tmp, portcodes);
 tmp = pop_runica(tmp, 'extended', 1);
 EEG = pop_saveset(EEG, 'filename', [EEG.setname,'_ICAweights.set'], 'filepath', procdir);
 
@@ -86,7 +85,7 @@ EEG = pop_saveset(EEG, 'filename', [EEG.setname,'_ICAweights.set'], 'filepath', 
 EEG = pop_eegfiltnew(EEG, 0.1);
 EEG = pop_select(EEG, 'channel', find(tmp.etc.clean_channel_mask));
 EEG.data = averageReference(EEG.data);
-EEG = pop_epoch(EEG, portcodes, epochlim, 'newname', EEG.setname);
+EEG = doEpoching(EEG, portcodes);
 EEG.icaweights = tmp.icaweights;
 EEG.icasphere = tmp.icasphere;
 EEG = pop_saveset(EEG, 'filename', [EEG.setname,'_ICA.set'], 'filepath', procdir);
@@ -96,4 +95,9 @@ end
 function data = averageReference(data)
 % data should be chan x time x epochs
 data = bsxfun(@minus, data, sum(data,1) / (size(data,1) + 1));
+end
+
+function EEG = doEpoching(EEG, portcodes)
+epochlim = [5 26]; % 1 second of silence after portcode, then 4 seconds to start entraining; shortest stim is 25 seconds
+EEG = pop_epoch(EEG, portcodes, epochlim, 'newname', EEG.setname); 
 end
