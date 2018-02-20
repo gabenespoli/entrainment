@@ -3,6 +3,8 @@ function move = playTrial(fname, stimType, ioObj, address)
 % defaults
 if nargin < 2, stimType = 'sync'; end
 likertRange= 1:7; % Witek2014 used 5-point likert; Janata2012 used 7-point
+start = 1; % in samples
+stop_seconds = 30; % in seconds
 
 % get correct wording for question
 % this question from Witek2014 (with 'rhythm' as the rhythmWord)
@@ -17,6 +19,7 @@ moveQuestion = ['To what extent does this ', rhythmWord, ...
 % prepare for trial
 audioObj = loadAudio(fname);
 portcode = getPortcode(fname);
+stop = stop_seconds * audioObj.SampleRate; % convert to samples
 fprintf('Press enter to play the trial.\n')
 pause
 
@@ -25,7 +28,7 @@ fprintf('\nPlaying... ')
 io64(ioObj, address, portcode); % send portcode
 pause(1)
 io64(ioObj, address, 0); % send a zero portcode
-playblocking(audioObj)
+playblocking(audioObj, [start, stop])
 fprintf('Done.\n')
 
 move = getLikertResponse(moveQuestion, likertRange);
