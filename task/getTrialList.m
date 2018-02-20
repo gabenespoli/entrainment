@@ -67,8 +67,7 @@ if continuePreviousLogfile
         end
     end
 
-    logfileFid = fopen(logfile, 'a');
-
+    logfileFid = fopen(logfile, 'at');
 
 else % make new logfile and trial list
     % add tempo jitter
@@ -102,13 +101,13 @@ else % make new logfile and trial list
     trialList = trialList(randperm(length(trialList)));
 
     % write trial list to file
-    trialList_fid = fopen(trialListFile, 'w');
+    trialList_fid = fopen(trialListFile, 'wt');
     fprintf(trialList_fid, '%s\n', trialList{:});
     fclose(trialList_fid);
 
     % start logfile
     nHeaders = length(logfileHeaders);
-    logfileFid = fopen(logfile, 'w');
+    logfileFid = fopen(logfile, 'wt');
     formatSpec = [repmat('%s,',[1,nHeaders-1]),'%s\n'];
     fprintf(logfileFid, formatSpec, logfileHeaders{:});
     startTrial = 1;
