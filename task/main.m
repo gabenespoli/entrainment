@@ -33,6 +33,7 @@ try
         stimfile = trialList{trial};
         clc
         fprintf('Trial %i / %i\n', trial, nTrials)
+        try showProgress(trial, nTrials), catch, end
         move = playTrial(stimfile, stimType, ioObj, address);
         logResponse(logfileFid, id, stimType, trigType, trial, stimfile, move);
     end
