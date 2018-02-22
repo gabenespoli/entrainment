@@ -49,6 +49,9 @@ catch err
 end
 
 fclose('all');
+
+try playDone, catch, disp('Done!'), end
+
 end
 
 function makeSureFoldersExist(varargin)
