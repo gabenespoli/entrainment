@@ -1,6 +1,7 @@
 function EEG = en_readbdf(id, do_save)
 if nargin < 2, do_save = true; end
 bdflog = en_load('bdflog', id);
+idStr = num2str(id);
 
 % load the bdf file
 bdffile = fullfile(en_getFolder('bdf'), [bdflog.bdffile{1}, '.bdf']);
