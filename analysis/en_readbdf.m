@@ -14,7 +14,7 @@ EEG.setname = idStr;
 % add channel locations
 EEG = pop_select(EEG, 'nochannel', 135:136); % remove EXG7 and EXG8
 EEG = en_alpha2fivepct(EEG, false); % convert to 5% system; also relabels EXG channels
-chanfile = fullfile(en_getFolder('eeglab'), 'function', 'resources', 'Standard-10-5-Cap385_witheog.elp');
+chanfile = fullfile(en_getFolder('eeglab'), 'functions', 'resources', 'Standard-10-5-Cap385_witheog.elp');
 EEG = pop_chanedit(EEG, 'lookup', chanfile);
 
 % save .set file
