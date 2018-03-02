@@ -3,8 +3,8 @@ function EEG = en_pilot_pre_4
 % played sync stim at 90:114 bpm
 % see if there is an entrainment advantage for a certain tempo
 
-addpath('~/bin/matlab/eeglab13_5_4b')
-eeglab
+% addpath('~/local/matlab/eeglab')
+% eeglab
 
 %% get filenames and recording info
 id = 5;
@@ -51,6 +51,10 @@ EEG = pop_chanedit(EEG, 'changefield', {132 'labels' 'LO2'});
 EEG = pop_chanedit(EEG, 'changefield', {133 'labels' 'IO1'});
 EEG = pop_chanedit(EEG, 'changefield', {134 'labels' 'IO2'});
 EEG = pop_chanedit(EEG, 'lookup', 'chanlocs/sphere_1005_and_exg_besa_fivepct.sfp');
+% chanfile = fullfile('chanlocs', 'sphere_1005_and_exg_besa_fivepct.sfp');
+% chanfile = fullfile('~','local','matlab','eeglab','plugins','dipfit2.3','standard_BESA','standard-10-5-cap385.elp');
+chanfile = fullfile('~','local','matlab','eeglab','functions','resources','Standard-10-5-Cap385_witheog.elp');
+EEG = pop_chanedit(EEG, 'lookup', chanfile);
 
 %% save
 EEG = pop_saveset(EEG, 'filename', [EEG.setname,'.set'], 'filepath', procdir);
@@ -58,31 +62,39 @@ EEG = pop_saveset(EEG, 'filename', [EEG.setname,'.set'], 'filepath', procdir);
 %% preprocessing
 rmchans = eeg_ABCDto5percent(d.rmchans{1}, false);
 EEG = pop_select(EEG, 'nochannel', rmchans); % remove bad channels before changing to 5pct
-EEG.data = averageReference(EEG.data);
+EEG = pop_select(EEG, 'nochannel', {'PPO5h', 'P03'}); % looked to be flatlined
+EEG.data = averageReference(EEG.data); % TODO try removing this
 
 %% run two pipelines
-portcodes = unique(LOG.portcode);
+% pipeline 1 tmp (get ICA weights, higher HP)
+% pipeline 2 EEG
+tmp = EEG;
 
-% pipeline 1 (1 Hz HP and ICA)
-tmp             = EEG;
-tmp             = pop_eegfiltnew(tmp, 1);
+% filtering
+tmp = pop_eegfiltnew(tmp, 2);
+EEG = pop_eegfiltnew(EEG, 1);
+
 % find bad channels and remove
-% tmp             = clean_artifacts(tmp, 'Highpass','off', 'BurstCriterion','off', 'WindowCriterion','off');
-tmp             = clean_artifacts(tmp);
-tmp.data        = averageReference(tmp.data);
-tmp             = doEpoching(tmp, portcodes);
-tmp             = pop_runica(tmp, 'extended', 1);
-tmp             = pop_saveset(tmp, 'filename', [EEG.setname,'_ICAweights.set'], 'filepath', procdir);
+tmp = clean_artifacts(tmp, 'Highpass','off', 'BurstCriterion','off', 'WindowCriterion','off');
+% tmp = clean_artifacts(tmp, 'Highpass', 'off');
+EEG = pop_select(EEG, 'channel', find(tmp.etc.clean_channel_mask));
 
-% pipeline 2 (0.1 Hz HP)
-EEG             = pop_eegfiltnew(EEG, 0.1);
-% remove bad channels found in pipeline 1
-EEG             = pop_select(EEG, 'channel', find(tmp.etc.clean_channel_mask));
-EEG.data        = averageReference(EEG.data);
-EEG             = doEpoching(EEG, portcodes);
+% average reference
+tmp.data = averageReference(tmp.data);
+EEG.data = averageReference(EEG.data);
+
+% epoching
+portcodes = unique(LOG.portcode);
+tmp = doEpoching(tmp, portcodes);
+EEG = doEpoching(EEG, portcodes);
+
+% ICA
+tmp             = pop_runica(tmp, 'extended', 1);
 EEG.icaweights  = tmp.icaweights; % import ICA from pipeline 1
 EEG.icasphere   = tmp.icasphere;
-EEG             = pop_saveset(EEG, 'filename', [EEG.setname,'_ICA.set'], 'filepath', procdir);
+
+% save
+EEG = pop_saveset(EEG, 'filename', [EEG.setname,'_ICA.set'], 'filepath', procdir);
 
 end
 
