@@ -2,9 +2,13 @@
 task/io64*
 task/logfiles
 *.xlsx
+*.csv
 *.tsv
 *.svg
-stimuli/*
-forms/*
 todo.txt
 notes.md
+analysis/chanlocs/*
+analysis/noneeglab/*
+forms/*
+photos/*
+stimuli/*
