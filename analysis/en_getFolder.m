@@ -21,7 +21,7 @@ switch dirtype
         outdir = fullfile(projectdir, 'data', 'eeg');
 
     case 'eeg_plots'
-        outdir = fullfile(projectdir, 'data', 'eeg', 'plots');
+        outdir = fullfile(projectdir, 'data', 'eeg_plots');
 
     case 'eeglab'
         outdir = fullfile(projectdir, 'eeglab');
