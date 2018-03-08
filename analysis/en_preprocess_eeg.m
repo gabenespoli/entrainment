@@ -60,20 +60,20 @@ fid = fopen(fullfile(en_getFolder('eeg'), [EEG.setname,'_portcodes.txt']), 'w');
 fprintf(fid, '%i\n', portcodes);
 fclose(fid);
 
-% save topoplot of components
+% fit dipoles
+EEG = en_dipfit(EEG);
+
+% save topoplot of components & dipoles
 pop_topoplot(EEG, ...
              0, ...                     % 0 for comps, 1 for chans
              1:size(EEG.icaact, 1), ... % comps/chans to plot
              EEG.setname, ...           % plot title
              0, ...                     % rows/cols per page (0 = near square)
-             0, ...                     % plot dipoles too
+             1, ...                     % plot dipoles too
              'electrodes', 'off');
+
 savefig(fullfile(en_getFolder('eeg_plots'), [EEG.setname, '_ICA_topoplot.fig']))
 print(fullfile(en_getFolder('eeg_plots'), [EEG.setname, '_ICA_topoplot.png']), '-dpng')
 close(gcf)
-
-% fit dipoles
-
-
 
 end
