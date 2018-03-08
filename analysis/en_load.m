@@ -27,6 +27,7 @@ switch lower(filetype)
                 error(['More than one row in the bdflog for id ', num2str(id), '.'])
             end
         end
+        bdflog.notes = []; % remove notes field for nicer display in command window
         varout = bdflog;
 
     case 'bdf' % load .bdf as .set, relabel channels
