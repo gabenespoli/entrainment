@@ -23,10 +23,9 @@ else
 end
 
 % get files
-dipdir   = fullfile('~','local','matlab','eeglab','plugins','dipfit2.3');
-hdmfile  = fullfile(dipdir, 'standard_BESA', 'standard_BESA.mat');
-mrifile  = fullfile(dipdir, 'standard_BESA', 'avg152t1.mat');
-chanfile = fullfile(dipdir, 'standard_BESA', 'standard-10-5-cap285.elp');
+hdmfile  = fullfile(en_getFolder('dipfit'), 'standard_BESA', 'standard_BESA.mat');
+mrifile  = fullfile(en_getfolder('dipfit'), 'standard_BESA', 'avg152t1.mat');
+chanfile = fullfile(en_getfolder('dipfit'), 'standard_BESA', 'standard-10-5-cap285.elp');
 % coord_transform = [0.628547 -15.8455 2.29126 0.0859382 0.00361671 -1.57308 1.17301 1.06471 1.15137];
 
 % create head model

@@ -25,5 +25,8 @@ switch dirtype
 
     case 'eeglab'
         outdir = fullfile(projectdir, 'eeglab');
+
+    case 'dipfit'
+        outdir = fullfile(projectdir, 'eeglab', 'plugins', 'dipfit2.3');
 end
 end
