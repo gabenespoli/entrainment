@@ -31,5 +31,12 @@ switch dirtype
 
     case 'chanfile'
         outdir = fullfile(en_getFolder('eeglab'), 'functions', 'resources', 'Standard-10-5-Cap385_witheog.elp');
+
+    case 'mrifile'
+        outdir = fullfile(en_getFolder('dipfit'), 'standard_BEM', 'standard_mri.mat');
+
+    case 'hdmfile'
+        outdir = fullfile(en_getFolder('dipfit'), 'standard_BEM', 'standard_vol.mat');
+
 end
 end
