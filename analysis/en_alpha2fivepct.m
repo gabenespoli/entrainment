@@ -9,29 +9,25 @@
 %   EXG5 = IO1 (inferior ocular)
 %   EXG6 = IO2
 %
-% usage:
+% Usage:
 %   fivepct = alpha2fivepct(alpha)
 %   EEG = alpha2fivepct(EEG)
 %
-% input:
-%   alpha = [string|cell of strings] cell of alphabetical labels
-%   EEG = [struct] eeglab structure with alphabetic labels. this input
-%       requires that eeglab has been added to the matlab path (it needs
-%       the pop_chanedit function to change the labels.
+% Input:
+%   alpha = [string|cell of strings] Cell of alphabetical labels
+%   EEG = [struct] eeglab structure with alphabetic labels. This input
+%       requires that EEGLAB has been added to the MATLAB path (it needs
+%       the pop_chanedit function to change the labels).
 %
-% output:
-%   fivepct = [string|cell of strings] cell of five percent labels. output
-%       class is the same as the input. e.g. if you input a string, you'll
+% Output:
+%   fivepct = [string|cell of strings] Cell of five percent labels. Output
+%       class is the same as the input. e.g., if you input a string, you'll
 %       get a string back.
-%   EEG = [struct] eeglab structure with five percent labels
+%   EEG = [struct] EEGLAB structure with five percent labels.
 
 function EEG = en_alpha2fivepct(EEG, verbose)
-if nargin < 2
-    verbose = true;
-end
-if verbose
-    fprintf('\n')
-end
+if nargin < 2, verbose = true; end
+if verbose, fprintf('\n'), end
 
 % convert string input to cell, we'll convert it back later
 if ischar(EEG)
