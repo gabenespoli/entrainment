@@ -26,9 +26,16 @@
 %   EEG = [struct] EEGLAB structure variable. File is also saved to
 %         en_getFolder('eeg').
 
-% load some things
+function EEG = en_preprocess_eeg(id, stim, task)
+
+% defaults
+if nargin < 1 || isempty(id),   id = input('Enter id: '); end
+if nargin < 2 || isempty(stim), stim = 'sync'; end % sync or mir
+if nargin < 3 || isempty(task), task = 'eeg'; end % eeg or tapping
+
+% load data and info
 bdflog = en_load('bdflog', id);
-EEG = en_load('eeg', id);
+EEG = en_readbdf('bdf', id);
 
 % remove manually-marked bad channels
 if ~isempty(bdflog.rmchans{1})
@@ -37,47 +44,21 @@ if ~isempty(bdflog.rmchans{1})
     EEG = pop_select(EEG, 'nochannel', rmchans);
 end
 
-% downsampling
-% setname = EEG.setname;
-% EEG = pop_resample(EEG, 128);
-% EEG.setname = setname;
-
-%% run two pipelines
-% pipeline 1 TMP (get ICA weights, higher HP)
-% pipeline 2 EEG
-
-% average reference
+% do preprocessing
+% EEG = pop_resample(EEG, 128); % downsampling
 EEG.data = en_averageReference(EEG.data);
-TMP = EEG;
-
-% filtering
-TMP = pop_eegfiltnew(TMP, 1);
-EEG = pop_eegfiltnew(EEG, 0.5);
-
-% find bad channels and remove
-TMP = clean_artifacts(TMP, ...
+EEG = pop_eegfiltnew(EEG, 1);
+EEG = clean_artifacts(EEG, ...  % find bad channels and remove
     'Highpass',         'off', ...
     'BurstCriterion',   'off', ...
     'WindowCriterion',  'off');
-EEG = pop_select(EEG, 'channel', find(TMP.etc.clean_channel_mask));
-
-% average reference
-TMP.data = en_averageReference(TMP.data);
 EEG.data = en_averageReference(EEG.data);
-
-% epoching
-[EEG, portcodes] = en_epoch(EEG, stimType, taskType);
-TMP = en_epoch(TMP, stimType, taskType);
-
-% ICA
-TMP             = pop_runica(TMP, 'extended', 1);
-EEG.icaweights  = TMP.icaweights; % import ICA from pipeline 1
-EEG.icasphere   = TMP.icasphere;
-
-% fit dipoles
+[EEG, portcodes] = en_epoch(EEG, stim, task);
+EEG = pop_runica(EEG, 'extended', 1);
 EEG = en_dipfit(EEG);
 
-% save
+% save file
+EEG.setname = num2str(id);
 EEG = pop_saveset(EEG, ...
     'filepath', en_getFolder('eeg'), ...
     'filename', [EEG.setname,'_ICA.set']);
