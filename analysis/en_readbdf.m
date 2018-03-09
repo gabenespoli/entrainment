@@ -1,27 +1,33 @@
-function EEG = en_readbdf(id, do_save)
-if nargin < 2, do_save = true; end
-bdflog = en_load('bdflog', id);
-idStr = num2str(id);
+function EEG = en_readbdf(id)
 
-% load the bdf file
-bdffile = fullfile(en_getFolder('bdf'), [bdflog.bdffile{1}, '.bdf']);
-range = [];
-eventchans = bdflog.eventchans; % event channel, usually last channel in bdf file
-ref = [];
-EEG = pop_readbdf(bdffile, range, eventchans, ref);
-EEG.setname = idStr;
+% get diary for this id
+d = en_load('diary', id);
+
+% read 1 bdf file, or read multiple and merge
+ind = 1;
+while ind < length(d.bdffile{1})
+    bdffile = fullfile(en_getFolder('bdf'), [d.bdffile{ind}, '.bdf']);
+    TMP = pop_readbdf( ...
+        bdffile, ...        % filename
+        [], ...             % range
+        d.eventchans, ...   % event channel
+        []);                % reference
+
+    if ind == 1
+        EEG = TMP;
+    else
+        EEG = pop_mergeset(EEG, TMP);
+    end
+
+    ind = ind + 1;
+end
+
+% make setname the id as a string
+EEG.setname = num2str(id);
 
 % add channel locations
 EEG = pop_select(EEG, 'nochannel', 135:136); % remove EXG7 and EXG8
-EEG = en_alpha2fivepct(EEG, false); % convert to 5% system; also relabels EXG channels
-chanfile = fullfile(en_getFolder('eeglab'), 'functions', 'resources', 'Standard-10-5-Cap385_witheog.elp');
-EEG = pop_chanedit(EEG, 'lookup', chanfile);
-
-% save .set file
-if do_save
-    EEG = pop_saveset(EEG, ...
-        'filename', [idStr,'.set'], ...
-        'filepath', en_getFolder('eeg'));
-end
+EEG = en_alpha2fivepct(EEG, false); % relabel as 5% (1005) system
+EEG = pop_chanedit(EEG, 'lookup', en_getFolder('chanfile')); % chan locs
 
 end
