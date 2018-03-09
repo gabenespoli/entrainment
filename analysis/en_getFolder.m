@@ -28,5 +28,8 @@ switch dirtype
 
     case 'dipfit'
         outdir = fullfile(projectdir, 'eeglab', 'plugins', 'dipfit2.3');
+
+    case 'chanfile'
+        outdir = fullfile(en_getFolder('eeglab'), 'functions', 'resources', 'Standard-10-5-Cap385_witheog.elp');
 end
 end
