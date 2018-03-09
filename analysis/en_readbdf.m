@@ -7,7 +7,7 @@ eventchans = d.eventchans;
 
 % read 1 bdf file, or read multiple and merge
 ind = 1;
-while ind < length(bdffiles)
+while ind <= length(bdffiles)
     bdffile = fullfile(en_getFolder('bdf'), [bdffiles{ind}, '.bdf']);
     TMP = pop_readbdf( ...
         bdffile, ...        % filename
