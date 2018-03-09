@@ -22,10 +22,16 @@ switch lower(filetype)
         d = readtable(fullfile(en_getFolder('analysis'), 'en_diary.csv'), 'Delimiter', ',');
         d.recording_notes = []; % remove notes field for nicer display in command window
         
-        % convert some fields from comma-delimited lists to cell arrays
         for i = 1:size(d, 1)
-            d.bdffile{i} = comma2cell(d.bdffile{i});
-            d.rmchans{i} = comma2cell(d.rmchans{i});
+            % convert some fields from comma-delimited lists to cell arrays
+            d.bdffile{i} = regexp(d.bdffile{i}, '\ *,\ *', 'split');
+            d.rmchans{i} = regexp(d.rmchans{i}, '\ *,\ *', 'split');
+            d.rmportcodes{i} = regexp(d.rmportcodes{i}, '\ *,\ *', 'split');
+            d.missedportcodes{i} = regexp(d.missedportcodes{i}, '\ *,\ *', 'split');
+
+            % convert some cell arrays to numeric vectors
+            d.rmportcodes{i} = cellfun(@str2num, d.rmportcodes{i});
+            d.missedportcodes{i} = cellfun(@str2num, d.missedportcodes{i});
         end
 
         if ~isempty(id) % restrict to a specific id
@@ -66,8 +72,4 @@ if ispc  % Windows is not case-sensitive
 else
   onPath = any(strcmp(Folder, pathCell));
 end
-end
-
-function C = comma2cell(c)
-C = regexp(c, '\ *,\ *', 'split');
 end
