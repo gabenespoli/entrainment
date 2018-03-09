@@ -3,10 +3,10 @@
 %
 %   1. Load raw data (en_readbdf.m)
 %   2. Remove channels that were marked as bad in en_log.csv
-%   3. Average reference (en_averageReference.m)
+%   3. Average reference (averageReference.m)
 %   4. High-pass filter at 1 Hz
 %   5. Automatically find and remove bad channels (clean_artifacts.m)
-%   6. Average reference again (en_averageReference.m)
+%   6. Average reference again (averageReference.m)
 %   7. Extract epochs (en_epoch.m)
 %   8. Run ICA (pop_runica.m)
 %   9. Fit dipoles (en_dipfit.m)
@@ -40,19 +40,19 @@ EEG = en_readbdf('bdf', id);
 %% remove manually-marked bad channels
 if ~isempty(d.rmchans{1})
     rmchans = d.rmchans{1};
-    rmchans = en_alpha2fivepct(rmchans, false);
+    rmchans = alpha2fivepct(rmchans, false);
     EEG = pop_select(EEG, 'nochannel', rmchans);
 end
 
 %% preprocess
 % EEG = pop_resample(EEG, 128); % downsampling
-EEG.data = en_averageReference(EEG.data);
+EEG.data = averageReference(EEG.data);
 EEG = pop_eegfiltnew(EEG, 1);
 EEG = clean_artifacts(EEG, ...  % find bad channels and remove
     'Highpass',         'off', ...
     'BurstCriterion',   'off', ...
     'WindowCriterion',  'off');
-EEG.data = en_averageReference(EEG.data);
+EEG.data = averageReference(EEG.data);
 [EEG, portcodes] = en_epoch(EEG, stim, task);
 EEG = pop_runica(EEG, 'extended', 1);
 EEG = en_dipfit(EEG);

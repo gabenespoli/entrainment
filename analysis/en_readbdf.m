@@ -27,7 +27,7 @@ EEG.setname = num2str(id);
 
 % add channel locations
 EEG = pop_select(EEG, 'nochannel', 135:136); % remove EXG7 and EXG8
-EEG = en_alpha2fivepct(EEG, false); % relabel as 5% (1005) system
+EEG = alpha2fivepct(EEG, false); % relabel as 5% (1005) system
 EEG = pop_chanedit(EEG, 'lookup', en_getFolder('chanfile')); % chan locs
 
 end

@@ -25,7 +25,7 @@
 %       get a string back.
 %   EEG = [struct] EEGLAB structure with five percent labels.
 
-function EEG = en_alpha2fivepct(EEG, verbose)
+function EEG = alpha2fivepct(EEG, verbose)
 if nargin < 2, verbose = true; end
 if verbose, fprintf('\n'), end
 
