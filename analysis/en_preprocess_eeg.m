@@ -28,13 +28,13 @@
 
 function EEG = en_preprocess_eeg(id, stim, task)
 
-% defaults
+%% defaults
 if nargin < 1 || isempty(id),   id = input('Enter id: '); end
 if nargin < 2 || isempty(stim), stim = 'sync'; end % sync or mir
 if nargin < 3 || isempty(task), task = 'eeg'; end % eeg or tapping
+d = en_load('diary', id);
 
-% load data and info
-bdflog = en_load('bdflog', id);
+%% load bdf file
 EEG = en_readbdf('bdf', id);
 
 %% remove manually-marked bad channels
@@ -44,7 +44,7 @@ if ~isempty(d.rmchans{1})
     EEG = pop_select(EEG, 'nochannel', rmchans);
 end
 
-% do preprocessing
+%% preprocess
 % EEG = pop_resample(EEG, 128); % downsampling
 EEG.data = en_averageReference(EEG.data);
 EEG = pop_eegfiltnew(EEG, 1);
@@ -57,7 +57,7 @@ EEG.data = en_averageReference(EEG.data);
 EEG = pop_runica(EEG, 'extended', 1);
 EEG = en_dipfit(EEG);
 
-% save file
+%% save file
 EEG.setname = num2str(id);
 EEG = pop_saveset(EEG, ...
     'filepath', en_getFolder('eeg'), ...
@@ -66,7 +66,7 @@ fid = fopen(fullfile(en_getFolder('eeg'), [EEG.setname,'_portcodes.txt']), 'w');
 fprintf(fid, '%i\n', portcodes);
 fclose(fid);
 
-% save topoplot of components & dipoles
+%% save topoplot of components & dipoles
 pop_topoplot(EEG, ...
      0, ...                     % 0 for comps, 1 for chans
      1:size(EEG.icaact, 1), ... % comps/chans to plot
