@@ -26,12 +26,16 @@ switch lower(filetype)
             % convert some fields from comma-delimited lists to cell arrays
             d.bdffile{i} = regexp(d.bdffile{i}, '\ *,\ *', 'split');
             d.rmchans{i} = regexp(d.rmchans{i}, '\ *,\ *', 'split');
-            d.rmportcodes{i} = regexp(d.rmportcodes{i}, '\ *,\ *', 'split');
-            d.missedportcodes{i} = regexp(d.missedportcodes{i}, '\ *,\ *', 'split');
-
-            % convert some cell arrays to numeric vectors
-            d.rmportcodes{i} = cellfun(@str2num, d.rmportcodes{i});
-            d.missedportcodes{i} = cellfun(@str2num, d.missedportcodes{i});
+            if iscell(d.rmportcodes)
+                d.rmportcodes{i} = regexp(d.rmportcodes{i}, '\ *,\ *', 'split');
+                d.rmportcodes{i} = cellfun(@str2num, d.rmportcodes{i}, 'UniformOutput', false);
+                d.rmportcodes{i} = cell2mat(d.rmportcodes{i});
+            end
+            if iscell(d.missedportcodes)
+                d.missedportcodes{i} = regexp(d.missedportcodes{i}, '\ *,\ *', 'split');
+                d.missedportcodes{i} = cellfun(@str2num, d.missedportcodes{i}, 'UniformOutput', false);
+                d.missedportcodes{i} = cell2mat(d.missedportcodes{i});
+            end
         end
 
         if ~isempty(id) % restrict to a specific id
