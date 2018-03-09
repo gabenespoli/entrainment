@@ -1,9 +1,30 @@
-function EEG = en_preprocess_eeg(id) 
-% reads file id.set from en_getFolder('eeg')
-% file must already have been loaded using en_readbdf.m
-% id = [numeric]
-stimType = 'sync'; % sync or mir
-taskType = 'eeg'; % eeg or tapping
+%EN_PREPROCESS_EEG  Preprocess EEG data. This script uses EEGLAB functions
+%   to preprocess a BioSemi .bdf file:
+%
+%   1. Load raw data (en_readbdf.m)
+%   2. Remove channels that were marked as bad in en_log.csv
+%   3. Average reference (en_averageReference.m)
+%   4. High-pass filter at 1 Hz
+%   5. Automatically find and remove bad channels (clean_artifacts.m)
+%   6. Average reference again (en_averageReference.m)
+%   7. Extract epochs (en_epoch.m)
+%   8. Run ICA (pop_runica.m)
+%   9. Fit dipoles (en_dipfit.m)
+%  10. Save the EEG .set file to en_getFolder('eeg')
+%  11. Save topoplot (incl. dipoles) to en_getFolder('eeg_plots')
+%
+% Usage:
+%   EEG = en_preprocess_eeg(id)
+%   EEG = en_preprocess_eeg(id, stim, task)
+%
+% Input:
+%   id = [numeric] ID of participant to preprocess.
+%   stim = ['sync' or 'mir'] Passed to en_epoch.
+%   task = ['eeg' or 'tapping'] Passed to en_epoch.
+%
+% Output:
+%   EEG = [struct] EEGLAB structure variable. File is also saved to
+%         en_getFolder('eeg').
 
 % load some things
 bdflog = en_load('bdflog', id);
