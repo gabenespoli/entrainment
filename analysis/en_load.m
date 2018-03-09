@@ -18,17 +18,23 @@ switch lower(filetype)
             disp('Started eeglab.')
         end
 
-    case 'bdflog' % loads the bdf log of recordings
-        fname = fullfile(en_getFolder('analysis'), 'en_log.csv');
-        bdflog = readtable(fname, 'Delimiter', ',');
+    case 'diary' % loads the diary csv file as a table
+        d = readtable(fullfile(en_getFolder('analysis'), 'en_diary.csv'), 'Delimiter', ',');
+        d.recording_notes = []; % remove notes field for nicer display in command window
+        
+        % convert some fields from comma-delimited lists to cell arrays
+        for i = 1:size(d, 1)
+            d.bdffile{i} = comma2cell(d.bdffile{i});
+            d.rmchans{i} = comma2cell(d.rmchans{i});
+        end
+
         if ~isempty(id) % restrict to a specific id
-            bdflog = bdflog(bdflog.id == id, :); % rows in corresponding to this id
-            if height(bdflog) > 1
-                error(['More than one row in the bdflog for id ', num2str(id), '.'])
+            d = d(d.id == id, :); % rows in corresponding to this id
+            if height(d) > 1
+                error(['More than one row in the d for id ', num2str(id), '.'])
             end
         end
-        bdflog.notes = []; % remove notes field for nicer display in command window
-        varout = bdflog;
+        varout = d;
 
     case 'bdf' % load .bdf as .set, relabel channels
         varout = en_readbdf(id);
@@ -60,4 +66,8 @@ if ispc  % Windows is not case-sensitive
 else
   onPath = any(strcmp(Folder, pathCell));
 end
+end
+
+function C = comma2cell(c)
+C = regexp(c, '\ *,\ *', 'split');
 end
