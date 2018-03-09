@@ -2,15 +2,17 @@ function EEG = en_readbdf(id)
 
 % get diary for this id
 d = en_load('diary', id);
+bdffiles = d.bdffile{1};
+eventchans = d.eventchans;
 
 % read 1 bdf file, or read multiple and merge
 ind = 1;
-while ind < length(d.bdffile{1})
-    bdffile = fullfile(en_getFolder('bdf'), [d.bdffile{ind}, '.bdf']);
+while ind < length(bdffiles)
+    bdffile = fullfile(en_getFolder('bdf'), [bdffiles{ind}, '.bdf']);
     TMP = pop_readbdf( ...
         bdffile, ...        % filename
         [], ...             % range
-        d.eventchans, ...   % event channel
+        eventchans, ...   % event channel
         []);                % reference
 
     if ind == 1
