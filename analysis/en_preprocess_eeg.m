@@ -37,9 +37,9 @@ if nargin < 3 || isempty(task), task = 'eeg'; end % eeg or tapping
 bdflog = en_load('bdflog', id);
 EEG = en_readbdf('bdf', id);
 
-% remove manually-marked bad channels
-if ~isempty(bdflog.rmchans{1})
-    rmchans = regexp(bdflog.rmchans{1}, ',', 'split'); % convert comma-delimited list to cell array
+%% remove manually-marked bad channels
+if ~isempty(d.rmchans{1})
+    rmchans = d.rmchans{1};
     rmchans = en_alpha2fivepct(rmchans, false);
     EEG = pop_select(EEG, 'nochannel', rmchans);
 end
