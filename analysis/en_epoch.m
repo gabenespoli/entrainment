@@ -15,7 +15,7 @@ catch
     error('EEG.setname should be the id.')
 end
 
-bdflog = en_load('bdflog', id);
+d = en_load('diary', id);
 
 %% get event indices
 % 'eventindices' param/val pair in pop_epoch is the indices of EEG.event from where
@@ -27,23 +27,23 @@ bdflog = en_load('bdflog', id);
 eventindices = 1:length(EEG.event);
 
 % remove extra portcodes
-if ~isnan(bdflog.rmportcodes)
+if ~isnan(d.rmportcodes)
     disp('Removing extra portcodes...')
-    eventindices(bdflog.rmportcodes) = [];
+    eventindices(d.rmportcodes) = [];
 end
 
 % add nans for missed portcodes
-if ~isnan(bdflog.missedportcodes)
+if ~isnan(d.missedportcodes)
     disp('Adding nans for extra portcodes...')
-    for i = 1:length(bdflog.missedportcodes)
-        if bdflog.missedportcodes(i) == 1
+    for i = 1:length(d.missedportcodes)
+        if d.missedportcodes(i) == 1
             eventindices = [nan eventindices];
-        elseif bdflog.missedportcodes(i) == 120
+        elseif d.missedportcodes(i) == 120
             eventindices = [eventindices nan];
         else
-            eventindices = [eventindices(1:bdflog.missportcodes(i)-1) ...
+            eventindices = [eventindices(1:d.missportcodes(i)-1) ...
                             nan ...
-                            eventindices(bdflog.missportcodes(i)+1:end)];
+                            eventindices(d.missportcodes(i)+1:end)];
         end
     end
 end
@@ -52,23 +52,23 @@ end
 if strcmpi(stimType, 'sync')
     if strcmpi(trigType, 'eeg')
 
-        if     bdflog.order == 1,   eventindices = eventindices(1:30);
-        elseif bdflog.order == 2,   eventindices = eventindices(31:60);
+        if     d.order == 1,   eventindices = eventindices(1:30);
+        elseif d.order == 2,   eventindices = eventindices(31:60);
         end
 
     elseif strcmpi(trigType, 'tapping')
-        if     bdflog.order == 1,   eventindices = eventindices(31:60);
-        elseif bdflog.order == 2,   eventindices = eventindices(1:30);
+        if     d.order == 1,   eventindices = eventindices(31:60);
+        elseif d.order == 2,   eventindices = eventindices(1:30);
         end
     end
 elseif strcmpi (stimType, 'mir')
     if strcmpi(trigType, 'eeg')
-        if     bdflog.order == 1,   eventindices = eventindices(61:90);
-        elseif bdflog.order == 2,   eventindices = eventindices(91:120);
+        if     d.order == 1,   eventindices = eventindices(61:90);
+        elseif d.order == 2,   eventindices = eventindices(91:120);
         end
     elseif strcmpi(trigType, 'tapping')
-        if     bdflog.order == 1,   eventindices = eventindices(91:120);
-        elseif bdflog.order == 2,   eventindices = eventindices(61:90);
+        if     d.order == 1,   eventindices = eventindices(91:120);
+        elseif d.order == 2,   eventindices = eventindices(61:90);
         end
     end
 end
