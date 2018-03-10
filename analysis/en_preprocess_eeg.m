@@ -38,7 +38,7 @@ d = en_load('diary', id);
 EEG = en_readbdf(id); % also adds channel locations
 
 %% remove manually-marked bad channels
-if ~isempty(d.rmchans{1})
+if ~isempty(d.rmchans{1}{1})
     rmchans = d.rmchans{1};
     rmchans = alpha2fivepct(rmchans, false);
     EEG = pop_select(EEG, 'nochannel', rmchans);
