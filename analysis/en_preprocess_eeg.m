@@ -61,7 +61,7 @@ EEG = en_dipfit(EEG);
 EEG.setname = num2str(id);
 EEG = pop_saveset(EEG, ...
     'filepath', en_getFolder('eeg'), ...
-    'filename', [EEG.setname,'_ICA.set']);
+    'filename', [EEG.setname,'.set']);
 fid = fopen(fullfile(en_getFolder('eeg'), [EEG.setname,'_portcodes.txt']), 'w');
 fprintf(fid, '%i\n', portcodes);
 fclose(fid);
@@ -75,8 +75,8 @@ pop_topoplot(EEG, ...
      1, ...                     % plot dipoles too
      'electrodes', 'off');
 
-savefig(fullfile(en_getFolder('eeg_plots'), [EEG.setname, '_ICA_topoplot.fig']))
-print(fullfile(en_getFolder('eeg_plots'),   [EEG.setname, '_ICA_topoplot.png']), '-dpng')
+savefig(fullfile(en_getFolder('eeg_plots'), [EEG.setname, '_topoplot.fig']))
+print(fullfile(en_getFolder('eeg_plots'),   [EEG.setname, '_topoplot.png']), '-dpng')
 close(gcf)
 
 end
