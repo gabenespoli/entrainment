@@ -27,19 +27,21 @@ d = en_load('diary', id);
 eventindices = 1:length(EEG.event);
 
 % remove extra portcodes
-if ~isnan(d.rmportcodes)
+rmportcodes = d.rmportcodes{1};
+if ~isnan(rmportcodes)
     disp('Removing extra portcodes...')
-    eventindices(d.rmportcodes) = [];
+    eventindices(rmportcodes) = [];
 end
 
 % add nans for missed portcodes
-if ~isnan(d.missedportcodes)
-    disp('Adding nans for extra portcodes...')
-    for i = 1:length(d.missedportcodes)
-        if d.missedportcodes(i) == 1
-            eventindices = [nan eventindices];
-        elseif d.missedportcodes(i) == 120
-            eventindices = [eventindices nan];
+missedportcodes = d.missedportcodes{1};
+if ~isnan(missedportcodes)
+    disp('Adding NaNs for extra portcodes...')
+    for i = 1:length(missedportcodes)
+        if missedportcodes(i) == 1
+            eventindices = [nan eventindices]; %#ok<AGROW>
+        elseif missedportcodes(i) == 120
+            eventindices = [eventindices nan]; %#ok<AGROW>
         else
             eventindices = [eventindices(1:missedportcodes(i) - 1), ...
                             nan, ...
