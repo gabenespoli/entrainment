@@ -35,7 +35,7 @@ if nargin < 3 || isempty(task), task = 'eeg'; end % eeg or tapping
 d = en_load('diary', id);
 
 %% load bdf file
-EEG = en_readbdf(id);
+EEG = en_readbdf(id); % also adds channel locations
 
 %% remove manually-marked bad channels
 if ~isempty(d.rmchans{1})
