@@ -1,6 +1,8 @@
 function EEG = en_readbdf(id)
+% en_readbdf  Load a bdf file in EEGLAB and add channel locations.
+% Loads en_diary.csv and uses id to get bdf filename and event channel.
 
-% get diary for this id
+% get diary info for this id
 d = en_load('diary', id);
 bdffiles = d.bdffile{1};
 eventchans = d.eventchans;
@@ -12,7 +14,7 @@ while ind <= length(bdffiles)
     TMP = pop_readbdf( ...
         bdffile, ...        % filename
         [], ...             % range
-        eventchans, ...   % event channel
+        eventchans, ...     % event channel
         []);                % reference
 
     if ind == 1
