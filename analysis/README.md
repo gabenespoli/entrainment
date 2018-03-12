@@ -25,3 +25,5 @@
 `tal2region`: This is a wrapper for the [Talairach client](http://www.talairach.org/client.html). It requires that the `talairach.jar` file be in the same folder.
 
 `region2comps`: This is a wrapper for `tal2region`, that takes an EEG struct and a brain region as input, and returns the IC numbers that are in, or close to that region.
+
+`en_select_comps`: Takes a preprocessed EEG struct and returns component numbers that match three criteria: region, residual variance, and dipolarity (as marked by manual inspection and recorded in en_diary.csv in the "dipolar_comps" column).

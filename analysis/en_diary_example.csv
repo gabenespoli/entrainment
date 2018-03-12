@@ -1,2 +1,2 @@
-id,bdffile,order,eventchans,rmchans,rmportcodes,missedportcodes,experimenters,recording_notes,comps
-1,20180101A,1,137,"D25,D4,C30",31,,"ES, JR, GN",,
+id,bdffile,order,eventchans,rmchans,rmportcodes,missedportcodes,experimenters,recording_notes,dipolar_comps
+1,20180101A,1,137,"D25,D4,C30",31,,"ES, JR, GN",,"1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 14, 17, 18, 19, 27, 30, 34, 42, 58, 60, 115"
