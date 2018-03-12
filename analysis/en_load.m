@@ -11,7 +11,7 @@ idStr = num2str(id);
 
 switch lower(filetype)
     case 'eeglab' % add eeglab to path
-        eeglabdir = en_getFolder('eeglab');
+        eeglabdir = en_getpath('eeglab');
         if ~isOnPath(eeglabdir)
             addpath(eeglabdir) % add path to eeglab root
             eeglab % start eeglab
@@ -19,7 +19,7 @@ switch lower(filetype)
         end
 
     case 'diary' % loads the diary csv file as a table
-        d = readtable(fullfile(en_getFolder('analysis'), 'en_diary.csv'), 'Delimiter', ',');
+        d = readtable(en_getpath('diary'), 'Delimiter', ',');
         d.recording_notes = []; % remove notes field for nicer display in command window
         
         for i = 1:size(d, 1)
@@ -50,10 +50,10 @@ switch lower(filetype)
         varout = en_readbdf(id);
 
     case 'eeg'
-        varout = pop_loadset(fullfile(en_getFolder('eeg'), [idStr, '.set']));
+        varout = pop_loadset(fullfile(en_getpath('eeg'), [idStr, '.set']));
 
     case 'ica'
-        varout = pop_loadset(fullfile(en_getFolder('eeg'), [idStr, '_ICA.set']));
+        varout = pop_loadset(fullfile(en_getpath('eeg'), [idStr, '_ICA.set']));
 
     case {'logfile','log'}
         % loads the logfile as a table

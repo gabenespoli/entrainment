@@ -10,7 +10,7 @@ eventchans = d.eventchans;
 % read 1 bdf file, or read multiple and merge
 ind = 1;
 while ind <= length(bdffiles)
-    bdffile = fullfile(en_getFolder('bdf'), [bdffiles{ind}, '.bdf']);
+    bdffile = fullfile(en_getpath('bdf'), [bdffiles{ind}, '.bdf']);
     TMP = pop_readbdf( ...
         bdffile, ...        % filename
         [], ...             % range
@@ -32,6 +32,6 @@ EEG.setname = num2str(id);
 % add channel locations
 EEG = pop_select(EEG, 'nochannel', 135:136); % remove EXG7 and EXG8
 EEG = alpha2fivepct(EEG, false); % relabel as 5% (1005) system
-EEG = pop_chanedit(EEG, 'lookup', en_getFolder('chanfile')); % chan locs
+EEG = pop_chanedit(EEG, 'lookup', en_getpath('chanfile')); % chan locs
 
 end

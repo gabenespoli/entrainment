@@ -1,6 +1,6 @@
 %% en_eeg_loop
 % Loop many participants and run en_preprocess_eeg. Saves text files with
-% all command window output to the folder en_getFolder('eeg'). Files
+% all command window output to the folder en_getpath('eeg'). Files
 % are named by the starting date and time of the loop.
 %
 % Usage:
@@ -17,7 +17,7 @@ timeLog = cell(1, length(id));
 for i = 1:length(id)
 
     % start diary file to save command window output
-    diary(fullfile(en_getFolder('eeg'), ...
+    diary(fullfile(en_getpath('eeg'), ...
         [num2str(id(i)), '_en_eeg_preprocess_', startTimeStr, '.txt']))
 
     fprintf('Participant ID: %i\n', id(i))
@@ -42,7 +42,7 @@ for i = 1:length(id)
 end
 
 % save elapsed time and errors for all ids to file
-fid = fopen(fullfile(en_getFolder('eeg'), ...
+fid = fopen(fullfile(en_getpath('eeg'), ...
     ['loop_log_', startTimeStr, '.txt']), 'w');
 fprintf(fid, 'Loop summary\n');
 for i = 1:length(id)
