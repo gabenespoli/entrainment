@@ -11,9 +11,6 @@ switch dirtype
     case 'analysis'
         outdir = fullfile(projectdir, 'analysis');
 
-    case 'looplogs'
-        outdir = fullfile(projectdir, 'analysis', 'looplogs');
-
     case 'data'
         outdir = fullfile(projectdir, 'data');
 
