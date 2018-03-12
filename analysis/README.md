@@ -16,7 +16,7 @@
 
 `alpha2fivepct`: Takes an EEG struct or a cell of strings, and remaps channel labels from BioSemi alphabetical labels to [Oostenveld](http://robertoostenveld.nl/electrode/)'s 10-5 system.
 
-`averageReference`: Performs average referencing for rank-deficient data on an EEG struct.
+`averageReference`: Performs average referencing for fully-ranked data on an EEG struct.
 
 `en_epoch`: Epochs an EEG struct based on portcodes which are specified with keywords. This function in particular is highly specialized for the current study, and will require lots of editing to work for a different study.
 
@@ -24,4 +24,4 @@
 
 `tal2region`: This is a wrapper for the [Talairach client](http://www.talairach.org/client.html). It requires that the `talairach.jar` file be in the same folder.
 
-`region2comps`: This is a wrapper for tal2region, that takes an EEG struct and a brain region as input, and returns the IC numbers that are in, or close to that region.
+`region2comps`: This is a wrapper for `tal2region`, that takes an EEG struct and a brain region as input, and returns the IC numbers that are in, or close to that region.
