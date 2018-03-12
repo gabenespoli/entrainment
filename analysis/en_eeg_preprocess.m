@@ -54,7 +54,7 @@ EEG = clean_artifacts(EEG, ...  % find bad channels and remove
     'BurstCriterion',   'off', ...
     'WindowCriterion',  'off');
 EEG.data = averageReference(EEG.data);
-[EEG, portcodes] = en_epoch(EEG, stim, task);
+EEG = en_epoch(EEG, stim, task);
 EEG = pop_runica(EEG, 'extended', 1);
 EEG = en_dipfit(EEG);
 
@@ -63,9 +63,6 @@ EEG.setname = num2str(id);
 EEG = pop_saveset(EEG, ...
     'filepath', en_getpath('eeg'), ...
     'filename', [EEG.setname,'.set']);
-fid = fopen(fullfile(en_getpath('eeg'), [EEG.setname,'_portcodes.txt']), 'w');
-fprintf(fid, '%i\n', portcodes);
-fclose(fid);
 
 %% save topoplot of components & dipoles
 pop_topoplot(EEG, ...
