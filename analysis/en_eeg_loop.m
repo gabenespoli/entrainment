@@ -1,44 +1,62 @@
-function en_eeg_loop(id)
+function en_eeg_loop(id, stim, task)
+if nargin < 2 || isempty(stim), stim = 'sync'; end
+if nargin < 3 || isempty(task), task = 'eeg'; end
+
 
 d = datestr(now, 'yyyy-mm-dd_HH-MM-SS');
-tid = cell(1, length(id));
+startTime = clock;
+timeLog = cell(1, length(id));
 
-tic;
-tStart = toc;
 for i = 1:length(id)
 
-    % prepare for id id
+    % start diary file to save command window output
     diary(fullfile(en_getFolder('looplogs'), [d, '_id-', num2str(id(i)), '.txt']))
+
     fprintf('Participant ID: %i\n', id(i))
-    fprintf('Loop started: %s\n', d)
     fprintf('This ID started: %s\n', datestr(now, 'yyyy-mm-dd_HH-MM-SS'));
-    tStart_id = toc;
+    fprintf('Loop started: %s\n', d)
+    startTimeID = clock;
 
     try
-        en_preprocess_eeg(id(i), 'sync', 'eeg');
+        en_preprocess_eeg(id(i), stim, task);
 
     catch err
-        tid{i} = ['Error: ' getReport(err), '\n']; % save error message too
-        fprintf('%s\n', getReport(err)); % print error in command window
+        timeLog{i} = [' ** Error **\n', getReport(err)]; % save error message
 
     end
 
     % save and print the elapsed time for this id
-    tEnd_id = toc;
-    tTime_id = (tEnd_id - tStart_id) / 60; % in minutes
-    tid{i} = [tid{i}, num2str(tTime_id), ' minutes'];
-    fprintf('%s\n', tid{i})
+    timeLog{i} = [getElapsedTime(startTimeID), timeLog{i}];
+    fprintf('%s\n', timeLog{i})
+
     diary off
 end
 
-% save summary of elapsed time for all ids
-fname = fullfile(en_getFolder('looplogs'), [d, '_summary.txt']);
-fid = fopen(fname, 'w');
+% save elapsed time and errors for all ids to file
+fid = fopen(fullfile(en_getFolder('looplogs'), [d, '_summary.txt']), 'w');
 fprintf(fid, 'Loop summary\n');
 for i = 1:length(id)
-    fprintf('%i: %s\n', id(i), tid{i});
+    fprintf(fid, '%i: %s\n\n', id(i), timeLog{i});
 end
-fprintf('Total time: %g hours\n', (toc - tStart) / 60 / 60);
+fprintf(fid, 'Total time: %s\n', getElapsedTime(startTime));
 fclose(fid);
 
+end
+
+function str = getElapsedTime(startTime)
+% startTime is the output of the clock function
+startTime = datevec(datenum(clock - startTime));
+ind = find(startTime == 0, 1, 'last') + 1;
+if isempty(ind), ind = 1; end
+switch ind
+    case 1, units = 'years';    x = nan;
+    case 2, units = 'months';   x = 12;
+    case 3, units = 'days';     x = 30.436875;
+    case 4, units = 'hours';    x = 24;
+    case 5, units = 'minutes';  x = 60;
+    case 6, units = 'seconds';  x = 60;
+end
+% approximate time to make it readable
+t = startTime(ind) + startTime(ind + 1) / x;
+str = [num2str(t), ' ', units];
 end
