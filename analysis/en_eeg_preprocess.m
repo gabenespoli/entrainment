@@ -1,17 +1,18 @@
-%EN_PREPROCESS_EEG  Preprocess EEG data. This script uses EEGLAB functions
-%   to preprocess a BioSemi .bdf file:
+%% en_eeg_preprocess
+%   Preprocess EEG data. This script uses EEGLAB functions to preprocess
+%   a BioSemi .bdf file:
 %
-%   1. Load raw data (en_readbdf.m)
-%   2. Remove channels that were marked as bad in en_log.csv
-%   3. Average reference (averageReference.m)
-%   4. High-pass filter at 1 Hz
-%   5. Automatically find and remove bad channels (clean_artifacts.m)
-%   6. Average reference again (averageReference.m)
-%   7. Extract epochs (en_epoch.m)
-%   8. Run ICA (pop_runica.m)
-%   9. Fit dipoles (en_dipfit.m)
-%  10. Save the EEG .set file to en_getFolder('eeg')
-%  11. Save topoplot (incl. dipoles) to en_getFolder('eeg_plots')
+%   1. en_readbdf:       Load raw data
+%   2. en_diary.csv:     Remove channels that were manually marked as bad
+%   3. averageReference: Average reference controlling for rank
+%   4. pop_eegfiltnew:   High-pass filter at 1 Hz
+%   5. clean_artifacts:  Automatically find and remove bad channels
+%   6. averageReference: Average reference again
+%   7. en_epoch:         Extract epochs
+%   8. pop_runica:       Run independent components analysis (ICA)
+%   9. en_dipfit:        Fit dipoles
+%  10. pop_saveset:      Save the EEG .set file to en_getpath('eeg')
+%  11. pop_topoplot:     Save IC maps w/dipoles to en_getpath('eeg_plots')
 %
 % Usage:
 %   EEG = en_preprocess_eeg(id)
