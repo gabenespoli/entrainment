@@ -1,12 +1,21 @@
-function [EEG, portcodes] = en_epoch(EEG, stimType, trigType, timelim)
+%% en_epoch
 % EEG = en_epoch(EEG, stimType, taskType [, timelim])
-if ~ismember(lower(stimType), {'sync', 'mir'}),    error('Invalid stimType.'), end
-if ~ismember(lower(trigType), {'eeg', 'tapping'}), error('Invalid trigType'), end
 
+function EEG = en_epoch(EEG, stimType, trigType, timelim)
+
+if ~ismember(lower(stimType), {'sync', 'mir'})
+    error('Invalid stimType.')
+end
+if ~ismember(lower(trigType), {'eeg', 'tapping'})
+    error('Invalid trigType')
+end
 % default extraction window
 % 1 second of silence after portcode, so stimulus plays from 1-31 seconds
 % leave 3 seconds to start entraining, so start epoch at 5 seconds
-if nargin < 4 || isempty(timelim), timelim = [4 31]; end % 30 epochs x 27-seconds = 13.5 minutesj
+% 30 epochs x 27-seconds = 13.5 minutesj
+if nargin < 4 || isempty(timelim)
+    timelim = [4 31];
+end
 
 % EEG.setname is assumed to be the id
 try
