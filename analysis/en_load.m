@@ -21,21 +21,16 @@ switch lower(filetype)
     case 'diary' % loads the diary csv file as a table
         d = readtable(en_getpath('diary'), 'Delimiter', ',');
         d.recording_notes = []; % remove notes field for nicer display in command window
-        
+
         for i = 1:size(d, 1)
             % convert some fields from comma-delimited lists to cell arrays
-            d.bdffile{i} = csv2cell(d.bdffile{i});
-            d.rmchans{i} = csv2cell(d.rmchans{i});
-            if iscell(d.rmportcodes)
-                d.rmportcodes{i} = csv2cell(d.rmportcodes{i});
-                d.rmportcodes{i} = cellfun(@str2num, d.rmportcodes{i}, 'UniformOutput', false);
-                d.rmportcodes{i} = cell2mat(d.rmportcodes{i});
-            end
-            if iscell(d.missedportcodes)
-                d.missedportcodes{i} = csv2cell(d.missedportcodes{i});
-                d.missedportcodes{i} = cellfun(@str2num, d.missedportcodes{i}, 'UniformOutput', false);
-                d.missedportcodes{i} = cell2mat(d.missedportcodes{i});
-            end
+            d.bdffile{i}            = csv2cell(d.bdffile{i});
+            d.rmchans{i}            = csv2cell(d.rmchans{i});
+
+            % convert some fields from comma-delimited lists to numeric vectors
+            d.rmportcodes{i}        = csv2vec(d.rmportcodes{i});
+            d.missedportcodes{i}    = csv2vec(d.missedportcodes{i});
+            d.dipolar_comps{i}      = csv2vec(d.dipolar_comps{i});
         end
 
         if ~isempty(id) % restrict to a specific id
@@ -95,4 +90,10 @@ end
 
 function C = csv2cell(csv)
 C = regexp(csv, '\ *,\ *', 'split');
+end
+
+function vec = csv2vec(csv)
+C = csv2cell(csv);
+C = cellfun(@str2num, C, 'UniformOutput', false);
+vec = cell2mat(C);
 end
