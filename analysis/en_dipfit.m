@@ -2,6 +2,15 @@ function EEG = en_dipfit(EEG, chans, rv)
 if nargin < 2 || isempty(chans), chans = 1:size(EEG.icaact,1); end
 if nargin < 3 || isempty(rv), rv = 15; end
 
+% coord_transform was obtained in the following way:
+%   - load an EEG struct from this study
+%   - Tools > Dipfit > Head model and settings from the EEGLAB gui
+%   - Select Boundary MNI model
+%   - Select manual co-reg
+%   - Select warp montage
+%   - Press ok
+%   - copy coord_transform from the text box
+
 EEG = pop_dipfit_settings(EEG, ...
     'coordformat',      'MNI', ...
     'hdmfile',          en_getpath('hdmfile'), ...
