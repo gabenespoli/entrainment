@@ -10,26 +10,27 @@ function en_eeg_loop(id, stim, task)
 if nargin < 2 || isempty(stim), stim = 'sync'; end
 if nargin < 3 || isempty(task), task = 'eeg'; end
 
-
-d = datestr(now, 'yyyy-mm-dd_HH-MM-SS');
 startTime = clock;
+startTimeStr = datestr(startTime, 'yyyy-mm-dd_HH-MM-SS');
 timeLog = cell(1, length(id));
 
 for i = 1:length(id)
 
     % start diary file to save command window output
-    diary(fullfile(en_getFolder('eeg'), [num2str(id(i)), '_en_preprocess_eeg_', d, '.txt']))
+    diary(fullfile(en_getFolder('eeg'), ...
+        [num2str(id(i)), '_en_eeg_preprocess_', startTimeStr, '.txt']))
 
     fprintf('Participant ID: %i\n', id(i))
     fprintf('This ID started: %s\n', datestr(now, 'yyyy-mm-dd_HH-MM-SS'));
-    fprintf('Loop started: %s\n', d)
+    fprintf('Loop started: %s\n', startTimeStr)
     startTimeID = clock;
 
     try
         en_preprocess_eeg(id(i), stim, task);
 
     catch err
-        timeLog{i} = [' ** Error **\n', getReport(err)]; % save error message
+        % save error message
+        timeLog{i} = [' ** Error **\n', getReport(err)];
 
     end
 
@@ -41,7 +42,8 @@ for i = 1:length(id)
 end
 
 % save elapsed time and errors for all ids to file
-fid = fopen(fullfile(en_getFolder('eeg'), [d, '_summary.txt']), 'w');
+fid = fopen(fullfile(en_getFolder('eeg'), ...
+    ['loop_log_', startTimeStr, '.txt']), 'w');
 fprintf(fid, 'Loop summary\n');
 for i = 1:length(id)
     fprintf(fid, '%i: %s\n\n', id(i), timeLog{i});
