@@ -24,15 +24,15 @@ switch lower(filetype)
         
         for i = 1:size(d, 1)
             % convert some fields from comma-delimited lists to cell arrays
-            d.bdffile{i} = regexp(d.bdffile{i}, '\ *,\ *', 'split');
-            d.rmchans{i} = regexp(d.rmchans{i}, '\ *,\ *', 'split');
+            d.bdffile{i} = csv2cell(d.bdffile{i});
+            d.rmchans{i} = csv2cell(d.rmchans{i});
             if iscell(d.rmportcodes)
-                d.rmportcodes{i} = regexp(d.rmportcodes{i}, '\ *,\ *', 'split');
+                d.rmportcodes{i} = csv2cell(d.rmportcodes{i});
                 d.rmportcodes{i} = cellfun(@str2num, d.rmportcodes{i}, 'UniformOutput', false);
                 d.rmportcodes{i} = cell2mat(d.rmportcodes{i});
             end
             if iscell(d.missedportcodes)
-                d.missedportcodes{i} = regexp(d.missedportcodes{i}, '\ *,\ *', 'split');
+                d.missedportcodes{i} = csv2cell(d.missedportcodes{i});
                 d.missedportcodes{i} = cellfun(@str2num, d.missedportcodes{i}, 'UniformOutput', false);
                 d.missedportcodes{i} = cell2mat(d.missedportcodes{i});
             end
@@ -91,4 +91,8 @@ if ispc  % Windows is not case-sensitive
 else
   onPath = any(strcmp(Folder, pathCell));
 end
+end
+
+function C = csv2cell(csv)
+C = regexp(csv, '\ *,\ *', 'split');
 end
