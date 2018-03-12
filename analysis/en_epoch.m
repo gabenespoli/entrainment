@@ -84,20 +84,30 @@ elseif strcmpi (stimType, 'mir')
     end
 end
 
+%% cleanup and do epoching
+
 % remove nans (probably due to some missed portcodes)
 eventindices(isnan(eventindices)) = [];
 
-% get portcodes in order to return to caller
-portcodes = [EEG.event.type];
-portcodes = portcodes(eventindices);
-
-% we can just lock to all events (sync and mir) because we're
-%   restricting by eventindices anyway
+% we can just lock to all events (sync and mir) because we're restricting
+%   by eventindices anyway
 eventTypes = unique([EEG.event.type]);
-eventTypes = regexp(num2str(eventTypes), '\s*', 'split'); % convert numeric to cell of strings
+% convert numeric to cell of strings
+eventTypes = regexp(num2str(eventTypes), '\s*', 'split');
+
+% verify portcodes against the logfile
+portcodes = [EEG.event.type];
+portcodes = transpose(portcodes(eventindices));
+L = en_load('logfile', id);
+logfile_portcodes = L(L.stimType==stimType & L.trigType==trigType, :).portcode;
+if ~all(portcodes == logfile_portcodes)
+    error('The portcodes in EEG struct don''t match the portcodes in the logfile.')
+end
 
 % do epoching
-EEG = pop_epoch(EEG, eventTypes, timelim, ...
+EEG = pop_epoch(EEG, ...
+    eventTypes, ...
+    timelim, ...
     'eventindices', eventindices, ...
     'newname',      EEG.setname); % keep same setname
 
