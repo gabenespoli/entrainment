@@ -17,6 +17,7 @@ switch pathtype
     case 'bdf',         outpath = fullfile(en_getpath('data'), 'bdf');
     case 'eeg',         outpath = fullfile(en_getpath('data'), 'eeg');
     case 'eeg_plots',   outpath = fullfile(en_getpath('data'), 'eeg_plots');
+    case 'logfiles',    outpath = fullfile(en_getpath('data'), 'logfiles');
 
     % paths from the EEGLAB toolbox
     case 'eeglab',      outpath = fullfile(en_getpath('project'), 'eeglab');

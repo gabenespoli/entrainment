@@ -55,15 +55,33 @@ switch lower(filetype)
     case 'ica'
         varout = pop_loadset(fullfile(en_getpath('eeg'), [idStr, '_ICA.set']));
 
-    case {'logfile','log'}
-        % loads the logfile as a table
-        % converts some vars to categorical
-        % adds a portcodes column
-        T = readtable(fname);
+    case {'logfile','logfiles','log'}
+        % loads all logfiles for the given ID as a table
+        fnames = { ...
+            fullfile(en_getpath('logfiles'), [idStr, '_sync_eeg.csv']), ...
+            fullfile(en_getpath('logfiles'), [idStr, '_sync_tapping.csv']), ...
+            fullfile(en_getpath('logfiles'), [idStr, '_mir_eeg.csv']), ...
+            fullfile(en_getpath('logfiles'), [idStr, '_mir_tapping.csv']), ...
+            };
+
+        for i = 1:length(fnames)
+            fname = fnames{i};
+            TMP = readtable(fname);
+            if i == 1
+                T = TMP;
+            else
+                T = [T; TMP]; %#ok<AGROW>
+            end
+        end
+
+        % make some columns categorical
         T.stimType = categorical(T.stimType);
         T.trigType = categorical(T.trigType);
+
         % add portcodes column from filename
-        T.portcode = cellfun(@(x) strrep(x, '.wav', ''), T.filename, 'UniformOutput', false);
+        T.portcode = cellfun(@(x) str2num(strrep(x, '.wav', '')), T.filename, 'UniformOutput', false);
+        T.portcode = cell2mat(T.portcode);
+
         varout = T;
 end
 end
