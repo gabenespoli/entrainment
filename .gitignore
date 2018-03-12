@@ -5,7 +5,7 @@ analysis/chanlocs/*
 analysis/noneeglab/*
 analysis/looplogs/*
 analysis/en_diary.csv
-pilots/en_log_pilots.csv
+analysis/pilots/en_log_pilots.csv
 plots/*
 forms/*
 photos/*
