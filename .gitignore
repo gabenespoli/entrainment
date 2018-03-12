@@ -13,4 +13,4 @@ forms/*
 photos/*
 stimuli/*
 plots/*
-looplogs/*
+analysis/looplogs/*
