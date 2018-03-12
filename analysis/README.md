@@ -4,7 +4,7 @@
 
 `en_getpath`: Takes a keyword as input and returns a directory or file path. All functions in this "toolbox" use this function to get path names. This means that you can move these scripts to a different computer or port them to a different project, and will only have to change this file in order for everything to work (theoretically).
 
-`en_load`: Takes a keyword (and optionally an ID number), and loads the specified file into the MATLAB workspace. Can also start EEGLAB from the path specified in `en_getpath('eeglab'`.
+`en_load`: Takes a keyword (and optionally an ID number), and loads the specified file into the MATLAB workspace. Can also start [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) from the path specified in `en_getpath('eeglab')`.
 
 `en_readbdf`: Takes an ID number as input, gets their .bdf filenames from `en_diary.csv`, and reads those files into an [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) .set file (if there are multiple .bdf files, they are merged). It also converts the channel labels from the BioSemi alphabetical labels into [Oostenveld](http://robertoostenveld.nl/electrode/)'s 10-5 system.
 
@@ -20,7 +20,7 @@
 
 `en_epoch`: Epochs an EEG struct based on portcodes which are specified with keywords. This function in particular is highly specialized for the current study, and will require lots of editing to work for a different study.
 
-`en_dipfit`: Wrapper on EEGLAB functions for dipole fitting using the Boundary Element Model (BEM).
+`en_dipfit`: Wrapper on [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) functions for dipole fitting using the Boundary Element Model (BEM).
 
 `tal2region`: This is a wrapper for the [Talairach client](http://www.talairach.org/client.html). It requires that the `talairach.jar` file be in the same folder.
 
