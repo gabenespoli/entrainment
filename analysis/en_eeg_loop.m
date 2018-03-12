@@ -1,3 +1,11 @@
+%% en_eeg_loop
+% Loop many participants and run en_preprocess_eeg. Saves text files with
+% all command window output to the folder en_getFolder('looplogs'). Files
+% are named by the starting date and time of the loop.
+%
+% Usage:
+%   en_eeg_loop(id, stim, task)
+
 function en_eeg_loop(id, stim, task)
 if nargin < 2 || isempty(stim), stim = 'sync'; end
 if nargin < 3 || isempty(task), task = 'eeg'; end
