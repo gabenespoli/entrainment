@@ -7,7 +7,12 @@ function varout = en_load(filetype, id)
 %   id = [numeric] Must be a single number, not a vector
 
 if nargin < 2, id = []; end
-idStr = num2str(id);
+if ischar(id)
+    idStr = id;
+    id = str2num(id);
+else
+    idStr = num2str(id);
+end
 
 switch lower(filetype)
     case 'eeglab' % add eeglab to path
