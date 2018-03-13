@@ -89,8 +89,11 @@ switch lower(filetype)
         % make some vars categorical
         S.stimType = categorical(S.stimType);
         if ~isempty(id)
-            % restrict by stim type
-            S = S(S.stimType == id, :);
+            % restrict by portcodes
+            ind = cell2mat(arrayfun(@(x) ...
+                find(ismember(S.portcode, x)), ...
+                id, 'UniformOutput', false));
+            S = S(ind, :);
             S.rhythmType = categorical(S.rhythmType);
         end
         varout = S;
