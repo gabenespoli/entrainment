@@ -25,6 +25,10 @@ switch lower(filetype)
             disp('Started eeglab.')
         end
 
+    case 'eeg'
+        varout = pop_loadset(fullfile(en_getpath('eeg'), [idStr, '.set']));
+
+    %% diary
     case 'diary' % loads the diary csv file as a table
         d = readtable(en_getpath('diary'), 'Delimiter', ',');
         d.recording_notes = []; % remove notes field for nicer display in command window
@@ -48,12 +52,7 @@ switch lower(filetype)
         end
         varout = d;
 
-    case 'bdf' % load .bdf as .set, relabel channels
-        varout = en_readbdf(id);
-
-    case 'eeg'
-        varout = pop_loadset(fullfile(en_getpath('eeg'), [idStr, '.set']));
-
+    %% logfiles
     case {'logfile','logfiles','log'}
         % loads all logfiles for the given ID as a table
         fnames = { ...
