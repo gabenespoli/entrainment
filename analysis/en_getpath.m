@@ -11,6 +11,7 @@ switch pathtype
     % analysis scripts paths
     case 'analysis',    outpath = fullfile(en_getpath('project'), 'analysis');
     case 'diary',       outpath = fullfile(en_getpath('analysis'), 'en_diary.csv');
+    case 'stiminfo',    outpath = fullfile(en_getpath('analysis'), 'en_stiminfo.csv');
 
     % data file paths
     case 'data',        outpath = fullfile(en_getpath('project'), 'data');

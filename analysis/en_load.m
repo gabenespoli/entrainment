@@ -9,12 +9,14 @@ function varout = en_load(filetype, id)
 if nargin < 2, id = []; end
 if ischar(id)
     idStr = id;
-    id = str2num(id);
+    if isempty(id), id = idStr; end
 else
     idStr = num2str(id);
 end
 
 switch lower(filetype)
+
+    %% eeg data
     case 'eeglab' % add eeglab to path
         eeglabdir = en_getpath('eeglab');
         if ~isOnPath(eeglabdir)
@@ -80,6 +82,20 @@ switch lower(filetype)
         T.portcode = cell2mat(T.portcode);
 
         varout = T;
+
+        %% stimulus info
+    case {'stiminfo'}
+        S = readtable(en_getpath('stiminfo'));
+
+        % make some vars categorical
+        S.stimType = categorical(S.stimType);
+        if ~isempty(id)
+            % restrict by stim type
+            S = S(S.stimType == id, :);
+            S.rhythmType = categorical(S.rhythmType);
+        end
+        varout = S;
+
 end
 end
 
