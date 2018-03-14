@@ -15,7 +15,9 @@ elseif ~isstruct(EEG)
     error('Input must be an EEG struct or an ID number.')
 end
 
-comps = en_select_comps(EEG, region);
+% filter comps by region, rv, dipolarity
+d = en_load('diary', str2num(EEG.setname)); % EEG.setname should be the ID
+comps = select_comps(EEG, region, 0.15, d.dipolar_comps{1});
 
 [fftdata, freqs] = en_fft(EEG.data(comps, :, :), ...
     EEG.srate, ...
