@@ -2,12 +2,41 @@
 % input can be a preprocessed EEG struct (with ICA and dipfit)
 %   or a numeric ID number
 
-function [T, fftdata, freqs] = en_eeg_entrainment(EEG, region, rv)
-if nargin < 2 || isempty(region), region = 6; end % BA6 (premotor)
-if nargin < 3 || isempty(rv), rv = 0.15; end % residual variance
+function [T, fftdata, freqs] = en_eeg_entrainment(EEG, varargin)
 
+% defaults
+region = 'pmc'; % pmc = 6, aud = [22 41 42]
 stimType = 'sync';
 trigType = 'eeg';
+rv = 0.15;
+binwidth = 5;
+
+% user-defined
+for i = 1:2:length(varargin)
+    val = varargin{i+1};
+    switch lower(varargin)
+        case 'region',              if ~isempty(val), region = val; end
+        case {'stim', 'stimtype'},  if ~isempty(val), stimType = val; end
+        case {'trig', 'trigtype'},  if ~isempty(val), trigType = val; end
+        case 'rv',                  if ~isempty(val), rv = val; end
+        case {'width', 'binwidth'}, if ~isempty(val), binwidth = val; end
+    end
+end
+
+% get region and regionStr
+if ischar(region)
+    regionStr = region;
+    switch lower(regionStr)
+        case 'pmc', region = 6;
+        case 'aud', region = [22 41 42];
+        otherwise, error('Invalid string for region input.')
+    end
+elseif isnumeric(region)
+    if region == 6,                             regionStr = 'pmc';
+    elseif all(ismember(region, [22 41 42])),   regionStr = 'aud';
+    else,                                       regionStr = 'other';
+    end
+end
 
 % get preprocessed EEG struct
 if isnumeric(EEG)
@@ -19,6 +48,7 @@ end
 % filter comps by region, rv, dipolarity
 d = en_load('diary', str2num(EEG.setname)); % EEG.setname should be the ID
 comps = select_comps(EEG, rv, region, d.dipolar_comps{1});
+dtplot(EEG, comps, en_getpath([regionStr, 'comps'])); % save plots of good ICs
 
 [fftdata, freqs] = getfft3(EEG.data(comps, :, :), ...
     EEG.srate, ...
@@ -40,7 +70,7 @@ S = en_load('stiminfo', portcodes);
 en = nan(size(fftdata, 1), length(S.tempo));
 for i = 1:length(en) % loop trials
     en(:, i) = getbins3(fftdata(:, :, i), freqs, S.tempo(i), ...
-    'width', 0, ... % num bins on either side to look for max peak
+    'width', binwidth, ... % num bins on either side to look for max peak
     'func',  'max'); % find max bin val within width
 end
 [en, comps_ind] = max(en); % take max of all comps
