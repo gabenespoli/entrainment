@@ -15,10 +15,13 @@ switch pathtype
 
     % data file paths
     case 'data',        outpath = fullfile(en_getpath('project'), 'data');
+    case 'logfiles',    outpath = fullfile(en_getpath('data'), 'logfiles');
     case 'bdf',         outpath = fullfile(en_getpath('data'), 'bdf');
     case 'eeg',         outpath = fullfile(en_getpath('data'), 'eeg');
     case 'topoplots',   outpath = fullfile(en_getpath('data'), 'eeg_topoplots');
-    case 'logfiles',    outpath = fullfile(en_getpath('data'), 'logfiles');
+    case 'pmccomps',    outpath = fullfile(en_getpath('data'), 'eeg_comps_pmc');
+    case 'audcomps',    outpath = fullfile(en_getpath('data'), 'eeg_comps_aud');
+    case 'entrainment', outpath = fullfile(en_getpath('data'), 'eeg_entrainment');
 
     % paths from the EEGLAB toolbox
     case 'eeglab',      outpath = fullfile(en_getpath('project'), 'eeglab');
