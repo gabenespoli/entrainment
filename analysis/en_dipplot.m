@@ -1,35 +1,39 @@
-function en_dipplot(EEG, comps)
+%% en_dipplot
+%   Plot a topographic maps and dipoles.
+
+function varargout = en_dipplot(EEG, comps)
+
+if length(comps) == 1
+    topofig = figure; axis;
+end
+pop_topoplot(EEG, ...
+     0, ...                     % 0 for comps, 1 for chans
+     comps, ...                 % comps/chans to plot
+     ['id ', EEG.setname], ...  % plot title
+     0, ...                     % rows/cols per page (0 = near square)
+     1, ...                     % plot dipoles too
+     'electrodes', 'off');
+if length(comps) > 1
+    topofig = gcf;
+end
 
 pop_dipplot(EEG, ...
     comps, ...
     'mri',          en_getpath('mrifile'), ...
     'projlines',    'on', ...
+    'view',         [0.5 -0.5 0.5], ...
     'normlen',      'on');
-        
+dipfig = gcf;
 
-% get dipole info struct
+% arrange figures so they aren't overlapping
+topofig.Position(1) = topofig.Position(1) - topofig.Position(3) / 2;
+dipfig.Position(1) = dipfig.Position(1) + dipfig.Position(3) / 2;
 
-% sources = dipplot(EEG.dipfit.model, ...
-%     'mri',          en_getpath('mrifile'), ...
-%     'coordformat',  'MNI', ...
-%     'normlen',      'on', ...
-%     'plot',         'off');
-              
-% TODO sources is only as big as the number of comps with good rv
-%   comps is the number of the comp
-%   need to get indices of comps in sources
-% coords = [sources(comps).talcoord];
-% coords = reshape(coords, 3, length(coords) / 3)';
-% if length(comps) ~= size(coords, 1), error('Something''s wrong.'), end
-% region = tal2region(coords, 5);
+if nargout > 0
+    varargout{1} = topofig;
+end
+if nargout > 1
+    varargout{2} = dipfig;
+end
 
-% for i = 1:length(comps)
-%     if ~isempty(region.cellType{i})
-%         str = strcat(region.cellType{i}{:});
-%     else
-%         str = '';
-%     end
-%     fprintf('Comp %i: %s\n', comps(i), str)
-% end
-        
 end
