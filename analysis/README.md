@@ -20,7 +20,11 @@ en_loop_eeg_entrainment(ids);
 
 ### Project Macros
 
+<<<<<<< HEAD
 These functions are used for performing a whole section of the analysis pipeline and batch processing. They mostly contain calls to the other functions in the lists below.
+=======
+These functions are used for performing an entire analysis pipeline and batch processing. They mostly contain calls to the other functions in the lists below.
+>>>>>>> d7797778317baa33cc3a966455dce36aa1df9ed4
 
 `en_eeg_preprocess`: A macro that runs `en_readbdf` and a number of [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) functions to pre-process EEG data, including ICA and dipole fitting. Resultant .set files are saved to `en_getpath('eeg')`.
 
