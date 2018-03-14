@@ -1,4 +1,4 @@
-%% en_getbins
+%% getbins3
 %   Combines specified bins in a vector by mean, max, or min. A common use
 %   is when y is fft data, x is the corresponding frequency vector, and
 %   bins is the frequencies of interest, and you would like to find the
@@ -7,9 +7,9 @@
 %   channels x time x trials.
 %
 % Usage:
-%   s         = getbins(y, x, bins)
-%   s         = getbins(y, x, bins, 'param', 'value', etc.)
-%   [s, ind]  = getbins(y, x, bins, ...)
+%   s         = getbins3(y, x, bins)
+%   s         = getbins3(y, x, bins, 'param', 'value', etc.)
+%   [s, ind]  = getbins3(y, x, bins, ...)
 %
 % Input:
 %   y         = [EEGLAB data matrix] Should be channels x time x trials.
@@ -44,17 +44,17 @@
 %   ind       = [numeric] The indices in x of the values in bins.
 %
 % Examples:
-%   >> getbins(yfft, f, [50 60])
+%   >> getbins3(yfft, f, [50 60])
 %   If yfft is fft data and f is the corresponding frequency vector, find
 %   the amount of energy at 50 and 60 Hz.
 %
-%   >> getbins(yfft, f, 60, 'width', 5)
+%   >> getbins3(yfft, f, 60, 'width', 5)
 %   Find the average of 11 bins centered on 60 Hz. Note that the width in
 %   Hz of the average will be dependent on the bin width of f. You can get
 %   the mean bin width using mean(diff(f)).
 %   
-%   >> getbins(yfft, f, 60, 'width', 5) - ...
-%          getbins(yfft, f, 60, 'width', 10, 'cwidth', 5)
+%   >> getbins3(yfft, f, 60, 'width', 5) - ...
+%          getbins3(yfft, f, 60, 'width', 10, 'cwidth', 5)
 %   Get the average of 11 bins centered on 60 Hz, and subtract the average
 %   of 10 bins, 5 each on either side of 60 Hz and 5 bins away from 60 Hz.
 %   If the bin width of f is 1 Hz, this is the equivalent of taking the
@@ -62,7 +62,7 @@
 %
 % Written by Gabe Nespoli 2015-03-10. Revised 2018-03-13.
 
-function [s, ind] = getbins(y, x, bins, varargin)
+function [s, ind] = getbins3(y, x, bins, varargin)
 
 % defaults
 width = 0;

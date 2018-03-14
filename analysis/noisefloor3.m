@@ -1,8 +1,8 @@
-%NOISEFLOOR  Removes the mean of neighbouring bins. Usually used for 
-%   normalizing FFT data. This function is for eeglab data, i.e. the
+%NOISEFLOOR3  Removes the mean of neighbouring bins. Usually used for 
+%   normalizing FFT data. This version is for EEGLAB data, where the
 %   shape of the data matrix should be channels x time x trials.
 %
-%   Y = NOISEFLOOR(X,BINS) takes each value in X and subracts the mean
+%   Y = NOISEFLOOR3(X,BINS) takes each value in X and subracts the mean
 %       of surrounding values as specified in BINS. BINS is the number of 
 %       bins values on either side to average and then subtract from the 
 %       current value. BINS can also be a 1x2 vector [NUMBINS BINSAWAY], 
@@ -13,20 +13,19 @@
 %       Y will be 2 x BINS values shorter than X. If X is a matrix, this
 %       procedure is carried out on the first non-singleton dimension.
 %
-%   [Y,F] = NOISEFLOOR(X,BINS,F) takes an additional vector F and shortens
+%   [Y,F] = NOISEFLOOR3(X,BINS,F) takes an additional vector F and shortens
 %       it the same amount as X. This is usually used when X is fft data
 %       and F is the corresponding frequency vector.
 
 % Written by Gabe Nespoli 2014-02-27. Revised 2018-03-13.
 % Adapted from Nozaradan et al., 2011, Journal of Neuroscience.
 
-function [y, f] = en_rmnoisefloor(x, bins, f)
+function [y, f] = noisefloor3(x, bins, f)
+if nargin < 3, f = []; end
 
-if length(f) ~= size(x, 2)
+if ~isempty(f) && (length(f) ~= size(x, 2))
     error('F must be the same length as size(EEG.data,2).')
 end
-
-
 
 switch length(bins)
     case 0
