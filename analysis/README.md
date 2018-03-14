@@ -18,6 +18,8 @@ en_loop_eeg_entrainment(ids);
 
 ## List of Functions
 
+Each function list is loosely in the order that they would be used in the processing pipeline.
+
 ### Project Macros
 
 These functions are used for performing a whole section of the analysis pipeline and batch processing. They mostly contain calls to the other functions in the lists below.
