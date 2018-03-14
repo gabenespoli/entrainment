@@ -63,25 +63,30 @@ dtplot(EEG, comps, en_getpath([regionStr, 'comps'])); % save plots of good ICs
 
 % get tempos
 L = en_load('logfile', EEG.setname); % setname should be id
-portcodes = L{L.stimType==stimType & L.trigType==trigType, 'portcode'};
-S = en_load('stiminfo', portcodes);
+L = L(L.stimType==stimType & L.trigType==trigType, :);
+S = en_load('stiminfo', L.portcode);
+if all(L.portcode == S.portcode)
+    S.portcode = [];
+    S.stimType = [];
+    T = [L, S];
+end
 
 % get values of each bin
 en = nan(size(fftdata, 1), length(S.tempo));
 for i = 1:length(en) % loop trials
     en(:, i) = getbins3(fftdata(:, :, i), freqs, S.tempo(i), ...
-    'width', binwidth, ... % num bins on either side to look for max peak
-    'func',  'max'); % find max bin val within width
+    'width', binwidth, ...
+    'func',  'max');
 end
-[en, comps_ind] = max(en); % take max of all comps
+[en, comps_ind] = max(en, [], 1); % take max of all comps
 comp = comps(comps_ind);
 
 % make them column vectors
-id = repmat(EEG.setname, length(en), 1);
-en = transpose(en);
-comp = transpose(comp);
+T.id = repmat(EEG.setname, length(en), 1);
+T.comp = transpose(comp);
+T.en = transpose(en);
+T.Properties.VariableNames{end} = regionStr;
 
-T = table(id, en, comp);
-T = [S, T];
+writetable(T, fullfile(en_getpath('entrainment'), [EEG.setname, '_', regionStr, '.csv']))
 
 end
