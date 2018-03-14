@@ -12,7 +12,7 @@
 %   8. pop_runica:       Run independent components analysis (ICA)
 %   9. en_dipfit:        Fit dipoles
 %  10. pop_saveset:      Save the EEG .set file to en_getpath('eeg')
-%  11. pop_topoplot:     Save IC maps w/dipoles to en_getpath('eeg_plots')
+%  11. pop_topoplot:     Save IC maps w/dipoles to en_getpath('topoplots')
 %
 % Usage:
 %   EEG = en_preprocess_eeg(id)
@@ -73,8 +73,8 @@ pop_topoplot(EEG, ...
      1, ...                     % plot dipoles too
      'electrodes', 'off');
 
-savefig(fullfile(en_getpath('eeg_plots'), [EEG.setname, '_topoplot.fig']))
-print(fullfile(en_getpath('eeg_plots'),   [EEG.setname, '_topoplot.png']), '-dpng')
+savefig(fullfile(en_getpath('topoplots'), [EEG.setname, '_topoplot.fig']))
+print(fullfile(en_getpath('topoplots'),   [EEG.setname, '_topoplot.png']), '-dpng')
 close(gcf)
 
 end
