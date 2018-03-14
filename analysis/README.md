@@ -22,13 +22,17 @@ en_loop_eeg_entrainment(ids);
 
 These functions are used for performing a whole section of the analysis pipeline and batch processing. They mostly contain calls to the other functions in the lists below.
 
-`en_eeg_preprocess`: A macro that runs `en_readbdf` and a number of [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) functions to pre-process EEG data, including ICA and dipole fitting. Resultant .set files are saved to `en_getpath('eeg')`.
+`en_eeg_preprocess`
+: A macro that runs `en_readbdf` and a number of [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) functions to pre-process EEG data, including ICA and dipole fitting. Resultant .set files are saved to `en_getpath('eeg')`.
 
-`en_loop_eeg_preprocess`: Loops through the specified IDs and runs `en_eeg_preprocess`. All output from the command window is captured for each ID and saved to `en_getpath('eeg')`, as well as a summary file with processing times and any errors for each ID.
+`en_loop_eeg_preprocess`
+: Loops through the specified IDs and runs `en_eeg_preprocess`. All output from the command window is captured for each ID and saved to `en_getpath('eeg')`, as well as a summary file with processing times and any errors for each ID.
 
-`en_eeg_entrainment`: A macro that takes an ID or EEGLAB struct and outputs a table of entrainment values for each trial. Resultant tables are saved as .csv files in `en_getpath('eeg_entrainment')`.
+`en_eeg_entrainment`
+: A macro that takes an ID or EEGLAB struct and outputs a table of entrainment values for each trial. Resultant tables are saved as .csv files in `en_getpath('eeg_entrainment')`.
 
-`en_loop_eeg_entrainment`: Loops through specified IDs and runs `en_eeg_entrainment`.
+`en_loop_eeg_entrainment`
+: Loops through specified IDs and runs `en_eeg_entrainment`.
 
 ### Project Utilities
 
