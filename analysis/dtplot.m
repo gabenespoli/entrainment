@@ -23,6 +23,11 @@
 
 function varargout = dtplot(EEG, comps, savedir)
 if nargin < 3, savedir = ''; end
+if isempty(savedir)
+    do_gui = 'on';
+else
+    do_gui = 'off';
+end
 
 %% topoplot
 if length(comps) == 1
@@ -49,13 +54,20 @@ else
 end
 
 %% dipplot
+if strcmp(do_gui, 'off')
+    dipfig = figure;
+end
 pop_dipplot(EEG, ...
     comps, ...
     'mri',          en_getpath('mrifile'), ...
     'projlines',    'on', ...
     'view',         [0.5 -0.5 0.5], ...
+    'num',          'on', ...
+    'gui',          do_gui, ...
     'normlen',      'on');
-dipfig = gcf;
+if strcmp(do_gui, 'on')
+    dipfig = gcf;
+end
 
 if isempty(savedir)
     % arrange figures so they aren't overlapping
