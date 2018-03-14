@@ -86,12 +86,37 @@ elseif ~isstruct(EEG)
     error('Input must be an EEG struct or an ID number.')
 end
 
+% get logfile and stiminfo
+L = en_load('logfile', EEG.setname); % setname should be id
+L = L(L.stimType==stimType & L.trigType==trigType, :);
+S = en_load('stiminfo', L.portcode);
+if ~all(L.portcode == S.portcode)
+    error('Portcodes in logfile and stiminfo don''t match.')
+end
+S.portcode = [];
+S.stimType = [];
+T = [L, S];
+T.id = repmat(EEG.setname, height(T), 1);
+T.comp = zeros(height(T), 1);
+T.en = zeros(height(T), 1);
+T.Properties.VariableNames{end} = regionStr;
+T.Properties.UserData.filename = fullfile(en_getpath('entrainment'), [EEG.setname, '_', regionStr, '.csv']);
+
 % filter comps by region, rv, dipolarity
 d = en_load('diary', str2num(EEG.setname)); % EEG.setname should be the ID
 comps = select_comps(EEG, rv, region, d.dipolar_comps{1});
+
+if isempty(comps)
+    % if no comps are selected, return the table with all zeros
+    writetable(T, T.Properties.UserData.filename)
+    return
+end
+
+% if there are some good comps, plot and calculate entrainment 
 dtplot(EEG, comps, en_getpath([regionStr, 'comps'])); % save plots of good ICs
 
-[fftdata, freqs] = getfft3(EEG.data(comps, :, :), ...
+[fftdata, freqs] = getfft3( ...
+    EEG.data(comps, :, :), ...
     EEG.srate, ...
     'spectrum',     'amplitude', ...
     'nfft',         nfft, ...
@@ -102,32 +127,19 @@ dtplot(EEG, comps, en_getpath([regionStr, 'comps'])); % save plots of good ICs
 
 [fftdata, freqs] = noisefloor3(fftdata, [2 2], freqs);
 
-% get tempos
-L = en_load('logfile', EEG.setname); % setname should be id
-L = L(L.stimType==stimType & L.trigType==trigType, :);
-S = en_load('stiminfo', L.portcode);
-if all(L.portcode == S.portcode)
-    S.portcode = [];
-    S.stimType = [];
-    T = [L, S];
-end
-
-% get values of each bin
-en = nan(size(fftdata, 1), length(S.tempo));
+en = zeros(size(fftdata, 1), length(S.tempo));
 for i = 1:length(en) % loop trials
-    en(:, i) = getbins3(fftdata(:, :, i), freqs, S.tempo(i), ...
-    'width', binwidth, ...
-    'func',  'max');
+    en(:, i) = getbins3( ...
+        fftdata(:, :, i), ...
+        freqs, ...
+        S.tempo(i), ...
+        'width', binwidth, ...
+        'func',  'max');
 end
 [en, comps_ind] = max(en, [], 1); % take max of all comps
-comp = comps(comps_ind);
+T.(regionStr) = transpose(en);
+T.comp = transpose(comps(comps_ind));
 
-% make them column vectors
-T.id = repmat(EEG.setname, length(en), 1);
-T.comp = transpose(comp);
-T.en = transpose(en);
-T.Properties.VariableNames{end} = regionStr;
-
-writetable(T, fullfile(en_getpath('entrainment'), [EEG.setname, '_', regionStr, '.csv']))
+writetable(T, T.Properties.UserData.filename)
 
 end
