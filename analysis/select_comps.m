@@ -26,7 +26,7 @@
 function comps = select_comps(EEG, rv, region, ind)
 
 % defaults
-if nargin < 2, rv = 0.15; end
+if nargin < 2, rv = []; end
 if nargin < 3, region = []; end
 if nargin < 4, ind = []; end
 allinds = 1:length(EEG.dipfit.model);
