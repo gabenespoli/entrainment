@@ -1,4 +1,39 @@
 %% en_eeg_entrainment
+%   Calculate entrainment of comps in a brain region. Saves topo and dip
+%   plots and writes data to a csv file.
+%
+% Usage:
+%   T = en_eeg_entrainment(EEG)
+%   T = en_eeg_entrainment(EEG, 'param', value, etc.)
+%   [T, fftdata, freqs] = en_eeg_entrainment(...)
+%
+% Input:
+%   EEG = [struct|numeric] EEGLAB struct with ICA and dipole information,
+%       or ID number to load from en_getpath('eeg').
+%
+%   'region' = [string|numeric] Usually this will be 'pmc' or 'aud' to
+%       select Brodmann areas 6 or [22 41 42] respectively. Can also be
+%       numeric to specify other Broadmann areas.
+%
+%   'stim' = ['sync'|'mir']
+%
+%   'trig' = ['eeg'|'tapping']
+%
+%   'rv' = [numeric between 0 and 1] Residual variance threshold for
+%       selecting components.
+%
+%   'width' = [numeric (int)] Number of bins on either side of center bin
+%       to include when selecting the max peak for a given frequency.
+%
+% Output:
+%   T = [table] Data from logfile, stiminfo, and the entrainment analysis
+%       in a single MATLAB table. This table is also written as a csv to
+%       en_getpath('entrainment').
+%
+%   fftdata = [numeric] The fft data matrix (comps x frequency x trial).
+%
+%   freqs = [numeric] The corresponding frequency vector.
+
 % input can be a preprocessed EEG struct (with ICA and dipfit)
 %   or a numeric ID number
 
@@ -9,12 +44,18 @@ region = 'pmc'; % pmc = 6, aud = [22 41 42]
 stimType = 'sync';
 trigType = 'eeg';
 rv = 0.15;
-binwidth = 5;
+nfft = 2^16; % 2^16 = bin width of 0.0078 Hz
+binwidth = 1; % number of bins on either side of tempo bin
+% tempos are 0.1 Hz apart, so half-width max is 0.05
+% binwidth = 1 means 3 bins are 0.0078 * 3 = 0.0234 Hz wide
+% binwidth = 2 means 5 bins are 0.0078 * 5 = 0.0391 Hz wide
+% binwidth = 3 means 7 bins are 0.0078 * 7 = 0.0546 Hz wide -- this is too
+%   wide; tempos will run into one another
 
 % user-defined
 for i = 1:2:length(varargin)
     val = varargin{i+1};
-    switch lower(varargin)
+    switch lower(varargin{i})
         case 'region',              if ~isempty(val), region = val; end
         case {'stim', 'stimtype'},  if ~isempty(val), stimType = val; end
         case {'trig', 'trigtype'},  if ~isempty(val), trigType = val; end
@@ -53,7 +94,7 @@ dtplot(EEG, comps, en_getpath([regionStr, 'comps'])); % save plots of good ICs
 [fftdata, freqs] = getfft3(EEG.data(comps, :, :), ...
     EEG.srate, ...
     'spectrum',     'amplitude', ...
-    'nfft',         2^16, ...
+    'nfft',         nfft, ...
     'detrend',      false, ...
     'wintype',      'hanning', ...
     'ramp',         [], ...
