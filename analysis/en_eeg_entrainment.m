@@ -86,7 +86,7 @@ elseif ~isstruct(EEG)
     error('Input must be an EEG struct or an ID number.')
 end
 
-% get logfile and stiminfo
+%% get logfile and stiminfo
 L = en_load('logfile', EEG.setname); % setname should be id
 L = L(L.stimType==stimType & L.trigType==trigType, :);
 S = en_load('stiminfo', L.portcode);
@@ -102,7 +102,7 @@ T.en = zeros(height(T), 1);
 T.Properties.VariableNames{end} = regionStr;
 T.Properties.UserData.filename = fullfile(en_getpath('entrainment'), [EEG.setname, '_', regionStr, '.csv']);
 
-% filter comps by region, rv, dipolarity
+%% filter comps by region, rv, dipolarity
 d = en_load('diary', str2num(EEG.setname)); % EEG.setname should be the ID
 comps = select_comps(EEG, rv, region, d.dipolar_comps{1});
 
@@ -112,9 +112,9 @@ if isempty(comps)
     return
 end
 
-% if there are some good comps, plot and calculate entrainment 
 dtplot(EEG, comps, en_getpath([regionStr, 'comps'])); % save plots of good ICs
 
+%% if there are some good comps, plot and calculate entrainment 
 [fftdata, freqs] = getfft3( ...
     EEG.data(comps, :, :), ...
     EEG.srate, ...
