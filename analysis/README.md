@@ -84,11 +84,11 @@ The diary.csv file can be considered a sort of configuration file for the analys
 
 - **missedportcodes** = [comma-separated list of numbers] If some portcodes did not get sent (e.g., because the BioSemi battery died, but the experiment continued), enter the indices of the portcodes that were missed. For example, if there are 60 trials, and the battery died after the 10th trial, you didn't notice and stop the experiment until after the 15th trial (trials 11 to 15 did not have their portcodes recorded), enter "11, 12, 13, 14, 15" here (without the quotes). Note that if the battery dies in the middle of a trial, you might want to consider adding that trial to *rmportcodes*. Filling in this field will probably require some comparison of the logfile (which portcodes were sent) and the BDF file (which portcodes were recorded).
 
-- *experimenters* = [comma-separated list of strings] Initials of the experimenters for this participant's session.
+- **experimenters** = [comma-separated list of strings] Initials of the experimenters for this participant's session.
 
-- *recording_notes* = [semicolon-separated list of sentences] Any notes from the EEG recording session that might be good to know.
+- **recording_notes** = [semicolon-separated list of sentences] Any notes from the EEG recording session that might be good to know.
 
-- *dipolar_comps* = [comma-separated list of numbers] After running `en_eeg_preprocess`, look at the topographical plots that are saved and mark down which components are dipolar. This field is used by `en_eeg_entrainment` to select good components with `select_comps`. See Delorme, Palmer, Onton, Oostenveld, & Makeig (2012; PLOS ONE) for more information.
+- **dipolar_comps** = [comma-separated list of numbers] After running `en_eeg_preprocess`, look at the topographical plots that are saved and mark down which components are dipolar. This field is used by `en_eeg_entrainment` to select good components with `select_comps`. See Delorme, Palmer, Onton, Oostenveld, & Makeig (2012; PLOS ONE) for more information.
 
 ## List of Functions
 
