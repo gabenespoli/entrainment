@@ -20,7 +20,8 @@
 %   'trig' = ['eeg'|'tapping']
 %
 %   'rv' = [numeric between 0 and 1] Residual variance threshold for
-%       selecting components.
+%       selecting components. This should probably be the same or smaller
+%       than what was used for en_eeg_preprocess.
 %
 %   'width' = [numeric (int)] Number of bins on either side of center bin
 %       to include when selecting the max peak for a given frequency.
@@ -68,7 +69,9 @@ end
 if ischar(region)
     regionStr = region;
     switch lower(regionStr)
+        case 'mot', region = 4;
         case 'pmc', region = 6;
+        case 'pmm', region = [4 6];
         case 'aud', region = [22 41 42];
         otherwise, error('Invalid string for region input.')
     end
