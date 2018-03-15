@@ -17,9 +17,15 @@
 %   Same as en_eeg_entrainment, but for each specified id.
 
 function en_loop_eeg_entrainment(ids, varargin)
-if nargin < 1 || isempty(ids)
+if nargin < 1 || isempty(ids) || ischar(ids)
     d = en_load('diary', 'incl');
     ids = d.id;
+end
+
+% if ids is actually a parameter (i.e., the ids var was left out entirely,
+%   then add it to varargin; ids will have already been set above
+if ischar(ids)
+    varargin = [{ids} varargin];
 end
 
 % defaults

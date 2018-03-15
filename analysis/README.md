@@ -35,13 +35,16 @@ project_folder/
         |-- 1.fdt  
         |-- 1_portcodes.txt  
 
-    |-- eeg_comps_aud/      (output from en_eeg_entrainment)  
-        |-- 1_dipplot.png  
-        |-- 1_topoplot.png  
-
-    |-- eeg_comps_pmc/      (output from en_eeg_entrainment)  
-        |-- 1_dipplot.png  
-        |-- 1_topoplot.png  
+    |-- eeg_goodcomps/     (output from en_eeg_entrainment)  
+        |-- aud
+            |-- 1_dipplot.png  
+            |-- 1_topoplot.png  
+        |-- mot
+            |-- 1_dipplot.png  
+            |-- 1_topoplot.png  
+        |-- pmc
+            |-- 1_dipplot.png  
+            |-- 1_topoplot.png  
 
     |-- eeg_entrainment/    (output from en_eeg_entrainment)  
         |-- 1_aud.csv  
