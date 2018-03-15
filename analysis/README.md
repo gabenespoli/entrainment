@@ -138,6 +138,8 @@ Some EEG-related functions for preprocessing and spectral analysis that will wor
 
 - `select_comps`: Takes a preprocessed EEG struct and returns component numbers that match three criteria: region, residual variance, or by manually giving indices. In this project, the indices input is used for manually selecting components that are dipolar.
 
+- `dtplot`: Takes a preprocessed EEG struct and displays both a topographical plot and a dipole plot for the specified components. If a folder argument is given, these plots are saved as .png files instead of being displayed.
+
 - `getfft3`: A fancy wrapper on MATLAB's `fft` function that expects data to be channels-by-time-by-trials (e.g., EEGLAB's EEG.data).
 
 - `noisefloor3`: For each value in the data, remove the mean of surrounding values. This version expects data to be channels-by-time-by-trials (e.g., EEGLAB's EEG.data).
