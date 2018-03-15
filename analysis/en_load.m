@@ -13,11 +13,9 @@
 %   d       = en_load('diary')
 %   d       = en_load('diary', id)
 %   M       = en_load('midi', id)
-%   times   = en_load('miditimes', id)
 %   L       = en_load('log', id)
 %   S       = en_load('stiminfo')
 %   EEG     = en_load('eeg', id)
-%   TAP     = en_load('tapping', id)
 
 function varout = en_load(filetype, id)
 
@@ -32,11 +30,10 @@ end
 switch lower(filetype)
 
     %% data
-
     case 'midi'
         % use miditoolbox to load matrix of midi data
         en_load('miditoolbox', 1)
-        M = readmidi(fullfile(en_getpath('tapping'), [idStr, '.mid']));
+        M = readmidi(fullfile(en_getpath('midi'), [idStr, '.mid']));
 
         % convert it to a table with headings
         M = array2table(M, ...
@@ -47,21 +44,31 @@ switch lower(filetype)
         % restrict to a few needed columns only
         M = M(:, {'onset', 'velocity', 'duration'});
 
-        varout = M;
-
-    case 'miditimes'
         % find marker times in seconds
-        [y, Fs] = audioread(fullfile(en_getpath('tapping'), [idStr, '.wav']));
+        disp('Loading marker wav file...')
+        [y, Fs] = audioread(fullfile(en_getpath('midi'), [idStr, '.wav']));
         times = findAudioMarkers( ...
             transpose(y), ...   % waveform
             0.001, ...          % threshold
             2 * Fs, ...         % timeBetween
             'plotMarkers',      false, ...
             'numMarkers',       60);    % TODO this should be based on rm and missed portcodes
-        times = times / Fs;
-        times = transpose(times);
+        times = times / Fs; % convert from samples to seconds
+        if ~iscolumn(times), times = transpose(times); end % make column vector
 
-        varout = times;
+        % add column for trial number
+        M.trial = zeros(height(M), 1);
+        for i = 1:length(times)
+            % get inds of M that match the current time
+            if i < length(times)
+                ind = M.onset >= times(i) & M.onset < times(i+1);
+            else
+                ind = M.onset >= times(i);
+            end
+            M.trial(ind) = i;
+        end
+        
+        varout = M;
 
     case 'eeg'
         varout = pop_loadset(fullfile(en_getpath('eeg'), [idStr, '.set']));
