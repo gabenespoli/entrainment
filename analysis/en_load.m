@@ -20,15 +20,29 @@ end
 
 switch lower(filetype)
 
-    %% eeg data
-    case 'eeglab' % add eeglab to path
+    %% toolboxes
+    case 'eeglab' % add eeglab to path and start eeglab
         eeglabdir = en_getpath('eeglab');
         if ~isOnPath(eeglabdir)
             addpath(eeglabdir) % add path to eeglab root
-            eeglab % start eeglab
-            disp('Started eeglab.')
+            disp('Added EEGLAB to the MATLAB path.')
+            % start eeglab normally because it will add other paths
+            eeglab
+        else
+            disp('EEGLAB is already on the MATLAB path.')
+            disp('Try typing `eeglab` or `eeglab redraw` in the command window.')
         end
 
+    case 'miditoolbox'
+        miditoolboxdir = en_getpath('miditoolbox');
+        if ~isOnPath(miditoolboxdir)
+            addpath(miditoolboxdir)
+            disp('Added MIDI Toolbox to the MATLAB path.')
+        else
+            disp('MIDI Toolbox is already on the MATLAB path.')
+        end
+
+    %% eeg data
     case 'eeg'
         varout = pop_loadset(fullfile(en_getpath('eeg'), [idStr, '.set']));
 

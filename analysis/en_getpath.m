@@ -29,5 +29,8 @@ switch pathtype
     case 'mrifile',     outpath = fullfile(en_getpath('dipfit'), 'standard_BEM', 'standard_mri.mat');
     case 'hdmfile',     outpath = fullfile(en_getpath('dipfit'), 'standard_BEM', 'standard_vol.mat');
 
+    % paths from MIDI toolbox
+    case 'miditoolbox', outpath = fullfile(en_getpath('project'), 'miditoolbox1.1', 'miditoolbox');
+
 end
 end
