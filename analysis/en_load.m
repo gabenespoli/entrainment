@@ -7,6 +7,17 @@
 %   filetype = [string]
 %
 %   id = [numeric|string] Must be a single number, not a vector
+%
+%
+% Examples:
+%   d       = en_load('diary')
+%   d       = en_load('diary', id)
+%   M       = en_load('midi', id)
+%   times   = en_load('miditimes', id)
+%   L       = en_load('log', id)
+%   S       = en_load('stiminfo')
+%   EEG     = en_load('eeg', id)
+%   TAP     = en_load('tapping', id)
 
 function varout = en_load(filetype, id)
 
@@ -20,31 +31,69 @@ end
 
 switch lower(filetype)
 
-    %% toolboxes
-    case 'eeglab' % add eeglab to path and start eeglab
-        eeglabdir = en_getpath('eeglab');
-        if ~isOnPath(eeglabdir)
-            addpath(eeglabdir) % add path to eeglab root
-            disp('Added EEGLAB to the MATLAB path.')
-            % start eeglab normally because it will add other paths
-            eeglab
-        else
-            disp('EEGLAB is already on the MATLAB path.')
-            disp('Try typing `eeglab` or `eeglab redraw` in the command window.')
-        end
+    %% data
 
-    case 'miditoolbox'
-        miditoolboxdir = en_getpath('miditoolbox');
-        if ~isOnPath(miditoolboxdir)
-            addpath(miditoolboxdir)
-            disp('Added MIDI Toolbox to the MATLAB path.')
-        else
-            disp('MIDI Toolbox is already on the MATLAB path.')
-        end
+    case 'midi'
+        % use miditoolbox to load matrix of midi data
+        en_load('miditoolbox', 1)
+        M = readmidi(fullfile(en_getpath('tapping'), [idStr, '.mid']));
 
-    %% eeg data
+        % convert it to a table with headings
+        M = array2table(M, ...
+            'VariableNames', {'onsetBeats', 'durationBeats', ... % in beats
+                              'channel', 'pitch', 'velocity', ...
+                              'onset', 'duration'});           % in seconds
+
+        % restrict to a few needed columns only
+        M = M(:, {'onset', 'velocity', 'duration'});
+
+        varout = M;
+
+    case 'miditimes'
+        % find marker times in seconds
+        [y, Fs] = audioread(fullfile(en_getpath('tapping'), [idStr, '.wav']));
+        times = findAudioMarkers( ...
+            transpose(y), ...   % waveform
+            0.001, ...          % threshold
+            2 * Fs, ...         % timeBetween
+            'plotMarkers',      false, ...
+            'numMarkers',       60);    % TODO this should be based on rm and missed portcodes
+        times = times / Fs;
+        times = transpose(times);
+
+        varout = times;
+
     case 'eeg'
         varout = pop_loadset(fullfile(en_getpath('eeg'), [idStr, '.set']));
+
+    case {'logfile','logfiles','log'}
+        % loads all logfiles for the given ID as a table
+        fnames = { ...
+            fullfile(en_getpath('logfiles'), [idStr, '_sync_eeg.csv']), ...
+            fullfile(en_getpath('logfiles'), [idStr, '_sync_tapping.csv']), ...
+            fullfile(en_getpath('logfiles'), [idStr, '_mir_eeg.csv']), ...
+            fullfile(en_getpath('logfiles'), [idStr, '_mir_tapping.csv']), ...
+            };
+
+        for i = 1:length(fnames)
+            fname = fnames{i};
+            TMP = readtable(fname);
+            if i == 1
+                T = TMP;
+            else
+                T = [T; TMP]; %#ok<AGROW>
+            end
+        end
+
+        % make some columns categorical
+        T.stimType = categorical(T.stimType);
+        T.trigType = categorical(T.trigType);
+
+        % add portcodes column from filename
+        T.portcode = cellfun(@(x) str2num(strrep(x, '.wav', '')), T.filename, 'UniformOutput', false);
+        T.portcode = cell2mat(T.portcode);
+
+        varout = T;
 
     %% diary
     case 'diary' % loads the diary csv file as a table
@@ -75,36 +124,6 @@ switch lower(filetype)
         end
         varout = d;
 
-    %% logfiles
-    case {'logfile','logfiles','log'}
-        % loads all logfiles for the given ID as a table
-        fnames = { ...
-            fullfile(en_getpath('logfiles'), [idStr, '_sync_eeg.csv']), ...
-            fullfile(en_getpath('logfiles'), [idStr, '_sync_tapping.csv']), ...
-            fullfile(en_getpath('logfiles'), [idStr, '_mir_eeg.csv']), ...
-            fullfile(en_getpath('logfiles'), [idStr, '_mir_tapping.csv']), ...
-            };
-
-        for i = 1:length(fnames)
-            fname = fnames{i};
-            TMP = readtable(fname);
-            if i == 1
-                T = TMP;
-            else
-                T = [T; TMP]; %#ok<AGROW>
-            end
-        end
-
-        % make some columns categorical
-        T.stimType = categorical(T.stimType);
-        T.trigType = categorical(T.trigType);
-
-        % add portcodes column from filename
-        T.portcode = cellfun(@(x) str2num(strrep(x, '.wav', '')), T.filename, 'UniformOutput', false);
-        T.portcode = cell2mat(T.portcode);
-
-        varout = T;
-
         %% stimulus info
     case {'stiminfo'}
         S = readtable(en_getpath('stiminfo'));
@@ -120,6 +139,28 @@ switch lower(filetype)
             S.rhythmType = categorical(S.rhythmType);
         end
         varout = S;
+
+    %% toolboxes
+    case 'eeglab' % add eeglab to path and start eeglab
+        eeglabdir = en_getpath('eeglab');
+        if ~isOnPath(eeglabdir)
+            addpath(eeglabdir) % add path to eeglab root
+            disp('Added EEGLAB to the MATLAB path.')
+            % start eeglab normally because it will add other paths
+            eeglab
+        elseif isempty(id) % be verbose if id arg is given
+            disp('EEGLAB is already on the MATLAB path.')
+            disp('Try typing `eeglab` or `eeglab redraw` in the command window.')
+        end
+
+    case 'miditoolbox'
+        miditoolboxdir = en_getpath('miditoolbox');
+        if ~isOnPath(miditoolboxdir)
+            addpath(miditoolboxdir)
+            disp('Added MIDI Toolbox to the MATLAB path.')
+        elseif isempty(id) % be verbose if id arg is given
+            disp('MIDI Toolbox is already on the MATLAB path.')
+        end
 
 end
 end

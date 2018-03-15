@@ -13,8 +13,14 @@ switch pathtype
     case 'diary',       outpath = fullfile(en_getpath('analysis'), 'en_diary.csv');
     case 'stiminfo',    outpath = fullfile(en_getpath('analysis'), 'en_stiminfo.csv');
 
-    % data file paths
+    % data folder
     case 'data',        outpath = fullfile(en_getpath('project'), 'data');
+
+    % tapping data
+    case 'tapping',     outpath = fullfile(en_getpath('data'), 'tapping');
+    case 'midi',        outpath = fullfile(en_getpath('data'), 'midi');
+
+    % eeg data
     case 'logfiles',    outpath = fullfile(en_getpath('data'), 'logfiles');
     case 'bdf',         outpath = fullfile(en_getpath('data'), 'bdf');
     case 'eeg',         outpath = fullfile(en_getpath('data'), 'eeg');
@@ -22,15 +28,13 @@ switch pathtype
     case 'goodcomps',   outpath = fullfile(en_getpath('data'), 'eeg_goodcomps');
     case 'entrainment', outpath = fullfile(en_getpath('data'), 'eeg_entrainment');
 
-    % paths from the EEGLAB toolbox
+    % toolboxes
+    case 'miditoolbox', outpath = fullfile(en_getpath('project'), 'miditoolbox1.1', 'miditoolbox');
     case 'eeglab',      outpath = fullfile(en_getpath('project'), 'eeglab');
     case 'dipfit',      outpath = fullfile(en_getpath('eeglab'), 'plugins', 'dipfit2.3');
     case 'chanfile',    outpath = fullfile(en_getpath('eeglab'), 'functions', 'resources', 'Standard-10-5-Cap385_witheog.elp');
     case 'mrifile',     outpath = fullfile(en_getpath('dipfit'), 'standard_BEM', 'standard_mri.mat');
     case 'hdmfile',     outpath = fullfile(en_getpath('dipfit'), 'standard_BEM', 'standard_vol.mat');
-
-    % paths from MIDI toolbox
-    case 'miditoolbox', outpath = fullfile(en_getpath('project'), 'miditoolbox1.1', 'miditoolbox');
 
 end
 end
