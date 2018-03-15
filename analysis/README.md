@@ -51,6 +51,7 @@ project_folder/
         |-- 1_pmc.csv  
 
     |-- eeg_topoplots/      (output from en_eeg_preprocess)  
+        |-- 1_topoplot.fig  
         |-- 1_topoplot.png  
 
     |-- logfiles/           (output from the task)  
