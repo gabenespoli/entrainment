@@ -34,6 +34,9 @@
 %   fftdata = [numeric] The fft data matrix (comps x frequency x trial).
 %
 %   freqs = [numeric] The corresponding frequency vector.
+%
+%   topoplots and dipplots of selected components are saved to
+%       en_getpath('goodcomps')
 
 % input can be a preprocessed EEG struct (with ICA and dipfit)
 %   or a numeric ID number
@@ -115,7 +118,7 @@ if isempty(comps)
     return
 end
 
-dtplot(EEG, comps, en_getpath([regionStr, 'comps'])); % save plots of good ICs
+dtplot(EEG, comps, fullfile(en_getpath('goodcomps'), regionStr)); % save plots of good ICs
 
 %% if there are some good comps, plot and calculate entrainment 
 [fftdata, freqs] = getfft3( ...

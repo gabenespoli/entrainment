@@ -19,8 +19,7 @@ switch pathtype
     case 'bdf',         outpath = fullfile(en_getpath('data'), 'bdf');
     case 'eeg',         outpath = fullfile(en_getpath('data'), 'eeg');
     case 'topoplots',   outpath = fullfile(en_getpath('data'), 'eeg_topoplots');
-    case 'pmccomps',    outpath = fullfile(en_getpath('data'), 'eeg_comps_pmc');
-    case 'audcomps',    outpath = fullfile(en_getpath('data'), 'eeg_comps_aud');
+    case 'goodcomps',   outpath = fullfile(en_getpath('data'), 'eeg_goodcomps');
     case 'entrainment', outpath = fullfile(en_getpath('data'), 'eeg_entrainment');
 
     % paths from the EEGLAB toolbox
