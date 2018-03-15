@@ -20,39 +20,39 @@ writetable(T, 'mydata.csv');
 
 The function `en_getpath` is used to access all required directory paths and files for the rest of the scripts in this toolbox (except for the "General EEG Analysis" functions, which don't require any external paths or files). Paths can be edited, added, or removed from that function as needed. Here is the folder structure for the current project, with some example filenames:
 
-project_folder/
-|-- analysis/
-    |-- en_diary.csv
-    |-- (all the other files in this analysis folder)
-|-- data/
-    |-- bdf/ (raw EEG recordings)
-        |-- 20180101A.bdf
-    |-- eeg/ (output from en_eeg_preprocess)
-        |-- 1.set
-        |-- 1.fdt
-        |-- 1_portcodes.txt
-    |-- eeg_comps_aud/ (output from en_eeg_entrainment)
-        |-- 1_dipplot.png
-        |-- 1_topoplot.png
-    |-- eeg_comps_pmc/ (output from en_eeg_entrainment)
-        |-- 1_dipplot.png
-        |-- 1_topoplot.png
-    |-- eeg_entrainment/ (output from en_eeg_entrainment)
-        |-- 1_aud.csv
-        |-- 1_pmc.csv
-    |-- eeg_topoplots/ (output from en_eeg_preprocess)
-        |-- 1_topoplot.png
-    |-- logfiles/ (output from the task)
-        |-- 1_mir_eeg.csv
-        |-- 1_mir_eeg_trialList.txt
-        |-- 1_mir_tapping.csv
-        |-- 1_mir_tapping_trialList.txt
-        |-- 1_sync_eeg.csv
-        |-- 1_sync_eeg_trialList.txt
-        |-- 1_sync_tapping.csv
-        |-- 1_sync_tapping_trialList.txt
-|-- eeglab/
-    |-- (EEGLAB toolbox)
+project_folder/  
+|-- analysis/  
+    |-- en_diary.csv  
+    |-- (all the other files in this analysis folder)  
+|-- data/  
+    |-- bdf/ (raw EEG recordings)  
+        |-- 20180101A.bdf  
+    |-- eeg/ (output from en_eeg_preprocess)  
+        |-- 1.set  
+        |-- 1.fdt  
+        |-- 1_portcodes.txt  
+    |-- eeg_comps_aud/ (output from en_eeg_entrainment)  
+        |-- 1_dipplot.png  
+        |-- 1_topoplot.png  
+    |-- eeg_comps_pmc/ (output from en_eeg_entrainment)  
+        |-- 1_dipplot.png  
+        |-- 1_topoplot.png  
+    |-- eeg_entrainment/ (output from en_eeg_entrainment)  
+        |-- 1_aud.csv  
+        |-- 1_pmc.csv  
+    |-- eeg_topoplots/ (output from en_eeg_preprocess)  
+        |-- 1_topoplot.png  
+    |-- logfiles/ (output from the task)  
+        |-- 1_mir_eeg.csv  
+        |-- 1_mir_eeg_trialList.txt  
+        |-- 1_mir_tapping.csv  
+        |-- 1_mir_tapping_trialList.txt  
+        |-- 1_sync_eeg.csv  
+        |-- 1_sync_eeg_trialList.txt  
+        |-- 1_sync_tapping.csv  
+        |-- 1_sync_tapping_trialList.txt  
+|-- eeglab/  
+    |-- (EEGLAB toolbox)  
 
 ## The diary.csv file
 
