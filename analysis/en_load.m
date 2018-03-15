@@ -1,10 +1,14 @@
-function varout = en_load(filetype, id)
-% usage:
+%% en_load
+%
+% Usage:
 %   varout = en_load(filetype [, id])
 %
-% input:
+% Input:
 %   filetype = [string]
-%   id = [numeric] Must be a single number, not a vector
+%
+%   id = [numeric|string] Must be a single number, not a vector
+
+function varout = en_load(filetype, id)
 
 if nargin < 2, id = []; end
 if ischar(id)
@@ -32,6 +36,7 @@ switch lower(filetype)
     case 'diary' % loads the diary csv file as a table
         d = readtable(en_getpath('diary'), 'Delimiter', ',');
         d.recording_notes = []; % remove notes field for nicer display in command window
+        d.incl(isnan(d.incl)) = 0; % make nans zeros instead
 
         for i = 1:size(d, 1)
             % convert some fields from comma-delimited lists to cell arrays
@@ -44,10 +49,14 @@ switch lower(filetype)
             d.dipolar_comps{i}      = csv2vec(d.dipolar_comps{i});
         end
 
-        if ~isempty(id) % restrict to a specific id
-            d = d(d.id == id, :); % rows in corresponding to this id
-            if height(d) > 1
-                error(['More than one row in the d for id ', num2str(id), '.'])
+        if ~isempty(id)
+            if isnumeric(id) % restrict to a specific id
+                d = d(d.id == id, :); % rows in corresponding to this id
+                if height(d) > 1
+                    error(['More than one row in the d for id ', num2str(id), '.'])
+                end
+            elseif ischar(id) && strcmpi(id, 'incl')
+                d = d(logical(d.incl), :);
             end
         end
         varout = d;
