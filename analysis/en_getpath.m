@@ -6,7 +6,7 @@
 function outpath = en_getpath(pathtype)
 
 switch pathtype
-    case 'project',     outpath = fullfile('~','local','en');
+    case 'project',     outpath = fullfile('/Users','gmac','local','en');
 
     % analysis scripts paths
     case 'analysis',    outpath = fullfile(en_getpath('project'), 'analysis');

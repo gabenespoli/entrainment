@@ -114,7 +114,7 @@ These functions are used for performing a whole section of the analysis pipeline
 
 These functions simplify finding and loading files.
 
-- `en_getpath`: Takes a keyword as input and returns a directory or file path. All functions in this "toolbox" use this function to get path names. This means that you can move these scripts to a different computer or port them to a different project, and will only have to change this file in order for everything to work (theoretically).
+- `en_getpath`: Takes a keyword as input and returns a directory or file path. All functions in this "toolbox" use this function to get path names. This means that you can move these scripts to a different computer or port them to a different project, and will only have to change this file in order for everything to work (theoretically). Note that in order for the `en_load` function to properly detect if a toolbox has been loaded, these have to be absolute paths.
 
 - `en_load`: Takes a keyword (and optionally an ID number), and loads the specified file into the MATLAB workspace. Can also start [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) from the path specified in `en_getpath('eeglab')`.
 
