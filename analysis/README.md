@@ -6,15 +6,79 @@ The following code will run the entire EEG analysis pipeline from raw BDF files 
 
 ```matlab
 % make sure paths in en_getpath are correct
-% set current folder to this folder
+% set current folder to this analysis folder
 ids = 6:16;
 en_load('eeglab')
 en_loop_eeg_preprocess(ids);
 % look at topographical maps saved in en_getpath('topoplots') and mark down component numbers that are dipolar in en_diary.csv
 en_loop_eeg_entrainment(ids);
-
-% more to come...
+T = en_getdata(ids);
+writetable(T, 'mydata.csv');
 ```
+
+## Preparing the Project Folder
+
+The function `en_getpath` is used to access all required directory paths and files for the rest of the scripts in this toolbox (except for the "General EEG Analysis" functions, which don't require any external paths or files). Paths can be edited, added, or removed from that function as needed. Here is the folder structure for the current project, with some example filenames:
+
+project_folder/
+|-- analysis/
+    |-- en_diary.csv
+    |-- (all the other files in this analysis folder)
+|-- data/
+    |-- bdf/ (raw EEG recordings)
+        |-- 20180101A.bdf
+    |-- eeg/ (output from en_eeg_preprocess)
+        |-- 1.set
+        |-- 1.fdt
+        |-- 1_portcodes.txt
+    |-- eeg_comps_aud/ (output from en_eeg_entrainment)
+        |-- 1_dipplot.png
+        |-- 1_topoplot.png
+    |-- eeg_comps_pmc/ (output from en_eeg_entrainment)
+        |-- 1_dipplot.png
+        |-- 1_topoplot.png
+    |-- eeg_entrainment/ (output from en_eeg_entrainment)
+        |-- 1_aud.csv
+        |-- 1_pmc.csv
+    |-- eeg_topoplots/ (output from en_eeg_preprocess)
+        |-- 1_topoplot.png
+    |-- logfiles/ (output from the task)
+        |-- 1_mir_eeg.csv
+        |-- 1_mir_eeg_trialList.txt
+        |-- 1_mir_tapping.csv
+        |-- 1_mir_tapping_trialList.txt
+        |-- 1_sync_eeg.csv
+        |-- 1_sync_eeg_trialList.txt
+        |-- 1_sync_tapping.csv
+        |-- 1_sync_tapping_trialList.txt
+|-- eeglab/
+    |-- (EEGLAB toolbox)
+
+## The diary.csv file
+
+The diary.csv file can be considered a sort of configuration file for the analysis. It should contain the following columns, with each row representing a single participant:
+
+- **id** = [numeric] Each row should be a unique number. When calling the functions in this toolbox, use this number to refer to a specific participant.
+
+- **incl** = [boolean; 1 or 0] Whether or not to include this participant in the analysis. When calling the "getdata" or looping functions in this toolbox, leaving the id argument empty will use all id's that have a 1 here.
+
+- **order** = [numeric, 1 or 2] This is used by the `en_epoch` function.
+
+- **bdffile** = [comma-separated list of strings]
+
+- **eventchans** = [numeric] The channel from which the portcode information should be extracted. Used by the `en_readbdf` function.
+
+- **rmchans** = [comma-separated list of strings] Channel/electrode labels that should be removed because they were noisy during the recording.
+
+- **rmportcodes** = [comma-separated list of numbers] If there were extra portcodes sent (e.g., because a trial was repeated and the portcode was erroneously sent twice), enter the indices of the portcodes that should be removed. For example, if there are 60 trials, and the portcode for the 30th trial was sent twice (i.e., the 30th and 31st portcodes are the same trial, and you would like to remove the first one), enter 30 here.
+
+- **missedportcodes** = [comma-separated list of numbers] If some portcodes did not get sent (e.g., because the BioSemi battery died, but the experiment continued), enter the indices of the portcodes that were missed. For example, if there are 60 trials, and the battery died after the 10th trial, you didn't notice and stop the experiment until after the 15th trial (trials 11 to 15 did not have their portcodes recorded), enter "11, 12, 13, 14, 15" here (without the quotes). Note that if the battery dies in the middle of a trial, you might want to consider adding that trial to *rmportcodes*. Filling in this field will probably require some comparison of the logfile (which portcodes were sent) and the BDF file (which portcodes were recorded).
+
+- *experimenters* = [comma-separated list of strings] Initials of the experimenters for this participant's session.
+
+- *recording_notes* = [semicolon-separated list of sentences] Any notes from the EEG recording session that might be good to know.
+
+- *dipolar_comps* = [comma-separated list of numbers] After running `en_eeg_preprocess`, look at the topographical plots that are saved and mark down which components are dipolar. This field is used by `en_eeg_entrainment` to select good components with `select_comps`. See Delorme, Palmer, Onton, Oostenveld, & Makeig (2012; PLOS ONE) for more information.
 
 ## List of Functions
 
