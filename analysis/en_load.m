@@ -110,6 +110,10 @@ switch lower(filetype)
         T.portcode = cellfun(@(x) str2num(strrep(x, '.wav', '')), T.filename, 'UniformOutput', false);
         T.portcode = cell2mat(T.portcode);
 
+        % reorder columns
+        T = T(:, {'id', 'stim', 'task', 'trial', 'timestamp', ...
+                  'filepath', 'filename', 'portcode'});
+
         varout = T;
 
     %% diary
