@@ -1,4 +1,4 @@
-# Neural Entrainment
+# Neural Entrainment Scripts
 
 These MATLAB scripts were used for a project measuring neural entrainment using EEG. The `task` folder is for presenting stimuli on a Windows computer, and was used to send port codes to a BioSemi EEG recording system. The `analysis` folder is a combination of wrapper scripts for [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) (mostly for preprocessing), and custom functions for selecting independent components by location and measuring entrainment.
 
@@ -107,7 +107,7 @@ The diary.csv file can be considered a sort of configuration file for the analys
 
 - **dipolar_comps** = [comma-separated list of numbers] After running `en_eeg_preprocess`, look at the topographical plots that are saved and mark down which components are dipolar. This field is used by `en_eeg_entrainment` to select good components with `select_comps`. See Delorme, Palmer, Onton, Oostenveld, & Makeig (2012; PLOS ONE) for more information.
 
-### List of Functions
+### List of Analysis Functions
 
 Each function list is loosely in the order that they would be used in the processing pipeline.
 
