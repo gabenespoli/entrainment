@@ -17,7 +17,7 @@
 %
 %   'stim' = ['sync'|'mir']
 %
-%   'trig' = ['eeg'|'tapping']
+%   'task' = ['eeg'|'tapping']
 %
 %   'rv' = [numeric between 0 and 1] Residual variance threshold for
 %       selecting components. This should probably be the same or smaller
@@ -45,8 +45,8 @@ function [T, fftdata, freqs] = en_eeg_entrainment(EEG, varargin)
 
 % defaults
 region = 'pmc'; % pmc = 6, aud = [22 41 42]
-stimType = 'sync';
-trigType = 'eeg';
+stim = 'sync';
+task = 'eeg';
 rv = 0.15;
 nfft = 2^16; % 2^16 = bin width of 0.0078 Hz
 binwidth = 1; % number of bins on either side of tempo bin
@@ -61,8 +61,8 @@ for i = 1:2:length(varargin)
     val = varargin{i+1};
     switch lower(varargin{i})
         case 'region',              if ~isempty(val), region = val; end
-        case {'stim', 'stimtype'},  if ~isempty(val), stimType = val; end
-        case {'trig', 'trigtype'},  if ~isempty(val), trigType = val; end
+        case 'stim',                if ~isempty(val), stim = val; end
+        case 'task',                if ~isempty(val), task = val; end
         case 'rv',                  if ~isempty(val), rv = val; end
         case {'width', 'binwidth'}, if ~isempty(val), binwidth = val; end
     end
@@ -94,19 +94,20 @@ end
 
 %% get logfile and stiminfo
 L = en_load('logfile', EEG.setname); % setname should be id
-L = L(L.stimType==stimType & L.trigType==trigType, :);
+L = L(L.stim==stim & L.task==task, :);
 S = en_load('stiminfo', L.portcode);
 if ~all(L.portcode == S.portcode)
     error('Portcodes in logfile and stiminfo don''t match.')
 end
 S.portcode = [];
-S.stimType = [];
+S.stim = [];
 T = [L, S];
 T.id = repmat(EEG.setname, height(T), 1);
 T.comp = zeros(height(T), 1);
 T.en = zeros(height(T), 1);
 T.Properties.VariableNames{end} = regionStr;
-T.Properties.UserData.filename = fullfile(en_getpath('entrainment'), [EEG.setname, '_', regionStr, '.csv']);
+T.Properties.UserData.filename = fullfile(en_getpath('entrainment'), ...
+    [stim, '_', task, '_', regionStr, '_', EEG.setname, '.csv']);
 
 %% filter comps by region, rv, dipolarity
 d = en_load('diary', str2num(EEG.setname)); % EEG.setname should be the ID
@@ -140,7 +141,7 @@ for i = 1:length(en) % loop trials
         freqs, ...
         S.tempo(i), ...
         'width', binwidth, ...
-        'func',  'max');
+        'func',  'mean');
 end
 [en, comps_ind] = max(en, [], 1); % take max of all comps
 T.(regionStr) = transpose(en);

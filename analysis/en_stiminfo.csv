@@ -1,4 +1,4 @@
-portcode,stimType,excerpt,rhythmType,tempo_bpm,tempo
+portcode,stim,excerpt,rhythm,tempo_bpm,tempo
 11,sync,LR3,simple,90,1.5
 12,sync,LR3,simple,96,1.6
 13,sync,LR3,simple,102,1.7

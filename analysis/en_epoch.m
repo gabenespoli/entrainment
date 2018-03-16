@@ -1,13 +1,13 @@
 %% en_epoch
-% EEG = en_epoch(EEG, stimType, taskType [, timelim])
+% EEG = en_epoch(EEG, stim, task [, timelim])
 
-function EEG = en_epoch(EEG, stimType, trigType, timelim)
+function EEG = en_epoch(EEG, stim, trig, timelim)
 
-if ~ismember(lower(stimType), {'sync', 'mir'})
-    error('Invalid stimType.')
+if ~ismember(lower(stim), {'sync', 'mir'})
+    error('Invalid stim.')
 end
-if ~ismember(lower(trigType), {'eeg', 'tapping'})
-    error('Invalid trigType')
+if ~ismember(lower(task), {'eeg', 'tapping'})
+    error('Invalid task')
 end
 % default extraction window
 % 1 second of silence after portcode, so stimulus plays from 1-31 seconds
@@ -60,24 +60,24 @@ if ~isnan(missedportcodes)
 end
 
 % get desired event indices and portcodes (event types)
-if strcmpi(stimType, 'sync')
-    if strcmpi(trigType, 'eeg')
+if strcmpi(stim, 'sync')
+    if strcmpi(task, 'eeg')
 
         if     d.order == 1,   eventindices = eventindices(1:30);
         elseif d.order == 2,   eventindices = eventindices(31:60);
         end
 
-    elseif strcmpi(trigType, 'tapping')
+    elseif strcmpi(task, 'tapping')
         if     d.order == 1,   eventindices = eventindices(31:60);
         elseif d.order == 2,   eventindices = eventindices(1:30);
         end
     end
-elseif strcmpi (stimType, 'mir')
-    if strcmpi(trigType, 'eeg')
+elseif strcmpi (stim, 'mir')
+    if strcmpi(task, 'eeg')
         if     d.order == 1,   eventindices = eventindices(61:90);
         elseif d.order == 2,   eventindices = eventindices(91:120);
         end
-    elseif strcmpi(trigType, 'tapping')
+    elseif strcmpi(task, 'tapping')
         if     d.order == 1,   eventindices = eventindices(91:120);
         elseif d.order == 2,   eventindices = eventindices(61:90);
         end
@@ -99,7 +99,7 @@ eventTypes = regexp(num2str(eventTypes), '\s*', 'split');
 portcodes = [EEG.event.type];
 portcodes = transpose(portcodes(eventindices));
 L = en_load('logfile', id);
-logfile_portcodes = L(L.stimType==stimType & L.trigType==trigType, :).portcode;
+logfile_portcodes = L(L.stim==stim & L.task==task, :).portcode;
 if ~all(portcodes == logfile_portcodes)
     error('The portcodes in EEG struct don''t match the portcodes in the logfile.')
 end

@@ -92,9 +92,19 @@ switch lower(filetype)
             end
         end
 
+        % change some variable names
+        names = {'stimType', 'trigType', 'rhythmType'};
+        newnames = {'stim', 'task', 'rhythm'};
+        for i = 1:length(names)
+            ind = cellfun(@(x) strcmp(x, names{i}), T.Properties.VariableNames);
+            if any(ind)
+                T.Properties.VariableNames{ind} = newnames{i};
+            end
+        end
+
         % make some columns categorical
-        T.stimType = categorical(T.stimType);
-        T.trigType = categorical(T.trigType);
+        T.stim = categorical(T.stim);
+        T.task = categorical(T.task);
 
         % add portcodes column from filename
         T.portcode = cellfun(@(x) str2num(strrep(x, '.wav', '')), T.filename, 'UniformOutput', false);
@@ -136,14 +146,14 @@ switch lower(filetype)
         S = readtable(en_getpath('stiminfo'));
 
         % make some vars categorical
-        S.stimType = categorical(S.stimType);
+        S.stim = categorical(S.stim);
         if ~isempty(id)
             % restrict by portcodes
             ind = cell2mat(arrayfun(@(x) ...
                 find(ismember(S.portcode, x)), ...
                 id, 'UniformOutput', false));
             S = S(ind, :);
-            S.rhythmType = categorical(S.rhythmType);
+            S.rhythm = categorical(S.rhythm);
         end
         varout = S;
 
