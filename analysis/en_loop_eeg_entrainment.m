@@ -22,6 +22,7 @@ function en_loop_eeg_entrainment(ids, varargin)
 %   then add it to varargin; ids will have already been set below
 if nargin > 0 && ischar(ids)
     varargin = [{ids} varargin];
+    ids = [];
 end
 
 % if no ids given, use all marked as incl in diary
