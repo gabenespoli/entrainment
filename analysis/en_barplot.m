@@ -41,6 +41,7 @@ switch lower(region)
     case 'pmc', ytitle = 'Premotor Cortex Beat Entrainment (\muV)';
     case 'pmm', ytitle = 'Pre- and Motor Cortex Beat Entrainment (\muV)';
     case 'aud', ytitle = 'Auditory Cortex Beat Entrainment (\muV)';
+    case 'move', ytitle = 'Rating of Wanting to Move (1-7)';
     otherwise, ytitle = region;
 end
 
