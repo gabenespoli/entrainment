@@ -55,7 +55,10 @@ for i = 1:length(ids)
 end
 
 % make some fields categorical
-T.rhythmType = categorical(T.rhythmType);
-T.rhythmType = reordercats(T.rhythmType, {'simple', 'optimal', 'complex'});
+cats = {'stim', 'task', 'rhythm', 'excerpt'};
+for i = 1:length(cats)
+    T.(cats{i}) = categorical(T.(cats{i}));
+end
+T.rhythm = reordercats(T.rhythm, {'simple', 'optimal', 'complex'});
 
 end
