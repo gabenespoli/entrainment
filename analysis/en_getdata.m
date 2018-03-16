@@ -1,12 +1,14 @@
 % concatenate csv files from many ids as a single table
 
-function T = en_getdata(varargin)
-if nargin < 1 || isnumeric(varargin{1})
+function T = en_getdata(ids, varargin)
+if nargin > 0 && ischar(ids)
+    varargin = [{ids} varargin];
+end
+
+% if no ids given, use all marked as incl in diary
+if nargin < 1 || isempty(ids) || ischar(ids)
     d = en_load('diary', 'incl');
     ids = d.id;
-end
-if nargin > 0 && isnumeric(varargin{1})
-    varargin(1) = [];
 end
 
 % defaults
