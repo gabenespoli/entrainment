@@ -73,6 +73,7 @@ switch lower(filetype)
     case 'eeg'
         varout = pop_loadset(fullfile(en_getpath('eeg'), [idStr, '.set']));
 
+    %% logfiles
     case {'logfile','logfiles','log'}
         % loads all logfiles for the given ID as a table
         fnames = { ...
