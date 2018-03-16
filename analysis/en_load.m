@@ -144,6 +144,20 @@ switch lower(filetype)
 
         varout = T;
 
+    case {'logfilestim', 'logstim'}
+        % load logfile and stiminfo in the same table
+
+        L = en_load('logfile', id); % setname should be id
+        % L = L(L.stim==stim & L.task==task, :);
+        S = en_load('stiminfo', L.portcode);
+        if ~all(L.portcode == S.portcode)
+            error('Portcodes in logfile and stiminfo don''t match.')
+        end
+        S.portcode = [];
+        S.stim = [];
+        L = [L, S];
+        varout = L;
+
     %% diary
     case 'diary' % loads the diary csv file as a table
         d = readtable(en_getpath('diary'), 'Delimiter', ',');

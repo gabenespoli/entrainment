@@ -93,15 +93,7 @@ elseif ~isstruct(EEG)
 end
 
 %% get logfile and stiminfo
-L = en_load('logfile', EEG.setname); % setname should be id
-L = L(L.stim==stim & L.task==task, :);
-S = en_load('stiminfo', L.portcode);
-if ~all(L.portcode == S.portcode)
-    error('Portcodes in logfile and stiminfo don''t match.')
-end
-S.portcode = [];
-S.stim = [];
-T = [L, S];
+T = en_load('logstim', EEG.setname); % setname should be id
 T.id = repmat(EEG.setname, height(T), 1);
 T.comp = zeros(height(T), 1);
 T.en = zeros(height(T), 1);
