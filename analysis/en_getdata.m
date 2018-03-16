@@ -1,12 +1,28 @@
 % concatenate csv files from many ids as a single table
 
-function T = en_getdata(ids, regions)
-if nargin < 1 || isempty(ids)
+function T = en_getdata(varargin)
+if nargin < 1 || isnumeric(varargin{1})
     d = en_load('diary', 'incl');
     ids = d.id;
 end
-if nargin < 2 || isempty(regions)
-    regions = {'mot', 'pmc', 'pmm', 'aud'};
+if nargin > 0 && isnumeric(varargin{1})
+    varargin(1) = [];
+end
+
+% defaults
+stim = 'sync';
+task = 'eeg';
+regions = {'mot', 'pmc', 'pmm', 'aud'};
+
+for i = 1:2:length(varargin)
+    param = varargin{i};
+    val = varargin{i+1};
+    if isempty(val), continue, end
+    switch lower(param)
+        case {'region', 'regions'}, regions = val;
+        case 'stim',                stim = val;
+        case {'task','trig'},       task = val;
+    end
 end
 if ~iscell(regions), regions = cellstr(regions); end
 
@@ -17,7 +33,7 @@ for i = 1:length(ids)
     for j = 1:length(regions)
         region = regions{j};
         fname = fullfile(en_getpath('entrainment'), ...
-            [idStr, '_', region, '.csv']);
+            [stim, '_', task, '_', region, '_', idStr, '.csv']);
         tmp = readtable(fname);
         if j == 1
             tmp_id = tmp;
