@@ -31,19 +31,6 @@ switch lower(filetype)
 
     %% data
     case 'midi'
-        % use miditoolbox to load matrix of midi data
-        en_load('miditoolbox', 1)
-        M = readmidi(fullfile(en_getpath('midi'), [idStr, '.mid']));
-
-        % convert it to a table with headings
-        M = array2table(M, ...
-            'VariableNames', {'onsetBeats', 'durationBeats', ... % in beats
-                              'channel', 'pitch', 'velocity', ...
-                              'onset', 'duration'});           % in seconds
-
-        % restrict to a few needed columns only
-        M = M(:, {'onset', 'velocity', 'duration'});
-
         % find marker times in seconds
         disp('Loading marker wav file...')
         [y, Fs] = audioread(fullfile(en_getpath('midi'), [idStr, '.wav']));
@@ -57,9 +44,19 @@ switch lower(filetype)
         if ~iscolumn(times), times = transpose(times); end % make column vector
         if length(times) ~= 60, error('There aren''t 60 trials.'), end
 
-        % add column for trial number
-        M.trial = zeros(height(M), 1);
-        M.stim = cell(height(M), 1);
+
+        % use miditoolbox to load matrix of midi data
+        en_load('miditoolbox', 1)
+        M = readmidi(fullfile(en_getpath('midi'), [idStr, '.mid']));
+
+        % convert it to a table with headings
+        M = array2table(M, ...
+            'VariableNames', {'onsetBeats', 'durationBeats', ... % in beats
+                              'channel', 'pitch', 'velocity', ...
+                              'onset', 'duration'});           % in seconds
+
+        % make one row per trial instead of one row per tap
+        % add columns for stim and trial number
         for i = 1:length(times)
             % get inds of M that match the current time
             if i < length(times)
@@ -67,29 +64,37 @@ switch lower(filetype)
             else
                 ind = M.onset >= times(i);
             end
-            % add stim and trial columns
+
+            % start this row of the table and add stim and trial columns
+            TMP = table(i, 'VariableNames', {'trial'});
             if ismember(i, 1:30)
-                M.trial(ind) = i;
-                inds = find(ind);
-                for j = 1:length(inds)
-                    M.stim{inds(j)} = 'sync';
-                end
+                TMP.stim = {'sync'};
             elseif ismember(i, 31:60)
-                M.trial(ind) = i - 30;
-                inds = find(ind);
-                for j = 1:length(inds)
-                    M.stim{inds(j)} = 'mir';
-                end
+                TMP.stim = {'mir'};
+                TMP.trial(1) = TMP.trial(1) - 30;
             else
-                    disp(i)
-                    error('Too many trials.')
+                error('Too many trials.')
+            end
+
+            % add the rest of M by trials (mutiple taps into one table row)
+            names = M.Properties.VariableNames;
+            for j = 1:length(names)
+                TMP.(names{j}) = {M.(names{j})(ind)};
+            end
+
+            if i == 1
+                OUT = TMP;
+            else
+                OUT = [OUT; TMP]; %#ok<AGROW>
             end
         end
+        M = OUT;
         M.stim = categorical(M.stim);
 
-        % reorder columns
+        % reorder and restrict to a few needed columns only
         M = M(:, {'stim', 'trial', 'onset', 'duration', 'velocity'});
         
+
         varout = M;
 
     case 'eeg'
