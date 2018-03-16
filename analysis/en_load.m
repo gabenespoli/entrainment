@@ -55,9 +55,11 @@ switch lower(filetype)
             'numMarkers',       60);    % TODO this should be based on rm and missed portcodes
         times = times / Fs; % convert from samples to seconds
         if ~iscolumn(times), times = transpose(times); end % make column vector
+        if length(times) ~= 60, error('There aren''t 60 trials.'), end
 
         % add column for trial number
         M.trial = zeros(height(M), 1);
+        M.stim = cell(height(M), 1);
         for i = 1:length(times)
             % get inds of M that match the current time
             if i < length(times)
@@ -65,8 +67,28 @@ switch lower(filetype)
             else
                 ind = M.onset >= times(i);
             end
-            M.trial(ind) = i;
+            % add stim and trial columns
+            if ismember(i, 1:30)
+                M.trial(ind) = i;
+                inds = find(ind);
+                for j = 1:length(inds)
+                    M.stim{inds(j)} = 'sync';
+                end
+            elseif ismember(i, 31:60)
+                M.trial(ind) = i - 30;
+                inds = find(ind);
+                for j = 1:length(inds)
+                    M.stim{inds(j)} = 'mir';
+                end
+            else
+                    disp(i)
+                    error('Too many trials.')
+            end
         end
+        M.stim = categorical(M.stim);
+
+        % reorder columns
+        M = M(:, {'stim', 'trial', 'onset', 'duration', 'velocity'});
         
         varout = M;
 
@@ -146,7 +168,7 @@ switch lower(filetype)
         end
         varout = d;
 
-        %% stimulus info
+    %% stimulus info
     case {'stiminfo'}
         S = readtable(en_getpath('stiminfo'));
 
