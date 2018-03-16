@@ -28,7 +28,7 @@
 %   'rmzeros'     = [boolean] If true removes zeros before averaging.
 %                   Default false.
 %   'sigstar'     = [cell] Args to pass to sigstar.m.
-%   'save'        = [string] Filename to save the plot.
+%   'save'        = [string|cell of strings] Filename(s) to save the plot.
 %   'ax'          = [axis handle] Axis handle to plot onto.
 %   'fig'         = [figure handle] Figure handle to plot into.
 % 
@@ -164,7 +164,17 @@ if pretty
     set(fig,'color','w')
 end
 
-if ~isempty(filename), savefig(filename), end
+if ~isempty(filename)
+    filename = cellstr(filename);
+    for i = 1:length(filename)
+        [~, ~, ext] = fileparts(filename{i});
+        if strcmpi(ext, '.png')
+            print(filename, '-dpng')
+        else
+            savefig(filename)
+        end
+    end
+end
 
 end
 
