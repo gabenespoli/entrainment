@@ -12,7 +12,7 @@ region = 'pmc';
 % remove first arg if it's a table
 if istable(varargin{1})
     T = varargin{1};
-    varargin{1} = [];
+    varargin(1) = [];
 else
     T = [];
 end
