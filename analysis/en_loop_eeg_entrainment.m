@@ -20,7 +20,7 @@ function en_loop_eeg_entrainment(ids, varargin)
 
 % if ids is actually a parameter (i.e., the ids var was left out entirely,
 %   then add it to varargin; ids will have already been set below
-if ischar(ids)
+if nargin > 0 && ischar(ids)
     varargin = [{ids} varargin];
 end
 
