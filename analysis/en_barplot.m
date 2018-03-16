@@ -55,7 +55,7 @@ switch lower(var)
 end
 
 switch lower(var)
-    case {'mot', 'pmc', 'pmm', 'aud'},  yl = [0 0.015];
+    case {'mot', 'pmc', 'pmm', 'aud'},  yl = [0 0.016];
     case {'move'},                      yl = [1 7];
     otherwise,                          yl = [];
 end
