@@ -169,9 +169,9 @@ if ~isempty(filename)
     for i = 1:length(filename)
         [~, ~, ext] = fileparts(filename{i});
         if strcmpi(ext, '.png')
-            print(filename, '-dpng')
+            print(filename{i}, '-dpng')
         else
-            savefig(filename)
+            savefig(filename{i})
         end
     end
 end
