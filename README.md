@@ -34,12 +34,12 @@ project_folder/
     |-- bdf/                (raw EEG recordings)  
         |-- 20180101A.bdf  
 
-    |-- eeg/                (output from en_eeg_preprocess)  
+    |-- eeg/                (output data from en_eeg_preprocess)  
         |-- 1.set  
         |-- 1.fdt  
         |-- 1_portcodes.txt  
 
-    |-- eeg_goodcomps/     (output from en_eeg_entrainment)  
+    |-- eeg_goodcomps/      (output plots from en_eeg_entrainment)  
         |-- aud
             |-- 1_dipplot.png  
             |-- 1_topoplot.png  
@@ -50,11 +50,11 @@ project_folder/
             |-- 1_dipplot.png  
             |-- 1_topoplot.png  
 
-    |-- eeg_entrainment/    (output from en_eeg_entrainment)  
+    |-- eeg_entrainment/    (output data from en_eeg_entrainment)  
         |-- 1_aud.csv  
         |-- 1_pmc.csv  
 
-    |-- eeg_topoplots/      (output from en_eeg_preprocess)  
+    |-- eeg_topoplots/      (output plots from en_eeg_preprocess)  
         |-- 1_topoplot.fig  
         |-- 1_topoplot.png  
 
@@ -111,9 +111,7 @@ The diary.csv file can be considered a sort of configuration file for the analys
 
 Each function list is loosely in the order that they would be used in the processing pipeline.
 
-#### Project Macros
-
-These functions are used for performing a whole section of the analysis pipeline and batch processing. They mostly contain calls to the other functions in the lists below.
+#### Project Macros: Perform a whole section of the analysis pipeline and batch processing. These mostly contain calls to the other functions in the lists below.
 
 - `en_eeg_preprocess`: A macro that runs `en_readbdf` and a number of [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) functions to pre-process EEG data, including ICA and dipole fitting. Resultant .set files are saved to `en_getpath('eeg')`.
 
@@ -123,17 +121,13 @@ These functions are used for performing a whole section of the analysis pipeline
 
 - `en_loop_eeg_entrainment`: Loops through specified IDs and runs `en_eeg_entrainment`.
 
-#### Project Utilities
-
-These functions simplify finding and loading files.
+#### Project Utilities: Simplify finding and loading files.
 
 - `en_getpath`: Takes a keyword as input and returns a directory or file path. All functions in this "toolbox" use this function to get path names. This means that you can move these scripts to a different computer or port them to a different project, and will only have to change this file in order for everything to work (theoretically). Note that in order for the `en_load` function to properly detect if a toolbox has been loaded, these have to be absolute paths.
 
 - `en_load`: Takes a keyword (and optionally an ID number), and loads the specified file into the MATLAB workspace. Can also start [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) from the path specified in `en_getpath('eeglab')`.
 
-#### Project EEG Analysis
-
-These include wrappers on EEGLAB functions (mostly EEG preprocessing) and custom scripts for spectral analyses.
+#### Project EEG Analysis: These include wrappers on EEGLAB functions (mostly EEG preprocessing) and custom scripts for spectral analyses.
 
 - `en_readbdf`: Takes an ID number as input, gets their .bdf filenames from `en_diary.csv`, and reads those files into an [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) .set file (if there are multiple .bdf files, they are merged). It also converts the channel labels from the BioSemi alphabetical labels into [Oostenveld](http://robertoostenveld.nl/electrode/)'s 10-5 system.
 
@@ -141,9 +135,7 @@ These include wrappers on EEGLAB functions (mostly EEG preprocessing) and custom
 
 - `en_dipfit`: Wrapper on [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) functions for dipole fitting using the Boundary Element Model (BEM).
 
-#### General EEG Analysis
-
-Some EEG-related functions for preprocessing and spectral analysis that will work outside of this project.
+#### General EEG Analysis: Some EEG-related functions for preprocessing and spectral analysis that will work outside of this project.
 
 - `alpha2fivepct`: Takes an EEG struct or a cell of strings, and remaps channel labels from BioSemi alphabetical labels to [Oostenveld](http://robertoostenveld.nl/electrode/)'s 10-5 system.
 
