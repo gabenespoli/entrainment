@@ -154,3 +154,7 @@ Each function list is loosely in the order that they would be used in the proces
 - `noisefloor3`: For each value in the data, remove the mean of surrounding values. This version expects data to be channels-by-time-by-trials (e.g., EEGLAB's EEG.data).
 
 - `getbins3`: Given some data and a vector of labels, get the value (or mean/max/min) of data for specified labels. This is used to get the max spectral value at a given frequency.
+
+## MATLAB
+
+These scripts were written using MATLAB R2017a.
