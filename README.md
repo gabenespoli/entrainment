@@ -91,7 +91,7 @@ The diary.csv file can be considered a sort of configuration file for the analys
 
 - **order** = [numeric, 1 or 2] This is used by the `en_epoch` function.
 
-- **bdffile** = [comma-separated list of strings]
+- **bdffile** = [comma-separated list of strings] List of bdf (raw BioSemi EEG data) files associated with this id. Don't include the ".bdf". If there are multiple files, `en_readbdf` will read them all and merge them using EEGLAB's `pop_mergeset`.
 
 - **eventchans** = [numeric] The channel from which the portcode information should be extracted. Used by the `en_readbdf` function.
 
