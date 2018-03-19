@@ -1,7 +1,7 @@
 %% en_epoch
 % EEG = en_epoch(EEG, stim, task [, timelim])
 
-function EEG = en_epoch(EEG, stim, trig, timelim)
+function EEG = en_epoch(EEG, stim, task, timelim)
 
 if ~ismember(lower(stim), {'sync', 'mir'})
     error('Invalid stim.')
