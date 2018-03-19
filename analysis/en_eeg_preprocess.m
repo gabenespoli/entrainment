@@ -5,11 +5,12 @@
 %   1. en_readbdf:       Load raw data
 %   2. en_diary.csv:     Remove channels that were manually marked as bad
 %   3. averageReference: Average reference controlling for rank
-%   4. pop_eegfiltnew:   High-pass filter at 1 Hz
+%   4. pop_eegfiltnew:   High-pass filter at 1 Hz for ICA, 0.5 Hz for EEG
 %   5. clean_artifacts:  Automatically find and remove bad channels
-%   6. averageReference: Average reference again
-%   7. en_epoch:         Extract epochs
-%   8. pop_runica:       Run independent components analysis (ICA)
+%   6. en_epoch:         Extract epochs
+%   7. averageReference: Average reference again
+%   8. pop_runica:       Run independent components analysis (ICA) on 1 Hz,
+%                        HP data, import weights into 0.5 Hz HP data.
 %   9. en_dipfit:        Fit dipoles
 %  10. pop_saveset:      Save the EEG .set file to en_getpath('eeg')
 %  11. pop_topoplot:     Save IC maps w/dipoles to en_getpath('topoplots')
@@ -46,16 +47,36 @@ if ~isempty(d.rmchans{1}{1})
 end
 
 %% preprocess
+% pipeline 1: ICA, higher HP filter, do ICA
+% pipeline 2: EEG, import ICA weights from pipeline 1
 % EEG = pop_resample(EEG, 128); % downsampling
 EEG.data = averageReference(EEG.data);
-EEG = pop_eegfiltnew(EEG, 1);
-EEG = clean_artifacts(EEG, ...  % find bad channels and remove
+
+% filter
+ICA = pop_eegfiltnew(EEG, 1); % higher HP for better ICA
+EEG = pop_eegfiltnew(EEG, 0.5); % slowest beat is 1.5, group by 2 = 0.75
+
+% remove bad channels from ICA, remove those same channels from EEG
+ICA = clean_artifacts(ICA, ...
     'Highpass',         'off', ...
     'BurstCriterion',   'off', ...
     'WindowCriterion',  'off');
-EEG.data = averageReference(EEG.data);
+EEG = pop_select(EEG, 'channel', find(ICA.etc.clean_channel_mask));
+
+% extract epochs
+ICA = en_epoch(ICA, stim, task);
 EEG = en_epoch(EEG, stim, task);
-EEG = pop_runica(EEG, 'extended', 1);
+
+% average reference before ICA
+ICA.data = averageReference(ICA.data);
+EEG.data = averageReference(EEG.data);
+
+% run ICA on ICA, import weights into EEG
+ICA = pop_runica(ICA, 'extended', 1);
+EEG.icaweights = ICA.icaweights;
+EEG.icasphere = ICA.icasphere;
+
+% fit dipoles
 EEG = en_dipfit(EEG);
 
 %% save file
