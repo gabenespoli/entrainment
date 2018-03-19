@@ -26,10 +26,10 @@ for i = 1:length(ids)
     id = ids(i);
 
     for currentStim = 1:length(stims)
-        stim = stim{currentStim};
+        stim = stims{currentStim};
 
         for currentTask = 1:length(tasks)
-            task = task{currentTask};
+            task = tasks{currentTask};
             timeLogInd = length(timeLog) + 1;
 
                 % start diary file to save command window output
