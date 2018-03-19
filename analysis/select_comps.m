@@ -2,12 +2,11 @@
 %   Get component numbers filtered by region and residual variance.
 %
 % Usage:
-%   comps = en_select_comps(EEG, region, rv, ind)
+%   comps = en_select_comps(EEG, rv, region, ind)
 %
 % Input:
-%   EEG = [struct|numeric] Either a preprocessed EEGLAB structure with ICA
-%       weights and dipole information, or a participant ID so that
-%       en_load can be used to load the EEG struct.
+%   EEG = [struct] A preprocessed EEGLAB structure with ICA weights and
+%       dipole information.
 %
 %   rv = [numeric between 0 and 1] Residual variance threshold.
 %       Default [] (empty; don't filter by residual variance).
@@ -21,7 +20,6 @@
 %
 % Output:
 %   comps = [numeric] List of component numbers that matched all criteria.
-%
 
 function comps = select_comps(EEG, rv, region, ind)
 
