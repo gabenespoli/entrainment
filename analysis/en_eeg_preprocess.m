@@ -82,7 +82,7 @@ EEG = en_dipfit(EEG);
 %% save file
 EEG.setname = num2str(id);
 EEG = pop_saveset(EEG, ...
-    'filepath', en_getpath('eeg'), ...
+    'filepath', fullfile(en_getpath('eeg'), [stim, '_', task]), ...
     'filename', [EEG.setname,'.set']);
 
 %% save topoplot of components & dipoles
@@ -94,8 +94,8 @@ pop_topoplot(EEG, ...
      1, ...                     % plot dipoles too
      'electrodes', 'off');
 
-savefig(fullfile(en_getpath('topoplots'), [EEG.setname, '_topoplot.fig']))
-print(fullfile(en_getpath('topoplots'),   [EEG.setname, '_topoplot.png']), '-dpng')
+savefig(fullfile(en_getpath('topoplots'), [stim, '_', task], [EEG.setname, '_topoplot.fig']))
+print(fullfile(en_getpath('topoplots'),   [stim, '_', task], [EEG.setname, '_topoplot.png']), '-dpng')
 close(gcf)
 
 end

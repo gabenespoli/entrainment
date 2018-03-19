@@ -6,44 +6,59 @@
 % Usage:
 %   en_eeg_loop(ids, stim, task)
 
-function en_loop_eeg_preprocess(ids, stim, task)
+function en_loop_eeg_preprocess(ids, stims, tasks)
 if nargin < 1 || isempty(ids)
     d = en_load('diary', 'incl');
     ids = d.id;
 end
-if nargin < 2 || isempty(stim), stim = 'sync'; end
-if nargin < 3 || isempty(task), task = 'eeg'; end
+if nargin < 2 || isempty(stims), stims = 'sync'; end
+if nargin < 3 || isempty(tasks), tasks = 'eeg'; end
+
+% make them cells so we can loop them
+stims = cellstr(stims);
+tasks = cellstr(tasks);
 
 startTime = clock;
 startTimeStr = datestr(startTime, 'yyyy-mm-dd_HH-MM-SS');
-timeLog = cell(1, length(ids));
+timeLog = cell(0);
 
 for i = 1:length(ids)
     id = ids(i);
 
-    % start diary file to save command window output
-    diary(fullfile(en_getpath('eeg'), ...
-        [num2str(id), '_en_eeg_preprocess_', startTimeStr, '.txt']))
+    for currentStim = 1:length(stims)
+        stim = stim{currentStim};
 
-    fprintf('Participant ID: %i\n', id)
-    fprintf('This ID started: %s\n', datestr(now, 'yyyy-mm-dd_HH-MM-SS'));
-    fprintf('Loop started: %s\n', startTimeStr)
-    startTimeID = clock;
+        for currentTask = 1:length(tasks)
+            task = task{currentTask};
+            timeLogInd = length(timeLog) + 1;
 
-    try
-        en_preprocess_eeg(id, stim, task);
+                % start diary file to save command window output
+                diary(fullfile(en_getpath('eeg'), ...
+                    [num2str(id), '_', stim '_', task, '_log_', startTimeStr, '.txt']))
 
-    catch err
-        % save error message
-        timeLog{i} = [' ** Error **\n', getReport(err)];
+                fprintf('Participant ID: %i\n', id)
+                fprintf('Stimulus set: %s\n', stim)
+                fprintf('Task: %s\n', task)
+                fprintf('Loop started: %s\n', startTimeStr)
+                fprintf('This ID started: %s\n', datestr(now, 'yyyy-mm-dd_HH-MM-SS'));
+                startTimeID = clock;
 
+                try
+                    en_eeg_preprocess(id, stim, task);
+
+                catch err
+                    % save error message
+                    timeLog{timeLogInd} = [' ** Error **\n', getReport(err)];
+
+                end
+
+                % save and print the elapsed time for this id
+                timeLog{timeLogInd} = [getElapsedTime(startTimeID), timeLog{timeLogInd}];
+                fprintf('%s\n', timeLog{timeLogInd})
+
+                diary off
+        end
     end
-
-    % save and print the elapsed time for this id
-    timeLog{i} = [getElapsedTime(startTimeID), timeLog{i}];
-    fprintf('%s\n', timeLog{i})
-
-    diary off
 end
 
 % save elapsed time and errors for all ids to file
