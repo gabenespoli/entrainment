@@ -36,11 +36,11 @@ for i = 1:length(ids)
                 diary(fullfile(en_getpath('eeg'), ...
                     [num2str(id), '_', stim '_', task, '_log_', startTimeStr, '.txt']))
 
-                fprintf('Participant ID: %i\n', id)
-                fprintf('Stimulus set: %s\n', stim)
-                fprintf('Task: %s\n', task)
-                fprintf('Loop started: %s\n', startTimeStr)
-                fprintf('This ID started: %s\n', datestr(now, 'yyyy-mm-dd_HH-MM-SS'));
+                fprintf('Participant ID:    %i\n', id)
+                fprintf('Stimulus set:      %s\n', stim)
+                fprintf('Task:              %s\n', task)
+                fprintf('Loop started:      %s\n', startTimeStr)
+                fprintf('This ID started:   %s\n', datestr(now, 'yyyy-mm-dd_HH-MM-SS'));
                 startTimeID = clock;
 
                 try
