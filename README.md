@@ -43,7 +43,7 @@ writetable(T, 'mydata.csv');
 
 ### Preparing the Project Folder
 
-The function `en_getpath` is used to access all required directory paths and files for the rest of the scripts in this toolbox (except for the "General EEG Analysis" functions, which don't require any external paths or files). Paths can be edited, added, or removed from that function as needed. Here is the folder structure for the current project, with some example filenames:
+The function `en_getpath` is used to access all required directory paths and files for the rest of the scripts in this toolbox (except for the [General EEG Analysis](#analysis-general-eeg-analysis) functions, which don't require any external paths or files). Paths can be edited, added, or removed from that function as needed. Here is the folder structure for the current project, with some example filenames:
 
 ```
 project_folder/  
