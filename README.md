@@ -1,8 +1,27 @@
 # Neural Entrainment Scripts
 
-These MATLAB scripts were used for a project measuring neural entrainment using EEG. The `task` folder is for presenting stimuli on a Windows computer, and was used to send port codes to a BioSemi EEG recording system. The `analysis` folder is a combination of wrapper scripts for [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) (mostly for preprocessing), and custom functions for selecting independent components by location and measuring entrainment.
+These MATLAB scripts were used for a project measuring neural entrainment using EEG. I have put them here with the hope that they will be useful to others interested in analyzing EEG data. They can be used as a template for another analysis or for inspiration. Many of the scripts can be used outside of this project (see the [General EEG Analysis](#analysis-general-eeg-analysis) section).
+
+The `task` folder is for presenting stimuli on a Windows computer, and was used to send port codes to a BioSemi EEG recording system. The `analysis` folder is a combination of wrapper scripts for [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) (mostly for preprocessing), and custom functions for selecting independent components by location and measuring entrainment.
+
+## Table of Contents
+
+1. [Analysis](#analysis)
+    1. [Running the Pipeline](#analysis-running-the-pipeline)
+    2. [Preparing the Project Folder](#analysis-preparing-the-project-folder)
+    3. [The Diary File](#analysis-the-diary-file)
+    4. [List of Analysis Functions](#analysis-list-of-analysis-functions)
+        1. [Project Macros](#analysis-functions-project-macros)
+        2. [Project Utilities](#analysis-functions-project-utilities)
+        3. [Project EEG Analysis](#analysis-project-eeg-analysis)
+        4. [General EEG Analysis](#analysis-general-eeg-analysis)
+2. [MATLAB](#matlab)
+
+<a name="analysis">
 
 ## Analysis
+
+<a name="analysis-running-the-pipeline">
 
 ### Running the Pipeline
 
@@ -19,6 +38,8 @@ en_loop_eeg_entrainment(ids);
 T = en_getdata(ids);
 writetable(T, 'mydata.csv');
 ```
+
+<a name="analysis-preparing-the-project-folder"></a>
 
 ### Preparing the Project Folder
 
@@ -81,7 +102,9 @@ project_folder/
 
 Note: the task scripts save the logfiles in the task/logfiles folder; these files should be moved to the logfiles folder for analysis.
 
-### The diary.csv file
+<a name="analysis-the-diary-file"></a>
+
+### The Diary File
 
 The diary.csv file can be considered a sort of configuration file for the analysis. It should contain the following columns, with each row representing a single participant:
 
@@ -107,9 +130,13 @@ The diary.csv file can be considered a sort of configuration file for the analys
 
 - **dipolar_comps** = [comma-separated list of numbers] After running `en_eeg_preprocess`, look at the topographical plots that are saved and mark down which components are dipolar. This field is used by `en_eeg_entrainment` to select good components with `select_comps`. See Delorme, Palmer, Onton, Oostenveld, & Makeig (2012; PLOS ONE) for more information.
 
+<a name="analysis-list-of-analysis-functions"></a>
+
 ### List of Analysis Functions
 
 Each function list is loosely in the order that they would be used in the processing pipeline.
+
+<a name="analysis-project-macros"></a>
 
 #### Project Macros: Perform a whole section of the analysis pipeline and batch processing. These mostly contain calls to the other functions in the lists below.
 
@@ -121,11 +148,15 @@ Each function list is loosely in the order that they would be used in the proces
 
 - `en_loop_eeg_entrainment`: Loops through specified IDs and runs `en_eeg_entrainment`.
 
+<a name="analysis-project-utilities"></a>
+
 #### Project Utilities: Simplify finding and loading files.
 
 - `en_getpath`: Takes a keyword as input and returns a directory or file path. All functions in this "toolbox" use this function to get path names. This means that you can move these scripts to a different computer or port them to a different project, and will only have to change this file in order for everything to work (theoretically). Note that in order for the `en_load` function to properly detect if a toolbox has been loaded, these have to be absolute paths.
 
 - `en_load`: Takes a keyword (and optionally an ID number), and loads the specified file into the MATLAB workspace. Can also start [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) from the path specified in `en_getpath('eeglab')`.
+
+<a name="analysis-project-eeg-analysis"></a>
 
 #### Project EEG Analysis: These include wrappers on EEGLAB functions (mostly EEG preprocessing) and custom scripts for spectral analyses.
 
@@ -134,6 +165,8 @@ Each function list is loosely in the order that they would be used in the proces
 - `en_epoch`: Epochs an EEG struct using [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) based on portcodes which are specified with keywords. This function in particular is highly specialized for the current study, and will require lots of editing to work for a different study.
 
 - `en_dipfit`: Wrapper on [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) functions for dipole fitting using the Boundary Element Model (BEM).
+
+<a name="analysis-general-eeg"></a>
 
 #### General EEG Analysis: Some EEG-related functions for preprocessing and spectral analysis that will work outside of this project.
 
@@ -154,6 +187,8 @@ Each function list is loosely in the order that they would be used in the proces
 - `noisefloor3`: For each value in the data, remove the mean of surrounding values. This version expects data to be channels-by-time-by-trials (e.g., EEGLAB's EEG.data).
 
 - `getbins3`: Given some data and a vector of labels, get the value (or mean/max/min) of data for specified labels. This is used to get the max spectral value at a given frequency.
+
+<a name="matlab"></a>
 
 ## MATLAB
 
