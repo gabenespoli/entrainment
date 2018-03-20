@@ -48,55 +48,22 @@ The function `en_getpath` is used to access all required directory paths and fil
 ```
 project_folder/  
 |-- analysis/  
-    |-- en_diary.csv  
+    |-- en_diary.csv
     |-- (all the other files in the analysis folder)  
-
 |-- data/  
-    |-- bdf/                (raw EEG recordings)  
-        |-- 20180101A.bdf  
-
-    |-- eeg/                (output data from en_eeg_preprocess)  
-        |-- 1.set  
-        |-- 1.fdt  
-        |-- 1_portcodes.txt  
-
-    |-- eeg_goodcomps/      (output plots from en_eeg_entrainment)  
-        |-- aud
-            |-- 1_dipplot.png  
-            |-- 1_topoplot.png  
+    |-- bdf/              (.bdf files of raw EEG recordings)  
+    |-- eeg/              (.set files from en_eeg_preprocess)  
+    |-- eeg_goodcomps/    (.png topo- and dip-plots from en_eeg_entrainment)  
+        |-- aud           (subfolder for a specific brain region)
         |-- mot
-            |-- 1_dipplot.png  
-            |-- 1_topoplot.png  
         |-- pmc
-            |-- 1_dipplot.png  
-            |-- 1_topoplot.png  
-
-    |-- eeg_entrainment/    (output data from en_eeg_entrainment)  
-        |-- 1_aud.csv  
-        |-- 1_pmc.csv  
-
-    |-- eeg_topoplots/      (output plots from en_eeg_preprocess)  
-        |-- 1_topoplot.fig  
-        |-- 1_topoplot.png  
-
-    |-- logfiles/           (output from the task)  
-        |-- 1_mir_eeg.csv  
-        |-- 1_mir_eeg_trialList.txt  
-        |-- 1_mir_tapping.csv  
-        |-- 1_mir_tapping_trialList.txt  
-        |-- 1_sync_eeg.csv  
-        |-- 1_sync_eeg_trialList.txt  
-        |-- 1_sync_tapping.csv  
-        |-- 1_sync_tapping_trialList.txt  
-
-    |-- midi/               (raw tapping files exported from ProTools)
-        |-- 6.mid
-        |-- 6.wav
-
-|-- eeglab/                 (EEGLAB toolbox)  
-
-|-- task/               (this folder is moved to the stim pres comp)
-    |-- logfiles/       (these are just logfiles from testing)
+    |-- eeg_entrainment/  (.csv files from en_eeg_entrainment)  
+    |-- eeg_topoplots/    (.fig and .png topoplots files from en_eeg_preprocess)  
+    |-- logfiles/         (.csv and .txt files copied from task/logfiles)
+    |-- midi/             (.mid and .wav tapping files exported from Pro Tools)
+|-- eeglab/               (EEGLAB toolbox)  
+|-- task/                 (this folder is moved to the stim pres comp)
+    |-- logfiles/         (these are just logfiles from testing)
 
 ```
 
