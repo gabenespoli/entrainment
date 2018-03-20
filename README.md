@@ -13,8 +13,8 @@ The `task` folder is for presenting stimuli on a Windows computer, and was used 
     4. [List of Analysis Functions](#analysis-list-of-analysis-functions)
         1. [Project Macros](#analysis-functions-project-macros)
         2. [Project Utilities](#analysis-functions-project-utilities)
-        3. [Project EEG Analysis](#analysis-project-eeg-analysis)
-        4. [General EEG Analysis](#analysis-general-eeg-analysis)
+        3. [Project EEG Analysis](#analysis-functions-project-eeg-analysis)
+        4. [General EEG Analysis](#analysis-functions-general-eeg-analysis)
 2. [MATLAB](#matlab)
 
 <a name="analysis">
@@ -136,7 +136,7 @@ The diary.csv file can be considered a sort of configuration file for the analys
 
 Each function list is loosely in the order that they would be used in the processing pipeline.
 
-<a name="analysis-project-macros"></a>
+<a name="analysis-functions-project-macros"></a>
 
 #### Project Macros: Perform a whole section of the analysis pipeline and batch processing. These mostly contain calls to the other functions in the lists below.
 
@@ -148,7 +148,7 @@ Each function list is loosely in the order that they would be used in the proces
 
 - `en_loop_eeg_entrainment`: Loops through specified IDs and runs `en_eeg_entrainment`.
 
-<a name="analysis-project-utilities"></a>
+<a name="analysis-functions-project-utilities"></a>
 
 #### Project Utilities: Simplify finding and loading files.
 
@@ -156,7 +156,7 @@ Each function list is loosely in the order that they would be used in the proces
 
 - `en_load`: Takes a keyword (and optionally an ID number), and loads the specified file into the MATLAB workspace. Can also start [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) from the path specified in `en_getpath('eeglab')`.
 
-<a name="analysis-project-eeg-analysis"></a>
+<a name="analysis-functions-project-eeg-analysis"></a>
 
 #### Project EEG Analysis: These include wrappers on EEGLAB functions (mostly EEG preprocessing) and custom scripts for spectral analyses.
 
@@ -166,7 +166,7 @@ Each function list is loosely in the order that they would be used in the proces
 
 - `en_dipfit`: Wrapper on [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) functions for dipole fitting using the Boundary Element Model (BEM).
 
-<a name="analysis-general-eeg"></a>
+<a name="analysis-functions-general-eeg"></a>
 
 #### General EEG Analysis: Some EEG-related functions for preprocessing and spectral analysis that will work outside of this project.
 
