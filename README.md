@@ -166,7 +166,7 @@ Each function list is loosely in the order that they would be used in the proces
 
 - `en_dipfit`: Wrapper on [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) functions for dipole fitting using the Boundary Element Model (BEM).
 
-<a name="analysis-functions-general-eeg"></a>
+<a name="analysis-functions-general-eeg-analysis"></a>
 
 #### General EEG Analysis: Some EEG-related functions for preprocessing and spectral analysis that will work outside of this project.
 
