@@ -109,7 +109,7 @@ Note: the task scripts save the logfiles in the task/logfiles folder; these file
 The diary.csv file can be considered a sort of configuration file for the analysis. It should contain the following columns, with each row representing a single participant:
 
 | variable | type | description |
-| --- | --- |
+| --- | --- | --- |
 | id | [numeric] | Each row should be a unique number. When calling the functions in this toolbox, use this number to refer to a specific participant. |
 | incl | [boolean; 1 or 0] | Whether or not to include this participant in the analysis. When calling the "getdata" or looping functions in this toolbox, leaving the id argument empty will use all id's that have a 1 here. |
 | order | [numeric, 1 or 2] | This is used by the `en_epoch` function. |
