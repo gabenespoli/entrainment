@@ -46,25 +46,26 @@ writetable(T, 'mydata.csv');
 The function `en_getpath` is used to access all required directory paths and files for the rest of the scripts in this toolbox (except for the [General EEG Analysis](#analysis-functions-general-eeg-analysis) functions, which don't require any external paths or files). Paths can be edited, added, or removed from that function as needed. Here is the folder structure for the current project, with some example filenames:
 
 ```
-project_folder/  
-|-- analysis/  
-    |-- en_diary.csv
-    |-- (all the other files in the analysis folder)  
-|-- data/  
-    |-- bdf/              (.bdf files of raw EEG recordings)  
-    |-- eeg/              (.set files from en_eeg_preprocess)  
-    |-- eeg_goodcomps/    (.png topo- and dip-plots from en_eeg_entrainment)  
-        |-- aud           (subfolder for a specific brain region)
-        |-- mot
-        |-- pmc
-    |-- eeg_entrainment/  (.csv files from en_eeg_entrainment)  
-    |-- eeg_topoplots/    (.fig and .png topoplots files from en_eeg_preprocess)  
-    |-- logfiles/         (.csv and .txt files copied from task/logfiles)
-    |-- midi/             (.mid and .wav tapping files exported from Pro Tools)
-|-- eeglab/               (EEGLAB toolbox)  
-|-- task/                 (this folder is moved to the stim pres comp)
-    |-- logfiles/         (these are just logfiles from testing)
-
+project_folder/         set this in en_getpath
+├─ analysis/            the folder from this repository
+|  └─ en_diary.csv      this file should be edited with your own data
+|
+├─ data/  
+|  ├─ bdf/              .bdf files of raw EEG recordings  
+|  ├─ eeg/              .set files from en_eeg_preprocess  
+|  ├─ eeg_goodcomps/    .png topo- and dip-plots from en_eeg_entrainment  
+|  |  ├─ aud            subfolder for a specific brain region
+|  |  └─ pmc
+|  |
+|  ├─ eeg_entrainment/  .csv files from en_eeg_entrainment  
+|  ├─ eeg_topoplots/    .fig and .png topoplots files from en_eeg_preprocess  
+|  ├─ logfiles/         .csv and .txt files should be copied from task/logfiles
+|  └─ midi/             .mid and .wav tapping files exported from Pro Tools
+|
+├─ eeglab/              EEGLAB toolbox (https://bitbucket.org/sccn_eeglab/eeglab.git)
+├─ miditoolbox1.1/      MIDI toolbox (https://github.com/miditoolbox/1.1) 
+└─ task/                from this repository; move to stimulus presentation computer
+   └─ logfiles/         these are just logfiles from testing
 ```
 
 Note: the task scripts save the logfiles in the task/logfiles folder; these files should be moved to the logfiles folder for analysis.
