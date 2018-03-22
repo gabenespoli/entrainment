@@ -2,46 +2,41 @@
 
 These MATLAB scripts were used for a project measuring neural entrainment using EEG. I have put them here with the hope that they will be useful to others interested in analyzing EEG data. They can be used as a template for another analysis or for inspiration. Many of the scripts can be used outside of this project (see the [General EEG Analysis](#analysis-functions-general-eeg-analysis) section).
 
-The `task` folder is for presenting stimuli on a Windows computer, and was used to send port codes to a BioSemi EEG recording system. The `analysis` folder is a combination of wrapper scripts for [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) (mostly for preprocessing), and custom functions for selecting independent components by location and measuring entrainment.
+The `analysis` folder is a combination of wrapper scripts for [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) (mostly for preprocessing), and custom functions for selecting independent components by location and measuring entrainment. The `task` folder is for presenting stimuli on a Windows computer, and was used to send port codes to a BioSemi EEG recording system.
 
 ## Table of Contents
 
 1. [Analysis](#analysis)
-    1. [Running the Pipeline](#analysis-running-the-pipeline)
-    2. [Preparing the Project Folder](#analysis-preparing-the-project-folder)
-    3. [The Diary File](#analysis-the-diary-file)
-    4. [List of Analysis Functions](#analysis-list-of-analysis-functions)
+    1. [Explanation of the Method](#analysis-explanation-of-the-method)
+    2. [Running the Analysis](#analysis-running-the-analysis)
+        1. [The Project Folder](#analysis-the-project-folder)
+        2. [The Diary File](#analysis-the-diary-file)
+        3. [Running the Whole Pipeline](#analysis-running-the-whole-pipeline)
+    3. [List of Analysis Functions](#analysis-list-of-analysis-functions)
         1. [Project Macros](#analysis-functions-project-macros)
         2. [Project Utilities](#analysis-functions-project-utilities)
         3. [Project EEG Analysis](#analysis-functions-project-eeg-analysis)
         4. [General EEG Analysis](#analysis-functions-general-eeg-analysis)
-2. [MATLAB](#matlab)
+2. [Task](#task)
+3. [MATLAB](#matlab)
 
 <a name="analysis">
 
 ## Analysis
 
+<a name="analysis-explanation-of-the-method">
+
+### Explanation of the Method
+
+Coming soon...
+
 <a name="analysis-running-the-pipeline">
 
-### Running the Pipeline
+### Running the Analysis
 
-The following code will run the entire EEG analysis pipeline from raw BDF files to a tabular data frame of entrainment values.
+<a name="analysis-the-project-folder"></a>
 
-```matlab
-% make sure paths in en_getpath are correct
-% set current folder to this analysis folder
-ids = 6:16;
-en_load('eeglab')
-en_loop_eeg_preprocess(ids);
-% look at topographical maps saved in en_getpath('topoplots') and mark down component numbers that are dipolar in en_diary.csv
-en_loop_eeg_entrainment(ids);
-T = en_getdata(ids);
-writetable(T, 'mydata.csv');
-```
-
-<a name="analysis-preparing-the-project-folder"></a>
-
-### Preparing the Project Folder
+#### The Project Folder
 
 The function `en_getpath` is used to access all required directory paths and files for the rest of the scripts in this toolbox (except for the [General EEG Analysis](#analysis-functions-general-eeg-analysis) functions, which don't require any external paths or files). Paths can be edited, added, or removed from that function as needed. Here is the folder structure for the current project, with some example filenames:
 
@@ -72,7 +67,7 @@ Note: the task scripts save the logfiles in the task/logfiles folder; these file
 
 <a name="analysis-the-diary-file"></a>
 
-### The Diary File
+#### The Diary File
 
 The diary.csv file can be considered a sort of configuration file for the analysis. It should contain the following columns, with each row representing a single participant:
 
@@ -89,6 +84,25 @@ The diary.csv file can be considered a sort of configuration file for the analys
 | experimenters   | [comma-separated list of strings]       | Initials of the experimenters for this participant's session. |
 | recording_notes | [semicolon-separated list of sentences] | Any notes from the EEG recording session that might be good to know. |
 | dipolar_comps   | [comma-separated list of numbers]       | After running `en_eeg_preprocess`, look at the topographical plots that are saved and mark down which components are dipolar. This field is used by `en_eeg_entrainment` to select good components with `select_comps`. See Delorme, Palmer, Onton, Oostenveld, & Makeig (2012; PLOS ONE) for more information. |
+
+<a name="analysis-running-the-whole-pipeline"></a>
+
+#### Running the Whole Pipeline
+
+The following code will run the entire analysis pipeline from raw data files to a tabular data frame of entrainment values.
+
+```matlab
+% make sure paths in en_getpath are correct
+% set current folder to this analysis folder
+ids = 6:16;
+en_load('eeglab')
+en_loop_eeg_preprocess(ids);
+% look at topographical maps saved in en_getpath('topoplots') and mark down component numbers that are dipolar in en_diary.csv
+en_loop_eeg_entrainment(ids);
+% MIDI analysis is coming soon...
+T = en_getdata(ids);
+writetable(T, 'mydata.csv');
+```
 
 <a name="analysis-list-of-analysis-functions"></a>
 
@@ -149,6 +163,12 @@ Some EEG-related functions for preprocessing and spectral analysis that will wor
 | `getfft3`                 | A fancy wrapper on MATLAB's `fft` function that expects data to be channels-by-time-by-trials (e.g., EEGLAB's EEG.data). |
 | `noisefloor3`             | For each value in the data, remove the mean of surrounding values. This version expects data to be channels-by-time-by-trials (e.g., EEGLAB's EEG.data). |
 | `getbins3`                | Given some data and a vector of labels, get the value (or mean/max/min) of data for specified labels. This is used to get the max spectral value at a given frequency. |
+
+<a name="task"></a>
+
+## Task
+
+Please see the documentation included in each of the functions in the task folder for an explanation of how they work.
 
 <a name="matlab"></a>
 
