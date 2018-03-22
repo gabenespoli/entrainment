@@ -43,22 +43,22 @@ The function `en_getpath` is used to access all required directory paths and fil
 ```
 project_folder/         set this in en_getpath
 ├─ analysis/            the folder from this repository
-|  └─ en_diary.csv      this file should be edited with your own data
-|
+│  └─ en_diary.csv      this file should be edited with your own data
+│
 ├─ data/  
-|  ├─ bdf/              .bdf files of raw EEG recordings  
-|  ├─ eeg/              .set files from en_eeg_preprocess  
-|  ├─ eeg_goodcomps/    .png topo- and dip-plots from en_eeg_entrainment  
-|  |  ├─ aud            subfolder for a specific brain region
-|  |  └─ pmc
-|  |
-|  ├─ eeg_entrainment/  .csv files from en_eeg_entrainment  
-|  ├─ eeg_topoplots/    .fig and .png topoplots files from en_eeg_preprocess  
-|  ├─ logfiles/         .csv and .txt files should be copied from task/logfiles
-|  └─ midi/             .mid and .wav tapping files exported from Pro Tools
-|
+│  ├─ bdf/              .bdf files of raw EEG recordings  
+│  ├─ eeg/              .set files from en_eeg_preprocess  
+│  ├─ eeg_goodcomps/    .png topo- and dip-plots from en_eeg_entrainment  
+│  │  └─ pmc            subfolder(s) for specific brain regions
+│  ├─ eeg_entrainment/  .csv files from en_eeg_entrainment  
+│  ├─ eeg_topoplots/    .fig and .png topoplots files from en_eeg_preprocess  
+│  ├─ logfiles/         .csv and .txt files should be copied from task/logfiles
+│  └─ midi/             .mid and .wav tapping files exported from Pro Tools
+│
 ├─ eeglab/              EEGLAB toolbox (https://bitbucket.org/sccn_eeglab/eeglab.git)
+│
 ├─ miditoolbox1.1/      MIDI toolbox (https://github.com/miditoolbox/1.1) 
+│
 └─ task/                from this repository; move to stimulus presentation computer
    └─ logfiles/         these are just logfiles from testing
 ```
