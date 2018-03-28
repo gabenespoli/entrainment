@@ -95,7 +95,7 @@ pop_topoplot(EEG, ...
      'electrodes', 'off');
 
 savefig(fullfile(en_getpath('topoplots'), [stim, '_', task], [EEG.setname, '_topoplot.fig']))
-print(fullfile(en_getpath('topoplots'),   [stim, '_', task], [EEG.setname, '_topoplot.png']), '-dpng')
+print(  fullfile(en_getpath('topoplots'), [stim, '_', task], [EEG.setname, '_topoplot.png']), '-dpng')
 close(gcf)
 
 end
