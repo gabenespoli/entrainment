@@ -91,7 +91,7 @@ pop_topoplot(EEG, ...
      1:size(EEG.icaact, 1), ... % comps/chans to plot
      ['id ', EEG.setname], ...  % plot title
      0, ...                     % rows/cols per page (0 = near square)
-     1, ...                     % plot dipoles too
+     0, ...                     % 1 to plot dipoles too
      'electrodes', 'off');
 
 savefig(fullfile(en_getpath('topoplots'), [stim, '_', task], [EEG.setname, '_topoplot.fig']))
