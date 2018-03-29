@@ -8,11 +8,12 @@
 
 function en_loop_eeg_preprocess(ids, stims, tasks)
 if nargin < 1 || isempty(ids)
+    % get ids marked as included
     d = en_load('diary', 'incl');
     ids = d.id;
 end
-if nargin < 2 || isempty(stims), stims = 'sync'; end
-if nargin < 3 || isempty(tasks), tasks = 'eeg'; end
+if nargin < 2 || isempty(stims), stims = {'sync', 'mir'}; end
+if nargin < 3 || isempty(tasks), tasks = {'eeg', 'tapping'}; end
 
 % make them cells so we can loop them
 stims = cellstr(stims);
@@ -33,9 +34,13 @@ for i = 1:length(ids)
             timeLogInd = length(timeLog) + 1;
 
                 % start diary file to save command window output
-                diary(fullfile(en_getpath('eeg'), ...
-                    [num2str(id), '_', stim '_', task, '_log_', startTimeStr, '.txt']))
+                diaryFilename = fullfile( ...
+                    en_getpath('eeg'), ...
+                    [stim, '_', task], ...
+                    [num2str(id), '_log_', startTimeStr, '.txt']);
+                diary(diaryFilename)
 
+                fprintf('Diary filename:    %s\n', diaryFilename)
                 fprintf('Participant ID:    %i\n', id)
                 fprintf('Stimulus set:      %s\n', stim)
                 fprintf('Task:              %s\n', task)
@@ -45,16 +50,16 @@ for i = 1:length(ids)
 
                 try
                     en_eeg_preprocess(id, stim, task);
+                    timeLog{timeLogInd} = '  ';
 
-                catch err
-                    % save error message
-                    timeLog{timeLogInd} = [' ** Error **\n', getReport(err)];
+                catch
+                    timeLog{timeLogInd} = '! ';
 
                 end
 
                 % save and print the elapsed time for this id
-                timeLog{timeLogInd} = [getElapsedTime(startTimeID), timeLog{timeLogInd}];
-                fprintf('%s\n', timeLog{timeLogInd})
+                timeLog{timeLogInd} = [timeLog{timeLogInd}, getElapsedTime(startTimeID)];
+                fprintf('%s\n\n', timeLog{timeLogInd})
 
                 diary off
         end
@@ -62,7 +67,7 @@ for i = 1:length(ids)
 end
 
 % save elapsed time and errors for all ids to file
-fid = fopen(fullfile(en_getpath('eeg'), ...
+fid = fopen(fullfile(en_getpath('analysis'), 'looplogs', ...
     ['loop_log_', startTimeStr, '.txt']), 'w');
 fprintf(fid, 'Loop summary\n');
 for i = 1:length(ids)
@@ -79,14 +84,15 @@ startTime = datevec(datenum(clock - startTime));
 ind = find(startTime == 0, 1, 'last') + 1;
 if isempty(ind), ind = 1; end
 switch ind
-    case 1, units = 'years';    x = nan;
+    case 1, str = 'years'; return
     case 2, units = 'months';   x = 12;
     case 3, units = 'days';     x = 30.436875;
     case 4, units = 'hours';    x = 24;
     case 5, units = 'minutes';  x = 60;
-    case 6, units = 'seconds';  x = 60;
+    case 6, str = [num2str(startTime(ind)), ' seconds']; return
 end
 % approximate time to make it readable
 t = startTime(ind) + startTime(ind + 1) / x;
 str = [num2str(t), ' ', units];
 end
+ 
