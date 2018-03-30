@@ -77,7 +77,10 @@ EEG.icaweights = ICA.icaweights;
 EEG.icasphere = ICA.icasphere;
 
 % fit dipoles
-EEG = en_dipfit(EEG);
+EEG = en_dipfit(EEG, ...
+    1:size(EEG.icaact, 1), ...  % channels to fit
+    40);                        % residual variance threshold
+
 
 %% save file
 EEG.setname = num2str(id);
