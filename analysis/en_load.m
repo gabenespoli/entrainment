@@ -235,7 +235,7 @@ switch lower(filetype)
             eeglab
         elseif isempty(id) % be verbose if id arg is given
             disp('EEGLAB is already on the MATLAB path.')
-            disp('Try typing `eeglab` or `eeglab redraw` in the command window.')
+            disp('Type `eeglab` or `eeglab redraw` in the command window to force restart it.')
         end
 
     case 'miditoolbox'
