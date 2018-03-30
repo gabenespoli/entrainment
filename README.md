@@ -38,10 +38,10 @@ Coming soon...
 
 #### The Project Folder
 
-The function `en_getpath` is used to access all required directory paths and files for the rest of the scripts in this toolbox (except for the [General EEG Analysis](#analysis-functions-general-eeg-analysis) functions, which don't require any external paths or files). Paths can be edited, added, or removed from that function as needed. Here is the folder structure for the current project, with some example filenames:
+The function `getpath` is used to access all required directory paths and files for the rest of the scripts in this toolbox (except for the [General EEG Analysis](#analysis-functions-general-eeg-analysis) functions, which don't require any external paths or files). Paths can be edited, added, or removed from that function as needed. Here is the folder structure for the current project, with some example filenames:
 
 ```
-project_folder/         set this in en_getpath
+project_folder/         set this in getroot
 ├─ analysis/            the folder from this repository
 │  └─ en_diary.csv      this file should be edited with your own data
 │
@@ -94,12 +94,14 @@ The diary.csv file can be considered a sort of configuration file for the analys
 The following code will run the entire analysis pipeline from raw data files to a tabular data frame of entrainment values.
 
 ```matlab
-% make sure paths in en_getpath are correct
-% set current folder to this analysis folder
-ids = 6:16;
-en_load('eeglab')
-en_preprocess(ids);
-% look at topographical maps saved in en_getpath('topoplots') and mark down component numbers that are dipolar in en_diary.csv
+% make a copy of getroot_example.m and rename it getroot.m
+% edit getroot.m to return the absolute path to the project root
+%   (i.e., the "project_folder" in the directory structure above)
+% set current folder to this analysis folder, or add it to the MATLAB path
+ids = 6:16; % specify the ids you would like to analyze
+en_load('eeglab') % adds eeglab to the MATLAB path
+en_preprocess(ids); % preprocess EEG and tapping data, saves topoplots
+% look at topographical maps saved in getpath('topoplots') and mark down component numbers that are dipolar in en_diary.csv
 en_loop_eeg_entrainment(ids);
 % MIDI analysis is coming soon...
 T = en_getdata(ids);
@@ -120,10 +122,10 @@ Perform a whole section of the analysis pipeline and batch processing. These mos
 
 | Function                  | Description                                                                                                                                                                                                                                                        |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `en_preprocess_eeg`       | A macro that runs `en_readbdf` and a number of [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) functions to pre-process EEG data, including ICA and dipole fitting. Resultant .set files are saved to `en_getpath('eeg')`.                                        |
+| `en_preprocess_eeg`       | A macro that runs `en_readbdf` and a number of [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) functions to pre-process EEG data, including ICA and dipole fitting. Resultant .set files are saved to `getpath('eeg')`.                                        |
 | `en_preprocess_tapping`   | A macro that loads the .wav file of stimuli that was exported from Pro Tools, searches for audio onsets to get the stimulus onset times, and uses these to epoch the MIDI tapping data. MIDI data is read using MIDI Toolbox and saved as a MATLAB table.          |
-| `en_preprocess`           | Loops through the specified IDs and runs `en_preprocess_eeg` and `en_preprocess_tapping`. All output from the command window is captured for each ID and saved to `en_getpath('eeg')`, as well as a summary file with processing times and any errors for each ID. |
-| `en_eeg_entrainment`      | A macro that takes an ID or EEGLAB struct and outputs a table of entrainment values for each trial. Resultant tables are saved as .csv files in `en_getpath('eeg_entrainment')`.                                                                                   |
+| `en_preprocess`           | Loops through the specified IDs and runs `en_preprocess_eeg` and `en_preprocess_tapping`. All output from the command window is captured for each ID and saved to `getpath('eeg')`, as well as a summary file with processing times and any errors for each ID. |
+| `en_eeg_entrainment`      | A macro that takes an ID or EEGLAB struct and outputs a table of entrainment values for each trial. Resultant tables are saved as .csv files in `getpath('eeg_entrainment')`.                                                                                   |
 | `en_loop_eeg_entrainment` | Loops through specified IDs and runs `en_eeg_entrainment`.                                                                                                                                                                                                         |
 
 <a name="analysis-functions-project-utilities"></a>
@@ -132,10 +134,11 @@ Perform a whole section of the analysis pipeline and batch processing. These mos
 
 Simplify finding and loading files.
 
-| Function                  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `en_getpath`              | Takes a keyword as input and returns a directory or file path. All functions in this "toolbox" use this function to get path names. This means that you can move these scripts to a different computer or port them to a different project, and will only have to change this file in order for everything to work (theoretically). Note that in order for the `en_load` function to properly detect if a toolbox has been loaded, these have to be absolute paths. |
-| `en_load`                 | Takes a keyword (and optionally an ID number), and loads the specified file into the MATLAB workspace. Can also start [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) from the path specified in `en_getpath('eeglab')`.                                                                                                                                                                                                                                           |
+| Function                  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `getroot`                 | This function should return the absolute path to the project root folder. It is used by getpath.m to find files and folders needed for the analysis                                                                                                                                                                                                                                                                                                   |
+| `getpath`                 | Takes a keyword as input and returns a directory or file path. All functions in this "toolbox" use this function to get path names. This means that you can move these scripts to a different computer or port them to a different project, and will only have to change this file in order for everything to work (theoretically). This function depends on getroot.m Note that you will have to create this file from the example that is provided. |
+| `en_load`                 | Takes a keyword (and optionally an ID number), and loads the specified file into the MATLAB workspace. Can also start [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) from the path specified in `getpath('eeglab')`.                                                                                                                                                                                                                                |
 
 <a name="analysis-functions-project-eeg-analysis"></a>
 

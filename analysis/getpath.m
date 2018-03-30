@@ -3,18 +3,18 @@
 %   scripts to get filenames and paths for project and data files. Editing
 %   the paths in this file will control which files the scripts act on.
 %
-%   This function depends on getprojectfolder.m. See
-%   getprojectfolder_example.m for instructions.
+%   This function depends on getroot.m. See
+%   getroot_example.m for instructions.
 
 function outpath = getpath(pathtype)
 
 % make sure project directory is set
-if exist('getprojectfolder', 'file') ~= 2 % make sure getprojectfolder.m exists
-    error('Don''t know what the project folder is. See getprojectfolder_example.m for instructions.')
+if exist('getroot', 'file') ~= 2 % make sure getroot.m exists
+    error('Don''t know what the project folder is. See getroot_example.m for instructions.')
 end
 
 switch pathtype
-    case 'project',     outpath = getprojectfolder;
+    case 'project',     outpath = getroot;
 
     % analysis scripts paths
     case 'analysis',    outpath = fullfile(getpath('project'), 'analysis');

@@ -6,6 +6,7 @@ analysis/noneeglab/*
 analysis/looplogs/*
 analysis/en_diary.csv
 analysis/pilots/en_log_pilots.csv
+analysis/getroot.m
 plots/*
 forms/*
 photos/*
