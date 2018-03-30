@@ -6,7 +6,7 @@
 % Usage:
 %   en_eeg_loop(ids, stim, task)
 
-function en_loop_eeg_preprocess(ids, stims, tasks)
+function varargout = en_loop_eeg_preprocess(ids, stims, tasks)
 if nargin < 1 || isempty(ids)
     % get ids marked as included
     d = en_load('diary', 'incl');
@@ -34,10 +34,18 @@ for i = 1:length(ids)
             timeLogInd = length(timeLog) + 1;
 
                 % start diary file to save command window output
+                % make diary a hidden file
+                if ismac || isunix
+                    hidechar = '.';
+                elseif ispc
+                    hidechar = '_';
+                else
+                    hidechar = '';
+                end
                 diaryFilename = fullfile( ...
                     en_getpath('eeg'), ...
                     [stim, '_', task], ...
-                    [num2str(id), '_log_', startTimeStr, '.txt']);
+                    [hidechar, num2str(id), '.log']);
                 diary(diaryFilename)
 
                 fprintf('Diary filename:    %s\n', diaryFilename)
@@ -48,13 +56,24 @@ for i = 1:length(ids)
                 fprintf('This ID started:   %s\n', datestr(now, 'yyyy-mm-dd_HH-MM-SS'));
                 startTimeID = clock;
 
+                err = []; % reset the error container
                 try
                     en_eeg_preprocess(id, stim, task);
                     timeLog{timeLogInd} = '  ';
 
                 catch err
                     timeLog{timeLogInd} = '! ';
+
+                    % display the error without terminating the loop
                     disp(err)
+                    for j = 1:length(err.stack)
+                        disp(err.stack(j))
+                    end
+
+                    % return err if output arg requested
+                    if nargout > 0
+                        varargout{1} = err;
+                    end
 
                 end
 
@@ -63,6 +82,18 @@ for i = 1:length(ids)
                 fprintf('%s\n\n', timeLog{timeLogInd})
 
                 diary off
+
+                % adjust diary filename to indicate errors
+                [pathstr, name, ext] = fileparts(diaryFilename);
+                errorFilename = fullfile(pathstr, [name, '_ERROR', ext]);
+                if ~isempty(err)
+                    % if there were errors, use the error filename instead
+                    movefile(diaryFilename, errorFilename)
+                elseif exist(errorFilename, 'file')
+                    % if there were no errors, delete previous diary that had errors
+                    delete(errorFilename)
+                end
+
         end
     end
 end
