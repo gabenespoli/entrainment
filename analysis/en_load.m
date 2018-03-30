@@ -32,9 +32,8 @@ if ischar(id)
         stim = C{2};
         task = C{3};
     else
-        disp('Using default stim=sync and task=eeg.')
-        stim = 'sync';
-        task = 'eeg';
+        stim = '';
+        task = '';
     end
 
 else
@@ -111,6 +110,14 @@ switch lower(filetype)
         varout = M;
 
     case 'eeg'
+        if isempty(stim)
+            disp('Using default stim=sync')
+            stim = 'sync';
+        end
+        if isempty(task)
+            disp('Using default task=eeg')
+            stim = 'mir';
+        end
         varout = pop_loadset(fullfile(getpath('eeg'), ...
             [stim, '_', task], ...
             [idStr, '.set']));
