@@ -94,6 +94,8 @@ pop_topoplot(EEG, ...
      0, ...                     % 1 to plot dipoles too
      'electrodes', 'off');
 
+set(gcf, 'color', [1 1 1] * 0.5) % make background grey instead of white
+
 savefig(fullfile(en_getpath('topoplots'), [stim, '_', task], [EEG.setname, '_topoplot.fig']))
 print(  fullfile(en_getpath('topoplots'), [stim, '_', task], [EEG.setname, '_topoplot.png']), '-dpng')
 close(gcf)
