@@ -2,14 +2,19 @@
 %   Get a project directory. This helper function is used throughout these
 %   scripts to get filenames and paths for project and data files. Editing
 %   the paths in this file will control which files the scripts act on.
+%
+%   This function depends on getprojectfolder.m. See
+%   getprojectfolder_example.m for instructions.
 
 function outpath = getpath(pathtype)
 
 % make sure project directory is set
-projectDir = getProjectDir
+if exist('getprojectfolder', 'file') ~= 2 % make sure getprojectfolder.m exists
+    error('Don''t know what the project folder is. See getprojectfolder_example.m for instructions.')
+end
 
 switch pathtype
-    case 'project',     outpath = fullfile('/Users','gmac','local','en');
+    case 'project',     outpath = getprojectfolder;
 
     % analysis scripts paths
     case 'analysis',    outpath = fullfile(getpath('project'), 'analysis');
@@ -40,10 +45,5 @@ switch pathtype
     case 'mrifile',     outpath = fullfile(getpath('dipfit'), 'standard_BEM', 'standard_mri.mat');
     case 'hdmfile',     outpath = fullfile(getpath('dipfit'), 'standard_BEM', 'standard_vol.mat');
 
-end
-end
-
-function projectDir = getProjectDir
-if ~exist('get_project_folder', 2)
 end
 end

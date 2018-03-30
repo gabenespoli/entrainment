@@ -1,8 +1,13 @@
-function project_folder = get_project_folder
-% this function is a helper function for getpath.m
-% it should return the absolute path to the root directory for this project
-% use the fullfile function to make this OS agnostic
-% e.g., project_folder = fullfile('/Users','gmac','local','en');
+function project_folder = getprojectfolder
+% This function is a helper function for getpath.m. It should return the
+%   absolute path to the root directory for this project.
+%
+% Instructions:
+%   Make a copy of this file and name it getprojectfolder.m. Edit the file
+%   so that it sets the value of the project_folder variable to be the root
+%   folder of this project. i.e., the "project_folder" folder as indicated
+%   in the "The Project Folder" section of the README. Use the `fullfile`
+%   function so that this will work on Linux, Mac, and Windows.
 
 project_folder = fullfile('/Users','gmac','local','en');
 
