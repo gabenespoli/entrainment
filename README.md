@@ -47,13 +47,14 @@ project_folder/         set this in en_getpath
 │
 ├─ data/  
 │  ├─ bdf/              .bdf files of raw EEG recordings  
-│  ├─ eeg/              .set files from en_eeg_preprocess  
+│  ├─ eeg/              .set files from en_preprocess_eeg  
 │  ├─ eeg_goodcomps/    .png topo- and dip-plots from en_eeg_entrainment  
 │  │  └─ pmc            subfolder(s) for specific brain regions
 │  ├─ eeg_entrainment/  .csv files from en_eeg_entrainment  
-│  ├─ eeg_topoplots/    .fig and .png topoplots files from en_eeg_preprocess  
+│  ├─ eeg_topoplots/    .fig and .png topoplots files from en_preprocess_eeg  
 │  ├─ logfiles/         .csv and .txt files should be copied from task/logfiles
-│  └─ midi/             .mid and .wav tapping files exported from Pro Tools
+│  ├─ midi/             .mid and .wav tapping files exported from Pro Tools
+│  └─ tapping/          .mat files from en_preprocess_tapping
 │
 ├─ eeglab/              EEGLAB toolbox (https://bitbucket.org/sccn_eeglab/eeglab.git)
 │
@@ -84,7 +85,7 @@ The diary.csv file can be considered a sort of configuration file for the analys
 | missedportcodes | [comma-separated list of numbers]       | If some portcodes did not get sent (e.g., because the BioSemi battery died, but the experiment continued), enter the indices of the portcodes that were missed. For example, if there are 60 trials, and the battery died after the 10th trial, you didn't notice and stop the experiment until after the 15th trial (trials 11 to 15 did not have their portcodes recorded), enter "11, 12, 13, 14, 15" here (without the quotes). Note that if the battery dies in the middle of a trial, you might want to consider adding that trial to *rmportcodes*. Filling in this field will probably require some comparison of the logfile (which portcodes were sent) and the BDF file (which portcodes were recorded). |
 | experimenters   | [comma-separated list of strings]       | Initials of the experimenters for this participant's session.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | recording_notes | [semicolon-separated list of sentences] | Any notes from the EEG recording session that might be good to know.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| dipolar_comps   | [comma-separated list of numbers]       | After running `en_eeg_preprocess`, look at the topographical plots that are saved and mark down which components are dipolar. This field is used by `en_eeg_entrainment` to select good components with `select_comps`. See Delorme, Palmer, Onton, Oostenveld, & Makeig (2012; PLOS ONE) for more information.                                                                                                                                                                                                                                                                                                                                                                                                     |
+| dipolar_comps   | [comma-separated list of numbers]       | After running `en_preprocess_eeg`, look at the topographical plots that are saved and mark down which components are dipolar. This field is used by `en_eeg_entrainment` to select good components with `select_comps`. See Delorme, Palmer, Onton, Oostenveld, & Makeig (2012; PLOS ONE) for more information.                                                                                                                                                                                                                                                                                                                                                                                                     |
 
 <a name="analysis-running-the-whole-pipeline"></a>
 
@@ -97,7 +98,7 @@ The following code will run the entire analysis pipeline from raw data files to 
 % set current folder to this analysis folder
 ids = 6:16;
 en_load('eeglab')
-en_loop_eeg_preprocess(ids);
+en_preprocess(ids);
 % look at topographical maps saved in en_getpath('topoplots') and mark down component numbers that are dipolar in en_diary.csv
 en_loop_eeg_entrainment(ids);
 % MIDI analysis is coming soon...
@@ -117,12 +118,13 @@ Each function list is loosely in the order that they would be used in the proces
 
 Perform a whole section of the analysis pipeline and batch processing. These mostly contain calls to the other functions in the lists below.
 
-| Function                  | Description                                                                                                                                                                                                                            |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `en_eeg_preprocess`       | A macro that runs `en_readbdf` and a number of [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) functions to pre-process EEG data, including ICA and dipole fitting. Resultant .set files are saved to `en_getpath('eeg')`.            |
-| `en_loop_eeg_preprocess`  | Loops through the specified IDs and runs `en_eeg_preprocess`. All output from the command window is captured for each ID and saved to `en_getpath('eeg')`, as well as a summary file with processing times and any errors for each ID. |
-| `en_eeg_entrainment`      | A macro that takes an ID or EEGLAB struct and outputs a table of entrainment values for each trial. Resultant tables are saved as .csv files in `en_getpath('eeg_entrainment')`.                                                       |
-| `en_loop_eeg_entrainment` | Loops through specified IDs and runs `en_eeg_entrainment`.                                                                                                                                                                             |
+| Function                  | Description                                                                                                                                                                                                                                                        |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `en_preprocess_eeg`       | A macro that runs `en_readbdf` and a number of [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) functions to pre-process EEG data, including ICA and dipole fitting. Resultant .set files are saved to `en_getpath('eeg')`.                                        |
+| `en_preprocess_tapping`   | A macro that loads the .wav file of stimuli that was exported from Pro Tools, searches for audio onsets to get the stimulus onset times, and uses these to epoch the MIDI tapping data. MIDI data is read using MIDI Toolbox and saved as a MATLAB table.          |
+| `en_preprocess`           | Loops through the specified IDs and runs `en_preprocess_eeg` and `en_preprocess_tapping`. All output from the command window is captured for each ID and saved to `en_getpath('eeg')`, as well as a summary file with processing times and any errors for each ID. |
+| `en_eeg_entrainment`      | A macro that takes an ID or EEGLAB struct and outputs a table of entrainment values for each trial. Resultant tables are saved as .csv files in `en_getpath('eeg_entrainment')`.                                                                                   |
+| `en_loop_eeg_entrainment` | Loops through specified IDs and runs `en_eeg_entrainment`.                                                                                                                                                                                                         |
 
 <a name="analysis-functions-project-utilities"></a>
 
