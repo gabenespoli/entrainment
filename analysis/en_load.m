@@ -7,7 +7,9 @@
 %   filetype = [string]
 %
 %   id = [numeric|string] Must be a single number, not a vector
-%
+%       Can also specify the stim/task like so: 6_stim_task
+%       stim can be either 'sync' or 'mir'
+%       task can be either 'eeg' or 'tapping'
 %
 % Examples:
 %   d       = en_load('diary')
@@ -19,10 +21,22 @@
 
 function varout = en_load(filetype, id)
 
+%% parse input
 if nargin < 2, id = []; end
 if ischar(id)
-    idStr = id;
-    if isempty(id), id = idStr; end
+    % get stim and task from id
+    C = regexp(id, '_', 'split');
+    idStr = C{1};
+    id = str2num(idStr);
+    if length(C) == 3
+        stim = C{2};
+        task = C{3};
+    else
+        disp('Using default stim=sync and task=eeg.')
+        stim = 'sync';
+        task = 'eeg';
+    end
+
 else
     idStr = num2str(id);
 end
@@ -94,11 +108,12 @@ switch lower(filetype)
         % reorder and restrict to a few needed columns only
         M = M(:, {'stim', 'trial', 'onset', 'duration', 'velocity'});
         
-
         varout = M;
 
     case 'eeg'
-        varout = pop_loadset(fullfile(en_getpath('eeg'), [idStr, '.set']));
+        varout = pop_loadset(fullfile(en_getpath('eeg'), ...
+            [stim, '_', task], ...
+            [idStr, '.set']));
 
     %% logfiles
     case {'logfile','logfiles','log'}
