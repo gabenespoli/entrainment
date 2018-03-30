@@ -52,8 +52,9 @@ for i = 1:length(ids)
                     en_eeg_preprocess(id, stim, task);
                     timeLog{timeLogInd} = '  ';
 
-                catch
+                catch err
                     timeLog{timeLogInd} = '! ';
+                    disp(err)
 
                 end
 
