@@ -19,6 +19,11 @@ if nargin < 3 || isempty(tasks), tasks = {'eeg', 'tapping'}; end
 stims = cellstr(stims);
 tasks = cellstr(tasks);
 
+% make sure toolboxes are loaded
+en_load('eeglab')
+en_load('miditoolbox')
+
+% prepare time logging
 startTime = clock;
 startTimeStr = datestr(startTime, 'yyyy-mm-dd_HH-MM-SS');
 timeLog = cell(0);
