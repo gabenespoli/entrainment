@@ -1,4 +1,4 @@
-%% en_loop_eeg_preprocess
+%% en_preprocess
 % Loop many participants and run en_preprocess_eeg. Saves text files with
 % all command window output to the folder en_getpath('eeg'). Files
 % are named by the starting date and time of the loop.
@@ -6,7 +6,7 @@
 % Usage:
 %   en_eeg_loop(ids, stim, task)
 
-function varargout = en_loop_eeg_preprocess(ids, stims, tasks)
+function varargout = en_preprocess(ids, stims, tasks)
 if nargin < 1 || isempty(ids)
     % get ids marked as included
     d = en_load('diary', 'incl');
@@ -58,8 +58,8 @@ for i = 1:length(ids)
 
                 err = []; % reset the error container
                 try
-                    en_eeg_preprocess(id, stim, task);
-                    en_tap_preprocess(id, stim);
+                    en_preprocess_eeg(id, stim, task);
+                    en_preprocess_tapping(id, stim);
                     timeLog{timeLogInd} = '  ';
 
                 catch err

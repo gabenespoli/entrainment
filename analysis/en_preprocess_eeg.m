@@ -1,4 +1,4 @@
-%% en_eeg_preprocess
+%% en_preprocess_eeg
 %   Preprocess EEG data. This script uses EEGLAB functions to preprocess
 %   a BioSemi .bdf file:
 %
