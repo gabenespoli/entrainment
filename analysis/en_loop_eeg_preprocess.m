@@ -59,6 +59,7 @@ for i = 1:length(ids)
                 err = []; % reset the error container
                 try
                     en_eeg_preprocess(id, stim, task);
+                    en_tap_preprocess(id, stim);
                     timeLog{timeLogInd} = '  ';
 
                 catch err
