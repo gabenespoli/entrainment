@@ -11,10 +11,10 @@ if ~ismember(lower(task), {'eeg', 'tapping'})
 end
 % default extraction window
 % 1 second of silence after portcode, so stimulus plays from 1-31 seconds
-% leave 3 seconds to start entraining, so start epoch at 5 seconds
-% 30 epochs x 27-seconds = 13.5 minutesj
+% leave 3 seconds to start entraining, so should start analysis at 5 seconds
+% 30 epochs x 27-seconds = 13.5 minutes
 if nargin < 4 || isempty(timelim)
-    timelim = [4 31];
+    timelim = [1 31];
 end
 
 % EEG.setname is assumed to be the id
