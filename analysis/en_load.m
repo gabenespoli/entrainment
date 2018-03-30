@@ -47,7 +47,7 @@ switch lower(filetype)
     case 'midi'
         % find marker times in seconds
         disp('Loading marker wav file...')
-        [y, Fs] = audioread(fullfile(en_getpath('midi'), [idStr, '.wav']));
+        [y, Fs] = audioread(fullfile(getpath('midi'), [idStr, '.wav']));
         times = findAudioMarkers( ...
             transpose(y), ...   % waveform
             0.001, ...          % threshold
@@ -61,7 +61,7 @@ switch lower(filetype)
 
         % use miditoolbox to load matrix of midi data
         en_load('miditoolbox', 1)
-        M = readmidi(fullfile(en_getpath('midi'), [idStr, '.mid']));
+        M = readmidi(fullfile(getpath('midi'), [idStr, '.mid']));
 
         % convert it to a table with headings
         M = array2table(M, ...
@@ -111,7 +111,7 @@ switch lower(filetype)
         varout = M;
 
     case 'eeg'
-        varout = pop_loadset(fullfile(en_getpath('eeg'), ...
+        varout = pop_loadset(fullfile(getpath('eeg'), ...
             [stim, '_', task], ...
             [idStr, '.set']));
 
@@ -119,10 +119,10 @@ switch lower(filetype)
     case {'logfile','logfiles','log'}
         % loads all logfiles for the given ID as a table
         fnames = { ...
-            fullfile(en_getpath('logfiles'), [idStr, '_sync_eeg.csv']), ...
-            fullfile(en_getpath('logfiles'), [idStr, '_sync_tapping.csv']), ...
-            fullfile(en_getpath('logfiles'), [idStr, '_mir_eeg.csv']), ...
-            fullfile(en_getpath('logfiles'), [idStr, '_mir_tapping.csv']), ...
+            fullfile(getpath('logfiles'), [idStr, '_sync_eeg.csv']), ...
+            fullfile(getpath('logfiles'), [idStr, '_sync_tapping.csv']), ...
+            fullfile(getpath('logfiles'), [idStr, '_mir_eeg.csv']), ...
+            fullfile(getpath('logfiles'), [idStr, '_mir_tapping.csv']), ...
             };
 
         for i = 1:length(fnames)
@@ -175,7 +175,7 @@ switch lower(filetype)
 
     %% diary
     case 'diary' % loads the diary csv file as a table
-        d = readtable(en_getpath('diary'), 'Delimiter', ',');
+        d = readtable(getpath('diary'), 'Delimiter', ',');
         d.recording_notes = []; % remove notes field for nicer display in command window
         d.incl(isnan(d.incl)) = 0; % make nans zeros instead
 
@@ -204,7 +204,7 @@ switch lower(filetype)
 
     %% stimulus info
     case {'stiminfo'}
-        S = readtable(en_getpath('stiminfo'));
+        S = readtable(getpath('stiminfo'));
 
         % make some vars categorical
         S.stim = categorical(S.stim);
@@ -220,7 +220,7 @@ switch lower(filetype)
 
     %% toolboxes
     case 'eeglab' % add eeglab to path and start eeglab
-        eeglabdir = en_getpath('eeglab');
+        eeglabdir = getpath('eeglab');
         if ~isOnPath(eeglabdir)
             addpath(eeglabdir) % add path to eeglab root
             disp('Added EEGLAB to the MATLAB path.')
@@ -232,7 +232,7 @@ switch lower(filetype)
         end
 
     case 'miditoolbox'
-        miditoolboxdir = en_getpath('miditoolbox');
+        miditoolboxdir = getpath('miditoolbox');
         if ~isOnPath(miditoolboxdir)
             addpath(miditoolboxdir)
             disp('Added MIDI Toolbox to the MATLAB path.')

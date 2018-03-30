@@ -9,7 +9,7 @@
 %
 % Input:
 %   EEG = [struct|numeric] EEGLAB struct with ICA and dipole information,
-%       or ID number to load from en_getpath('eeg').
+%       or ID number to load from getpath('eeg').
 %
 %   'region' = [string|numeric] Usually this will be 'pmc' or 'aud' to
 %       select Brodmann areas 6 or [22 41 42] respectively. Can also be
@@ -29,14 +29,14 @@
 % Output:
 %   T = [table] Data from logfile, stiminfo, and the entrainment analysis
 %       in a single MATLAB table. This table is also written as a csv to
-%       en_getpath('entrainment').
+%       getpath('entrainment').
 %
 %   fftdata = [numeric] The fft data matrix (comps x frequency x trial).
 %
 %   freqs = [numeric] The corresponding frequency vector.
 %
 %   topoplots and dipplots of selected components are saved to
-%       en_getpath('goodcomps')
+%       getpath('goodcomps')
 
 % input can be a preprocessed EEG struct (with ICA and dipfit)
 %   or a numeric ID number
@@ -98,7 +98,7 @@ T.id = repmat(EEG.setname, height(T), 1);
 T.comp = zeros(height(T), 1);
 T.en = zeros(height(T), 1);
 T.Properties.VariableNames{end} = regionStr;
-T.Properties.UserData.filename = fullfile(en_getpath('entrainment'), ...
+T.Properties.UserData.filename = fullfile(getpath('entrainment'), ...
     [stim, '_', task, '_', regionStr, '_', EEG.setname, '.csv']);
 
 %% filter comps by region, rv, dipolarity
@@ -111,7 +111,7 @@ if isempty(comps)
     return
 end
 
-dtplot(EEG, comps, fullfile(en_getpath('goodcomps'), regionStr)); % save plots of good ICs
+% dtplot(EEG, comps, fullfile(getpath('goodcomps'), regionStr)); % save plots of good ICs
 
 %% if there are some good comps, plot and calculate entrainment 
 [fftdata, freqs] = getfft3( ...

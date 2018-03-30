@@ -12,8 +12,8 @@
 %   8. pop_runica:       Run independent components analysis (ICA) on 1 Hz,
 %                        HP data, import weights into 0.5 Hz HP data.
 %   9. en_dipfit:        Fit dipoles
-%  10. pop_saveset:      Save the EEG .set file to en_getpath('eeg')
-%  11. pop_topoplot:     Save IC maps w/dipoles to en_getpath('topoplots')
+%  10. pop_saveset:      Save the EEG .set file to getpath('eeg')
+%  11. pop_topoplot:     Save IC maps w/dipoles to getpath('topoplots')
 %
 % Usage:
 %   EEG = en_preprocess_eeg(id)
@@ -26,7 +26,7 @@
 %
 % Output:
 %   EEG = [struct] EEGLAB structure variable. File is also saved to
-%         en_getpath('eeg').
+%         getpath('eeg').
 
 function EEG = en_preprocess_eeg(id, stim, task)
 
@@ -85,7 +85,7 @@ EEG = en_dipfit(EEG, ...
 %% save file
 EEG.setname = num2str(id);
 EEG = pop_saveset(EEG, ...
-    'filepath', fullfile(en_getpath('eeg'), [stim, '_', task]), ...
+    'filepath', fullfile(getpath('eeg'), [stim, '_', task]), ...
     'filename', [EEG.setname,'.set']);
 
 %% save topoplot of components & dipoles
@@ -99,8 +99,8 @@ pop_topoplot(EEG, ...
 
 set(gcf, 'color', [1 1 1] * 0.5) % make background grey instead of white
 
-savefig(fullfile(en_getpath('topoplots'), [stim, '_', task], [EEG.setname, '_topoplot.fig']))
-print(  fullfile(en_getpath('topoplots'), [stim, '_', task], [EEG.setname, '_topoplot.png']), '-dpng')
+savefig(fullfile(getpath('topoplots'), [stim, '_', task], [EEG.setname, '_topoplot.fig']))
+print(  fullfile(getpath('topoplots'), [stim, '_', task], [EEG.setname, '_topoplot.png']), '-dpng')
 close(gcf)
 
 end

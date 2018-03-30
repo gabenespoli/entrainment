@@ -35,7 +35,7 @@ for i = 1:length(ids)
 
     for j = 1:length(regions)
         region = regions{j};
-        fname = fullfile(en_getpath('entrainment'), ...
+        fname = fullfile(getpath('entrainment'), ...
             [stim, '_', task, '_', region, '_', idStr, '.csv']);
         tmp = readtable(fname);
         if j == 1

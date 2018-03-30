@@ -6,12 +6,12 @@
 %
 % Input:
 %   id = [numeric] ID number of participant as indicated in 
-%       en_getpath('diary'). All bdf files associated with this id will
+%       getpath('diary'). All bdf files associated with this id will
 %       be loaded and merged.
 %   
 % Output:
 %   EEG = [struct] EEGLAB structure with 1005 electrode labels and
-%       channel locations from en_getpath('chanfile').
+%       channel locations from getpath('chanfile').
 
 function EEG = en_readbdf(id)
 
@@ -23,7 +23,7 @@ eventchans = d.eventchans;
 % load .bdf files into EEGLAB .set files
 % merge all .bdf files for this id if there are multiple
 for i = length(bdffiles)
-    bdffile = fullfile(en_getpath('bdf'), [bdffiles{i}, '.bdf']);
+    bdffile = fullfile(getpath('bdf'), [bdffiles{i}, '.bdf']);
     TMP = pop_readbdf( ...
         bdffile, ...        % filename
         [], ...             % range
@@ -44,6 +44,6 @@ EEG.setname = num2str(id);
 % add channel locations
 EEG = pop_select(EEG, 'nochannel', 135:136); % remove EXG7 and EXG8
 EEG = alpha2fivepct(EEG, false); % relabel as 5% (1005) system
-EEG = pop_chanedit(EEG, 'lookup', en_getpath('chanfile')); % chan locs
+EEG = pop_chanedit(EEG, 'lookup', getpath('chanfile')); % chan locs
 
 end

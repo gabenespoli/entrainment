@@ -7,8 +7,8 @@
 %
 % Input:
 %   ids = [numeric] List of IDs whose data will be loaded from
-%       en_getpath('eeg'). If empty ([]), all ids with a 1 in the "incl"
-%       column of en_getpath('diary') are used.
+%       getpath('eeg'). If empty ([]), all ids with a 1 in the "incl"
+%       column of getpath('diary') are used.
 %
 %   See `help en_eeg_entrainment` for descriptions of other params
 %       'stim', 'task', and 'region'.

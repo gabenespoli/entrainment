@@ -13,7 +13,7 @@ M(:, 'stim') = [];
 
 TAP = join(L, M, 'Keys', 'trial');
 
-filename = fullfile(en_getpath('tapping'), stim, [num2str(id), '.mat']);
+filename = fullfile(getpath('tapping'), stim, [num2str(id), '.mat']);
 save(filename, 'TAP')
 
 end
