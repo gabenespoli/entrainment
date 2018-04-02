@@ -12,8 +12,8 @@
 %       task can be either 'eeg' or 'tapping'
 %
 % Examples:
-%   d       = en_load('diary')
-%   d       = en_load('diary', id)
+%   D       = en_load('diary')
+%   D       = en_load('diary', id)
 %   M       = en_load('midi', id)
 %   L       = en_load('log', id)
 %   S       = en_load('stiminfo')
@@ -182,32 +182,32 @@ switch lower(filetype)
 
     %% diary
     case 'diary' % loads the diary csv file as a table
-        d = readtable(getpath('diary'), 'Delimiter', ',');
-        d.recording_notes = []; % remove notes field for nicer display in command window
-        d.incl(isnan(d.incl)) = 0; % make nans zeros instead
+        D = readtable(getpath('diary'), 'Delimiter', ',');
+        D.recording_notes = []; % remove notes field for nicer display in command window
+        D.incl(isnan(D.incl)) = 0; % make nans zeros instead
 
-        for i = 1:size(d, 1)
+        for i = 1:size(D, 1)
             % convert some fields from comma-delimited lists to cell arrays
-            d.bdffile{i}            = csv2cell(d.bdffile{i});
-            d.rmchans{i}            = csv2cell(d.rmchans{i});
+            D.bdffile{i}            = csv2cell(D.bdffile{i});
+            D.rmchans{i}            = csv2cell(D.rmchans{i});
 
             % convert some fields from comma-delimited lists to numeric vectors
-            d.rmportcodes{i}        = csv2vec(d.rmportcodes{i});
-            d.missedportcodes{i}    = csv2vec(d.missedportcodes{i});
-            d.dipolar_comps{i}      = csv2vec(d.dipolar_comps{i});
+            D.rmportcodes{i}        = csv2vec(D.rmportcodes{i});
+            D.missedportcodes{i}    = csv2vec(D.missedportcodes{i});
+            D.dipolar_comps{i}      = csv2vec(D.dipolar_comps{i});
         end
 
         if ~isempty(id)
             if isnumeric(id) % restrict to a specific id
-                d = d(d.id == id, :); % rows in corresponding to this id
-                if height(d) > 1
+                D = D(D.id == id, :); % rows in corresponding to this id
+                if height(D) > 1
                     error(['More than one row in the d for id ', num2str(id), '.'])
                 end
             elseif ischar(id) && strcmpi(id, 'incl')
-                d = d(logical(d.incl), :);
+                D = D(logical(D.incl), :);
             end
         end
-        varargout{1} = d;
+        varargout{1} = D;
 
     %% stimulus info
     case {'stiminfo'}
