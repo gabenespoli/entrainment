@@ -20,7 +20,6 @@
 %   EEG     = en_load('eeg', id)
 
 function varargout = en_load(filetype, id)
-
 %% parse input
 if nargin < 2, id = []; end
 if ischar(id)
@@ -44,70 +43,24 @@ switch lower(filetype)
 
     %% data
     case 'midi'
-        % find marker times in seconds
-        disp('Loading marker wav file...')
-        [y, Fs] = audioread(fullfile(getpath('midi'), [idStr, '.wav']));
-        times = findAudioMarkers( ...
-            transpose(y), ...   % waveform
-            0.001, ...          % threshold
-            2 * Fs, ...         % timeBetween
-            'plotMarkers',      false, ...
-            'numMarkers',       60);    % TODO this should be based on rm and missed portcodes
-        times = times / Fs; % convert from samples to seconds
-        if ~iscolumn(times), times = transpose(times); end % make column vector
-        if length(times) ~= 60, error('There aren''t 60 trials.'), end
-
-
         % use miditoolbox to load matrix of midi data
         en_load('miditoolbox', 1)
-        M = readmidi(fullfile(getpath('midi'), [idStr, '.mid']));
+        MIDI = readmidi(fullfile(getpath('midi'), [idStr, '.mid']));
 
         % convert it to a table with headings
-        M = array2table(M, ...
+        MIDI = array2table(MIDI, ...
             'VariableNames', {'onsetBeats', 'durationBeats', ... % in beats
                               'channel', 'pitch', 'velocity', ...
                               'onset', 'duration'});           % in seconds
 
-        % make one row per trial instead of one row per tap
-        % add columns for stim and trial number
-        for i = 1:length(times)
-            % get inds of M that match the current time
-            if i < length(times)
-                ind = M.onset >= times(i) & M.onset < times(i+1);
-            else
-                ind = M.onset >= times(i);
-            end
+        varargout{1} = MIDI;
 
-            % start this row of the table and add stim and trial columns
-            TMP = table(i, 'VariableNames', {'trial'});
-            if ismember(i, 1:30)
-                TMP.stim = {'sync'};
-            elseif ismember(i, 31:60)
-                TMP.stim = {'mir'};
-                TMP.trial(1) = TMP.trial(1) - 30;
-            else
-                error('Too many trials.')
-            end
-
-            % add the rest of M by trials (mutiple taps into one table row)
-            names = M.Properties.VariableNames;
-            for j = 1:length(names)
-                TMP.(names{j}) = {M.(names{j})(ind)};
-            end
-
-            if i == 1
-                OUT = TMP;
-            else
-                OUT = [OUT; TMP]; %#ok<AGROW>
-            end
+        % also return audio marker file if requested
+        if nargout > 1
+            [y, Fs] = audioread(fullfile(getpath('midi'), [idStr, '.wav']));
+            varargout{2} = y;
+            varargout{3} = Fs;
         end
-        M = OUT;
-        M.stim = categorical(M.stim);
-
-        % reorder and restrict to a few needed columns only
-        M = M(:, {'stim', 'trial', 'onset', 'duration', 'velocity'});
-        
-        varout = M;
 
     case 'eeg'
         if isempty(stim)
