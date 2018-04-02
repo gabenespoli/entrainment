@@ -24,7 +24,7 @@ catch
     error('EEG.setname should be the id.')
 end
 
-d = en_load('diary', id);
+D = en_load('diary', id);
 
 %% get event indices
 % 'eventindices' param/val pair in pop_epoch is the indices of EEG.event from where
@@ -36,14 +36,14 @@ d = en_load('diary', id);
 eventindices = 1:length(EEG.event);
 
 % remove extra portcodes
-rmportcodes = d.rmportcodes{1};
+rmportcodes = D.rmportcodes{1};
 if ~isnan(rmportcodes)
     disp('Removing extra portcodes...')
     eventindices(rmportcodes) = [];
 end
 
 % add nans for missed portcodes
-missedportcodes = d.missedportcodes{1};
+missedportcodes = D.missedportcodes{1};
 if ~isnan(missedportcodes)
     disp('Adding NaNs for extra portcodes...')
     for i = 1:length(missedportcodes)
@@ -63,23 +63,23 @@ end
 if strcmpi(stim, 'sync')
     if strcmpi(task, 'eeg')
 
-        if     d.order == 1,   eventindices = eventindices(1:30);
-        elseif d.order == 2,   eventindices = eventindices(31:60);
+        if     D.order == 1,   eventindices = eventindices(1:30);
+        elseif D.order == 2,   eventindices = eventindices(31:60);
         end
 
     elseif strcmpi(task, 'tapping')
-        if     d.order == 1,   eventindices = eventindices(31:60);
-        elseif d.order == 2,   eventindices = eventindices(1:30);
+        if     D.order == 1,   eventindices = eventindices(31:60);
+        elseif D.order == 2,   eventindices = eventindices(1:30);
         end
     end
 elseif strcmpi (stim, 'mir')
     if strcmpi(task, 'eeg')
-        if     d.order == 1,   eventindices = eventindices(61:90);
-        elseif d.order == 2,   eventindices = eventindices(91:120);
+        if     D.order == 1,   eventindices = eventindices(61:90);
+        elseif D.order == 2,   eventindices = eventindices(91:120);
         end
     elseif strcmpi(task, 'tapping')
-        if     d.order == 1,   eventindices = eventindices(91:120);
-        elseif d.order == 2,   eventindices = eventindices(61:90);
+        if     D.order == 1,   eventindices = eventindices(91:120);
+        elseif D.order == 2,   eventindices = eventindices(61:90);
         end
     end
 end
