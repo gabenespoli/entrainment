@@ -19,7 +19,7 @@
 %   S       = en_load('stiminfo')
 %   EEG     = en_load('eeg', id)
 
-function varout = en_load(filetype, id)
+function varargout = en_load(filetype, id)
 
 %% parse input
 if nargin < 2, id = []; end
@@ -118,7 +118,7 @@ switch lower(filetype)
             disp('Using default task=eeg')
             stim = 'mir';
         end
-        varout = pop_loadset(fullfile(getpath('eeg'), ...
+        varargout{1} = pop_loadset(fullfile(getpath('eeg'), ...
             [stim, '_', task], ...
             [idStr, '.set']));
 
@@ -164,7 +164,7 @@ switch lower(filetype)
         T = T(:, {'id', 'stim', 'task', 'trial', 'timestamp', ...
                   'filepath', 'filename', 'portcode'});
 
-        varout = T;
+        varargout{1} = T;
 
     case {'logfilestim', 'logstim'}
         % load logfile and stiminfo in the same table
@@ -178,7 +178,7 @@ switch lower(filetype)
         S.portcode = [];
         S.stim = [];
         L = [L, S];
-        varout = L;
+        varargout{1} = L;
 
     %% diary
     case 'diary' % loads the diary csv file as a table
@@ -207,7 +207,7 @@ switch lower(filetype)
                 d = d(logical(d.incl), :);
             end
         end
-        varout = d;
+        varargout{1} = d;
 
     %% stimulus info
     case {'stiminfo'}
@@ -223,7 +223,7 @@ switch lower(filetype)
             S = S(ind, :);
             S.rhythm = categorical(S.rhythm);
         end
-        varout = S;
+        varargout{1} = S;
 
     %% toolboxes
     case 'eeglab' % add eeglab to path and start eeglab
