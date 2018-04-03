@@ -146,6 +146,7 @@ switch lower(filetype)
 
             % convert some fields from comma-delimited lists to numeric vectors
             D.rmportcodes{i}        = csv2vec(D.rmportcodes{i});
+            D.rmevent_midi{i}       = csv2vec(D.rmevent_midi{i});
             D.missedportcodes{i}    = csv2vec(D.missedportcodes{i});
             D.dipolar_comps{i}      = csv2vec(D.dipolar_comps{i});
         end
