@@ -1,26 +1,48 @@
-function TAP = en_preprocess_tapping(id, stim)
+function TAP = en_preprocess_tapping(id, stim, do_save)
 
-if nargin < 2
+if nargin < 2 || isempty(stim)
     stim = 'sync';
 end
+if nargin < 3 || isempty(do_save)
+    do_save = true;
+end
 
-L = en_load('logstim', id);
-L = L(L.stim==stim & L.task=='tapping', :);
-
-
+%% load midi data
 [M, y, Fs] = en_load('midi', id);
 
-%% first get marker times
+%% get parameters from diary
+D = en_load('diary', id);
+if isempty(D.rmevent_midi{1})
+    numMarkers = 60;
+else
+    numMarkers = 60 + length(D.rmevent_midi{1});
+end
+if isnan(D.midi_threshold)
+    threshold = 0.001;
+else
+    threshold = D.midi_threshold;
+end
+if isnan(D.midi_timeBetween_secs)
+    timeBetween = 2 * Fs;
+else
+    timeBetween = D.midi_timeBetween_secs * Fs;
+end
+
+%% get marker times
 times = findAudioMarkers( ...
-    transpose(y), ...   % waveform
-    0.001, ...          % threshold
-    2 * Fs, ...         % timeBetween
-    'plotMarkers',      false, ...
-    'numMarkers',       numMarkers, ... 
-    'numMarkersPrompt', 0);    
+    transpose(y), ...       % waveform
+    threshold, ...          % threshold
+    timeBetween, ...        % timeBetween
+    'plotMarkers',          false, ...
+    'numMarkers',           numMarkers, ... 
+    'numMarkersPrompt',     0);
 times = times / Fs; % convert from samples to seconds
 if ~iscolumn(times), times = transpose(times); end % make column vector
-if length(times) ~= 60, error('There aren''t 60 trials.'), end
+if length(times) ~= numMarkers, error('There are an incorrect number of trials.'), end
+if ~isempty(D.rmevent_midi{1})
+    fprintf('Removing %i MIDI events...\n', length(D.rmevent_midi{1}))
+    times(D.rmevent_midi{1}) = [];
+end
 
 %% epoching
 % make one row per trial instead of one row per tap
@@ -34,6 +56,8 @@ for i = 1:length(times)
     end
 
     % start this row of the table and add stim and trial columns
+    % remember that sync and mir are always in the same order
+    %   so sync = 1:30 and mir = 31:60
     TMP = table(i, 'VariableNames', {'trial'});
     if ismember(i, 1:30)
         TMP.stim = {'sync'};
@@ -62,14 +86,21 @@ M.stim = categorical(M.stim);
 % reorder and restrict to a few needed columns only
 M = M(:, {'stim', 'trial', 'onset', 'duration', 'velocity'});
 
-
-%% from before
 M = M(M.stim==stim, :);
 M(:, 'stim') = [];
 
+%% join data with logfile
+L = en_load('logstim', id);
+L = L(L.stim==stim & L.task=='tapping', :);
+
 TAP = join(L, M, 'Keys', 'trial');
 
-filename = fullfile(getpath('tapping'), stim, [num2str(id), '.mat']);
-save(filename, 'TAP')
+if do_save
+    filename = fullfile(getpath('tapping'), stim, [num2str(id), '.mat']);
+    fprintf('Saving tapping data to file...\n')
+    fprintf('''%s''\n', filename)
+    save(filename, 'TAP')
+    fprintf('Done.\n')
+end
 
 end
