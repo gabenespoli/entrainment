@@ -86,6 +86,4 @@ EEG.icaweights = tmp.icaweights;
 EEG.icasphere = tmp.icasphere;
 EEG = pop_saveset(EEG, 'filename',[setname,'_ICA.set'], 'filepath',procfolder);
 
-% TODO: upload to server
-
 end

@@ -63,7 +63,7 @@ EEG = pop_saveset(EEG, 'filename', [EEG.setname,'.set'], 'filepath', procdir);
 rmchans = eeg_ABCDto5percent(d.rmchans{1}, false);
 EEG = pop_select(EEG, 'nochannel', rmchans); % remove bad channels before changing to 5pct
 EEG = pop_select(EEG, 'nochannel', {'PPO5h', 'P03'}); % looked to be flatlined
-EEG.data = averageReference(EEG.data); % TODO try removing this
+EEG.data = averageReference(EEG.data); % try removing this?
 
 %% run two pipelines
 % pipeline 1 tmp (get ICA weights, higher HP)
