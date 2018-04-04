@@ -1,10 +1,25 @@
 %% en_preprocess
-% Loop many participants and run en_preprocess_eeg. Saves text files with
-% all command window output to the folder getpath('eeg'). Files
-% are named by the starting date and time of the loop.
+% Loop many participants and run en_preprocess_eeg. Saves hidden text files
+%   with all command window output to getpath('eeg'). Also marks up a
 %
 % Usage:
-%   en_eeg_loop(ids, stim, task)
+%   en_eeg_loop(ids, stim, task, master_log_filename)
+%
+% Input:
+%   ids = [numeric] id numbers to run preprocessing on. Default is all
+%       participants marked as 'incl' in the diary file. Enter 0 to run
+%       all participants marked as 'incl' as well as not marked with a 0
+%       in the master log file.
+%
+%   stim = ['sync' or 'mir']
+%
+%   task = ['eeg' or 'tapping']
+%
+%   master_log_filename = [string] CSV file to save a summary of what has
+%       been completed. This file marks 1 for completed without errors, 0
+%       if there were errors, and NaN if the file id hasn't been touched
+%       yet. Put this file in your Dropbox (or similar) to easily keep
+%       track of long batch processing jobs.
 
 function varargout = en_preprocess(ids, stims, tasks)
 if nargin < 1 || isempty(ids)
@@ -15,6 +30,8 @@ end
 if nargin < 2 || isempty(stims), stims = {'sync', 'mir'}; end
 if nargin < 3 || isempty(tasks), tasks = {'eeg', 'tapping'}; end
 
+master_log_filename = fullfile(getpath('analysis'), 'en_preprocess_log.csv');
+
 % make them cells so we can loop them
 stims = cellstr(stims);
 tasks = cellstr(tasks);
@@ -23,7 +40,6 @@ tasks = cellstr(tasks);
 en_load('eeglab')
 en_load('miditoolbox')
 
-% prepare time logging
 startTime = clock;
 startTimeStr = datestr(startTime, 'yyyy-mm-dd_HH-MM-SS');
 timeLog = cell(0);
@@ -66,9 +82,11 @@ for i = 1:length(ids)
                     en_preprocess_eeg(id, stim, task);
                     en_preprocess_tapping(id, stim);
                     timeLog{timeLogInd} = '  ';
+                    write_to_master_log(master_log_filename, id, stim, task, 1)
 
                 catch err
                     timeLog{timeLogInd} = '! ';
+                    write_to_master_log(master_log_filename, id, stim, task, 0)
 
                     % display the error without terminating the loop
                     disp(err)
@@ -134,3 +152,8 @@ t = startTime(ind) + startTime(ind + 1) / x;
 str = [num2str(t), ' ', units];
 end
  
+function write_to_master_log(filename, id, stim, task, val)
+T = readtable(filename);
+T{T.id==id,['pre_',stim,'_',task]} = val;
+writetable(T, filename)
+end
