@@ -20,6 +20,7 @@ switch pathtype
     case 'analysis',    outpath = fullfile(getpath('project'), 'analysis');
     case 'diary',       outpath = fullfile(getpath('analysis'), 'en_diary.csv');
     case 'stiminfo',    outpath = fullfile(getpath('analysis'), 'en_stiminfo.csv');
+    case 'proclog',     outpath = fullfile(getpath('analysis'), 'en_log.csv');
 
     % data folder
     case 'data',        outpath = fullfile(getpath('project'), 'data');

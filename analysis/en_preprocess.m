@@ -1,36 +1,42 @@
 %% en_preprocess
-% Loop many participants and run en_preprocess_eeg. Saves hidden text files
-%   with all command window output to getpath('eeg'). Also marks up a
+% Loop many participants and run en_preprocess_eeg and
+%   en_preprocess_tapping. Saves hidden text files with all command window
+%   output to getpath('eeg'). Also reads from and/or updates the processing
+%   log (getpath('proclog')).
 %
 % Usage:
-%   en_eeg_loop(ids, stim, task, master_log_filename)
+%   en_preprocess(ids, stim, task)
 %
 % Input:
 %   ids = [numeric] id numbers to run preprocessing on. Default is all
 %       participants marked as 'incl' in the diary file. Enter 0 to run
-%       all participants marked as 'incl' as well as not marked with a 0
-%       in the master log file.
+%       all participants marked as 'incl' in the diary file as well as not
+%       marked with a 1 in the processing log file.
 %
 %   stim = ['sync' or 'mir']
 %
 %   task = ['eeg' or 'tapping']
 %
-%   master_log_filename = [string] CSV file to save a summary of what has
+%   en_load('proclog') = [string] CSV file to save a summary of what has
 %       been completed. This file marks 1 for completed without errors, 0
 %       if there were errors, and NaN if the file id hasn't been touched
 %       yet. Put this file in your Dropbox (or similar) to easily keep
 %       track of long batch processing jobs.
 
 function varargout = en_preprocess(ids, stims, tasks)
-if nargin < 1 || isempty(ids)
+if nargin < 1 || isempty(ids) || ids == 0
+    % only process files that havn't already be done
+    if ids == 0
+        check_log = true;
+    else
+        check_log = false;
+    end
     % get ids marked as included
     d = en_load('diary', 'incl');
     ids = d.id;
 end
 if nargin < 2 || isempty(stims), stims = {'sync', 'mir'}; end
 if nargin < 3 || isempty(tasks), tasks = {'eeg', 'tapping'}; end
-
-master_log_filename = fullfile(getpath('analysis'), 'en_log.csv');
 
 % make them cells so we can loop them
 stims = cellstr(stims);
@@ -53,6 +59,11 @@ for i = 1:length(ids)
         for currentTask = 1:length(tasks)
             task = tasks{currentTask};
             timeLogInd = length(timeLog) + 1;
+
+            if check_log && already_been_done(id, stim, task)
+                % skip this file if it has already been done
+                continue
+            end
 
                 % start diary file to save command window output
                 % make diary a hidden file
@@ -82,11 +93,11 @@ for i = 1:length(ids)
                     en_preprocess_eeg(id, stim, task);
                     en_preprocess_tapping(id, stim);
                     timeLog{timeLogInd} = '  ';
-                    write_to_master_log(master_log_filename, id, stim, task, 1)
+                    write_proclog(id, stim, task, 1)
 
                 catch err
                     timeLog{timeLogInd} = '! ';
-                    write_to_master_log(master_log_filename, id, stim, task, 0)
+                    write_proclog(id, stim, task, 0)
 
                     % display the error without terminating the loop
                     disp(err)
@@ -142,8 +153,16 @@ t = startTime(ind) + startTime(ind + 1) / x;
 str = [num2str(t), ' ', units];
 end
  
-function write_to_master_log(filename, id, stim, task, val)
-T = readtable(filename);
+function write_proclog(id, stim, task, val)
+T = readtable(getpath('proclog'));
 T{T.id==id,['pre_',stim,'_',task]} = val;
 writetable(T, filename)
+end
+
+function val = already_been_done(id, stim, task)
+T = readtable(getpath('proclog'));
+val = false;
+if T{T.id==id,['pre_',stim,'_',task]} == 1
+    val = true;
+end
 end
