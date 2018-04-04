@@ -149,13 +149,15 @@ str = [num2str(t), ' ', units];
 end
  
 function write_proclog(id, stim, task, val)
-T = readtable(getpath('proclog'));
+filename = getpath('proclog');
+T = readtable(filename);
 T{T.id==id,['pre_',stim,'_',task]} = val;
 writetable(T, filename)
 end
 
 function val = already_been_done(id, stim, task)
-T = readtable(getpath('proclog'));
+filename = getpath('proclog');
+T = readtable(filename);
 val = false;
 if T{T.id==id,['pre_',stim,'_',task]} == 1
     val = true;
