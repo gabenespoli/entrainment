@@ -9,9 +9,10 @@
 %
 % Input:
 %   ids = [numeric] id numbers to run preprocessing on. Default is all
-%       participants marked as 'incl' in the diary file. Enter 0 to run
-%       all participants marked as 'incl' in the diary file as well as not
-%       marked with a 1 in the processing log file.
+%       participants marked as 'incl' in the diary file as well as not
+%       marked with a 1 in the processing log file. Enter 0 to run all
+%       participants marked as 'incl' in the diary file, regardless of
+%       what is marked in the preprocessing log.
 %
 %   stim = ['sync' or 'mir']
 %
@@ -25,11 +26,9 @@
 
 function varargout = en_preprocess(ids, stims, tasks)
 if nargin < 1 || isempty(ids) || ids == 0
-    % only process files that havn't already be done
+    check_log = true; % only process files that haven't already be done
     if ids == 0
-        check_log = true;
-    else
-        check_log = false;
+        check_log = false; % force re-preprocess all ids
     end
     % get ids marked as included
     d = en_load('diary', 'incl');
