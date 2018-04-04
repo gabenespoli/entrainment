@@ -1,2 +1,2 @@
-id,incl,order,bdffile,hc,capsize,eventchans,badchans,extra_eeg_event,missed_eeg_event,extra_midi_event,experimenters,recording_notes,midi_audio_marker_threshold,midi_timeBetween_secs,dipolar_comps
-1,1,1,20180101A,55,M,137,"D25,D4,C30",31,,,"ES, JR, GN",lots of movement artifact in block 2,0.001,2,"1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 14, 17, 18, 19, 27, 30, 34, 42, 58, 60, 115"
+id,incl,order,bdffile,hc,capsize,eventchans,badchans,extra_eeg_event,missed_eeg_event,extra_midi_event,missed_midi_event,experimenters,recording_notes,midi_audio_marker_threshold,midi_timeBetween_secs,dipolar_comps
+1,1,1,20180101A,55,M,137,"D25,D4,C30",31,,,,"ES, JR, GN",lots of movement artifact in block 2,0.001,2,"1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 14, 17, 18, 19, 27, 30, 34, 42, 58, 60, 115"
