@@ -1,8 +1,8 @@
 %% en_preprocess
 % Loop many participants and run en_preprocess_eeg and
-%   en_preprocess_tapping. Saves hidden text files with all command window
-%   output to getpath('eeg'). Also reads from and/or updates the processing
-%   log (getpath('proclog')).
+%   en_preprocess_tapping. Saves text files with all command window output
+%   to getpath('eeg'). Also reads from and/or updates the processing log
+%   (getpath('proclog')).
 %
 % Usage:
 %   en_preprocess(ids, stim, task)
@@ -66,18 +66,10 @@ for i = 1:length(ids)
             end
 
                 % start diary file to save command window output
-                % make diary a hidden file
-                if ismac || isunix
-                    hidechar = '.';
-                elseif ispc
-                    hidechar = '_';
-                else
-                    hidechar = '';
-                end
                 diaryFilename = fullfile( ...
                     getpath('eeg'), ...
                     [stim, '_', task], ...
-                    [hidechar, num2str(id), '.log']);
+                    [num2str(id), '.log']);
                 diary(diaryFilename)
 
                 fprintf('Diary filename:    %s\n', diaryFilename)
