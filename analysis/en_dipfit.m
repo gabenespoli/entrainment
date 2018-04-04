@@ -50,8 +50,9 @@ else
         linspace(0, hr, 6), ...
         rv / 100);
 
-    % TODO: fine fit
+    warning('Not doing any fine dipole fitting. Please do this manually.')
     % pop_autofit?
+    % I don't think there's an automated way to fine fit while also including a custom hr
     % check https://sccn.ucsd.edu/wiki/A08:_DIPFIT#Interactive_fine-grained_fitting
 
 end
