@@ -24,85 +24,99 @@ catch
     error('EEG.setname should be the id.')
 end
 
+numEvents = 120;
+
 D = en_load('diary', id);
 
 %% get event indices
-% 'eventindices' param/val pair in pop_epoch is the indices of EEG.event from where
-%   you want ot extract all epochs that have the labels of the events input
+% 'eventindices' param/val pair in pop_epoch is the indices of EEG.event
+%   from where you want ot extract all epochs that have the labels of the
+%   events input
 % so, to get all the sync trials from block 1 (of 4), you would have
 % EEG = pop_epoch(EEG, syncPortcodes, [5 31], 'eventindices', 1:30)
 
-% start with all portcode indices
-eventindices = 1:length(EEG.event);
+% step through expected and actual events simultaneously
+% note: it is possible to have the same event in extra_eeg_event and
+%   missed_eeg_event; this would be in the case that a trial was repeated,
+%   but the portcode that was sent is for the trial that you don't want to
+%   keep
 
-% remove extra portcodes
-extra_eeg_event = D.extra_eeg_event{1};
-if ~isnan(extra_eeg_event)
-    disp('Removing extra portcodes...')
-    eventindices(extra_eeg_event) = [];
-end
+expectedEvent = nan(1, numEvents); % a position for each expected event
+missed_eeg_event = D.missed_eeg_event{1}; % expected events that were missed
+expectedInd = 1; % eventindices
 
-% add nans for missed portcodes
-missed_eeg_event = D.missed_eeg_event{1};
-if ~isnan(missed_eeg_event)
-    disp('Adding NaNs for extra portcodes...')
-    for i = 1:length(missed_eeg_event)
-        if missed_eeg_event(i) == 1
-            eventindices = [nan eventindices]; %#ok<AGROW>
-        elseif missed_eeg_event(i) == 120
-            eventindices = [eventindices nan]; %#ok<AGROW>
-        else
-            eventindices = [eventindices(1:missed_eeg_event(i) - 1), ...
-                            nan, ...
-                            eventindices(missed_eeg_event(i):end)];
-        end
+actualEvent = 1:length(EEG.event); % actual events that were sent
+extra_eeg_event = D.extra_eeg_event{1}; % extra events that were sent
+actualInd = 1; % EEG.event event indices
+
+while expectedInd <= numEvents
+    % do the continuing with a variable, so we can check both extra and
+    %   missed, and then continue if either (or both) of them were true
+    do_continue = false;
+
+    % skip over the actual event that was extra
+    if ismember(actualInd, extra_eeg_event)
+        actualInd = actualInd + 1;
+        do_continue = true;
     end
+    % skip over the expected event that wasn't sent
+    if ismember(expectedInd, missed_eeg_event)
+        expectedInd = expectedInd + 1;
+        do_continue = true;
+    end
+    if do_continue
+        continue
+    end
+
+    expectedEvent(expectedInd) = actualEvent(actualInd);
+    expectedInd = expectedInd + 1;
+    actualInd = actualInd + 1;
 end
 
 % get desired event indices and portcodes (event types)
 if strcmpi(stim, 'sync')
     if strcmpi(task, 'eeg')
-
-        if     D.order == 1,   eventindices = eventindices(1:30);
-        elseif D.order == 2,   eventindices = eventindices(31:60);
+        if     D.order == 1,   eventindices = expectedEvent(1:30);
+        elseif D.order == 2,   eventindices = expectedEvent(31:60);
         end
-
     elseif strcmpi(task, 'tapping')
-        if     D.order == 1,   eventindices = eventindices(31:60);
-        elseif D.order == 2,   eventindices = eventindices(1:30);
+        if     D.order == 1,   eventindices = expectedEvent(31:60);
+        elseif D.order == 2,   eventindices = expectedEvent(1:30);
         end
     end
 elseif strcmpi (stim, 'mir')
     if strcmpi(task, 'eeg')
-        if     D.order == 1,   eventindices = eventindices(61:90);
-        elseif D.order == 2,   eventindices = eventindices(91:120);
+        if     D.order == 1,   eventindices = expectedEvent(61:90);
+        elseif D.order == 2,   eventindices = expectedEvent(91:120);
         end
     elseif strcmpi(task, 'tapping')
-        if     D.order == 1,   eventindices = eventindices(91:120);
-        elseif D.order == 2,   eventindices = eventindices(61:90);
+        if     D.order == 1,   eventindices = expectedEvent(91:120);
+        elseif D.order == 2,   eventindices = expectedEvent(61:90);
         end
     end
 end
 
-%% cleanup and do epoching
-
 % remove nans (probably due to some missed portcodes)
-eventindices(isnan(eventindices)) = [];
+nanind = isnan(eventindices);
+eventindices(nanind) = [];
 
+% get actual values of events
+portcodes = transpose([EEG.event.type]);
+portcodes = portcodes(eventindices);
+
+% verify event values against the logfile
+L = en_load('logfile', id);
+logfile_portcodes = L(L.stim==stim & L.task==task, :).portcode;
+if ~all(portcodes == logfile_portcodes(~nanind))
+    error('The portcodes in EEG struct don''t match the portcodes in the logfile.')
+end
+
+%% do epoching
 % we can just lock to all events (sync and mir) because we're restricting
 %   by eventindices anyway
 eventTypes = unique([EEG.event.type]);
 % convert numeric to cell of strings
 eventTypes = regexp(num2str(eventTypes), '\s*', 'split');
-
-% verify portcodes against the logfile
-portcodes = [EEG.event.type];
-portcodes = transpose(portcodes(eventindices));
-L = en_load('logfile', id);
-logfile_portcodes = L(L.stim==stim & L.task==task, :).portcode;
-if ~all(portcodes == logfile_portcodes)
-    error('The portcodes in EEG struct don''t match the portcodes in the logfile.')
-end
 
 % do epoching
 EEG = pop_epoch(EEG, ...
