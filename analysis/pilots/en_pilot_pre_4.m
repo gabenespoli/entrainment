@@ -60,7 +60,7 @@ EEG = pop_chanedit(EEG, 'lookup', chanfile);
 EEG = pop_saveset(EEG, 'filename', [EEG.setname,'.set'], 'filepath', procdir);
 
 %% preprocessing
-rmchans = eeg_ABCDto5percent(d.rmchans{1}, false);
+rmchans = eeg_ABCDto5percent(d.badchans{1}, false);
 EEG = pop_select(EEG, 'nochannel', rmchans); % remove bad channels before changing to 5pct
 EEG = pop_select(EEG, 'nochannel', {'PPO5h', 'P03'}); % looked to be flatlined
 EEG.data = averageReference(EEG.data); % try removing this?

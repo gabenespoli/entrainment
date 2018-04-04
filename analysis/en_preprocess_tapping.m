@@ -17,10 +17,10 @@ if isempty(D.rmevent_midi{1})
 else
     numMarkers = 60 + length(D.rmevent_midi{1});
 end
-if isnan(D.midi_threshold)
+if isnan(D.midi_audio_marker_threshold)
     threshold = 0.001;
 else
-    threshold = D.midi_threshold;
+    threshold = D.midi_audio_marker_threshold;
 end
 if isnan(D.midi_timeBetween_secs)
     timeBetween = 2 * Fs;

@@ -17,7 +17,7 @@ for i = 1:height(d)
     d.eventchans{i} = temp{1};
 end
 
-d.rmchans       = convertToCells(T.rmchans);
+d.badchans      = convertToCells(T.badchans);
 d.experimenters = T.experimenters;
 
 % restrict to specified ids

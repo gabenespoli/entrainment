@@ -142,13 +142,13 @@ switch lower(filetype)
         for i = 1:size(D, 1)
             % convert some fields from comma-delimited lists to cell arrays
             D.bdffile{i}            = csv2cell(D.bdffile{i});
-            D.rmchans{i}            = csv2cell(D.rmchans{i});
+            D.badchans{i}           = csv2cell(D.badchans{i});
 
             % convert some fields from comma-delimited lists to numeric vectors
-            D.rmportcodes{i}        = csv2vec(D.rmportcodes{i});
-            D.rmevent_midi{i}       = csv2vec(D.rmevent_midi{i});
-            D.missedportcodes{i}    = csv2vec(D.missedportcodes{i});
-            D.dipolar_comps{i}      = csv2vec(D.dipolar_comps{i});
+            D.extra_eeg_event{i}  = csv2vec(D.extra_eeg_event{i});
+            D.missed_eeg_event{i} = csv2vec(D.missed_eeg_event{i});
+            D.extra_midi_event{i} = csv2vec(D.extra_midi_event{i});
+            D.dipolar_comps{i}    = csv2vec(D.dipolar_comps{i});
         end
 
         if ~isempty(id)
