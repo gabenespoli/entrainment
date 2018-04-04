@@ -122,16 +122,6 @@ for i = 1:length(ids)
     end
 end
 
-% save elapsed time and errors for all ids to file
-fid = fopen(fullfile(getpath('analysis'), 'looplogs', ...
-    ['loop_log_', startTimeStr, '.txt']), 'w');
-fprintf(fid, 'Loop summary\n');
-for i = 1:length(ids)
-    fprintf(fid, '%i: %s\n\n', ids(i), timeLog{i});
-end
-fprintf(fid, 'Total time: %s\n', getElapsedTime(startTime));
-fclose(fid);
-
 end
 
 function str = getElapsedTime(startTime)
