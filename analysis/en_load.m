@@ -139,17 +139,15 @@ switch lower(filetype)
         D.recording_notes = []; % remove notes field for nicer display in command window
         D.incl(isnan(D.incl)) = 0; % make nans zeros instead
 
-        for i = 1:size(D, 1)
-            % convert some fields from comma-delimited lists to cell arrays
-            D.bdffile{i}            = csv2cell(D.bdffile{i});
-            D.badchans{i}           = csv2cell(D.badchans{i});
+        % convert some fields from comma-delimited lists to cell arrays
+        D.bdffile  = csv2cell(D.bdffile);
+        D.badchans = csv2cell(D.badchans);
 
-            % convert some fields from comma-delimited lists to numeric vectors
-            D.extra_eeg_event{i}  = csv2vec(D.extra_eeg_event{i});
-            D.missed_eeg_event{i} = csv2vec(D.missed_eeg_event{i});
-            D.extra_midi_event{i} = csv2vec(D.extra_midi_event{i});
-            D.dipolar_comps{i}    = csv2vec(D.dipolar_comps{i});
-        end
+        % convert some fields from comma-delimited lists to numeric vectors
+        D.extra_eeg_event  = csv2vec(D.extra_eeg_event);
+        D.missed_eeg_event = csv2vec(D.missed_eeg_event);
+        D.extra_midi_event = csv2vec(D.extra_midi_event);
+        D.dipolar_comps    = csv2vec(D.dipolar_comps);
 
         if ~isempty(id)
             if isnumeric(id) % restrict to a specific id
@@ -214,12 +212,35 @@ else
 end
 end
 
-function C = csv2cell(csv)
-C = regexp(csv, '\ *,\ *', 'split');
+function C = csv2cell(C)
+% loops through a cell array and splits items by comma and surrounding
+%   whitespace
+% e.g.
+% if C = {'a', ...
+%         'a, b', ...
+%         'a  ,  b  '}
+% then csv2cell(C) = {'a', ...
+%                     {'a', 'b'}, ...
+%                     {'a', 'b'}}
+for i = 1:length(C)
+    C{i} = regexp(C{i}, '\ *,\ *', 'split');
+end
 end
 
-function vec = csv2vec(csv)
-C = csv2cell(csv);
-C = cellfun(@str2num, C, 'UniformOutput', false);
-vec = cell2mat(C);
+function C = csv2vec(C)
+% takes a numeric vector or a cell array of strings that are
+%   comma-separated numbers, and returns a cell array of numeric vectors
+if isnumeric(C)
+    tmp = cell(size(C));
+    for i = 1:length(C)
+        tmp{i} = C(i);
+    end
+    C = tmp;
+else
+    for i = 1:length(C)
+        C{i} = regexp(C{i}, '\ *,\ *', 'split');
+        C{i} = cellfun(@str2num, C{i}, 'UniformOutput', false);
+        C{i} = cell2mat(C{i});
+    end
+end
 end
