@@ -43,7 +43,7 @@ if ~isnan(extra_eeg_event)
 end
 
 % add nans for missed portcodes
-missed_eeg_event = D.missedportcodes{1};
+missed_eeg_event = D.missed_eeg_event{1};
 if ~isnan(missed_eeg_event)
     disp('Adding NaNs for extra portcodes...')
     for i = 1:length(missed_eeg_event)
