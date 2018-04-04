@@ -1,6 +1,6 @@
 # Neural Entrainment Scripts
 
-These MATLAB scripts were used for a project measuring neural entrainment using EEG. I have put them here with the hope that they will be useful to others interested in analyzing EEG data. They can be used as a template for another analysis or for inspiration. Many of the scripts can be used outside of this project (see the [General EEG Analysis](#analysis-functions-general-eeg-analysis) section).
+These MATLAB scripts were used for a project measuring neural entrainment using EEG. I have put them here with the hope that they will be useful to others interested in analyzing EEG data. They can be used as a template for another analysis or for inspiration. Many of the scripts can be used outside of this project (see the [General EEG Analysis](#analysis-functions-general-analysis) section).
 
 The `analysis` folder is a combination of wrapper scripts for [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) (mostly for preprocessing), and custom functions for selecting independent components by location and measuring entrainment. The `task` folder is for presenting stimuli on a Windows computer, and was used to send port codes to a BioSemi EEG recording system.
 
@@ -15,8 +15,8 @@ The `analysis` folder is a combination of wrapper scripts for [EEGLAB](https://s
     3. [List of Analysis Functions](#analysis-list-of-analysis-functions)
         1. [Project Macros](#analysis-functions-project-macros)
         2. [Project Utilities](#analysis-functions-project-utilities)
-        3. [Project EEG Analysis](#analysis-functions-project-eeg-analysis)
-        4. [General EEG Analysis](#analysis-functions-general-eeg-analysis)
+        3. [Project Analysis](#analysis-functions-project-analysis)
+        4. [General Analysis](#analysis-functions-general-analysis)
 2. [Task](#task)
 3. [MATLAB](#matlab)
 
@@ -38,7 +38,7 @@ Coming soon...
 
 #### The Project Folder
 
-The function `getpath` is used to access all required directory paths and files for the rest of the scripts in this toolbox (except for the [General EEG Analysis](#analysis-functions-general-eeg-analysis) functions, which don't require any external paths or files). Paths can be edited, added, or removed from that function as needed. Here is the folder structure for the current project, with some example filenames:
+The function `getpath` is used to access all required directory paths and files for the rest of the scripts in this toolbox (except for the [General EEG Analysis](#analysis-functions-general-analysis) functions, which don't require any external paths or files). Paths can be edited, added, or removed from that function as needed. Here is the folder structure for the current project, with some example filenames:
 
 ```
 project_folder/         set this in getroot
@@ -100,16 +100,17 @@ The diary.csv file can be considered a sort of configuration file for the analys
 The following code will run the entire analysis pipeline from raw data files to a tabular data frame of entrainment values.
 
 ```matlab
-% make a copy of getroot_example.m and rename it getroot.m
-% edit getroot.m to return the absolute path to the project root
+% 1. make a copy of getroot_example.m and rename it getroot.m
+% 2. edit getroot.m to return the absolute path to the project root
 %   (i.e., the "project_folder" in the directory structure above)
-% set current folder to this analysis folder, or add it to the MATLAB path
-ids = 6:16; % specify the ids you would like to analyze
-en_load('eeglab') % adds eeglab to the MATLAB path
-en_preprocess(ids); % preprocess EEG and tapping data, saves topoplots
-% look at topographical maps saved in getpath('topoplots') and mark down component numbers that are dipolar in en_diary.csv
+% 3. set current folder to this analysis folder, or add it to the MATLAB path
+% 4. preprocess all EEG and tapping data, save topoplots
+en_preprocess 
+% 5. look at topographical maps saved in getpath('topoplots') and mark down component numbers that are dipolar in en_diary.csv
+% 6. find good, localized components, calculate entrainment
 en_loop_eeg_entrainment(ids);
-% MIDI analysis is coming soon...
+% 7. MIDI analysis is coming soon...
+% 8. write all data in tabular format to a csv file
 T = en_getdata(ids);
 writetable(T, 'mydata.csv');
 ```
@@ -146,9 +147,9 @@ Simplify finding and loading files.
 | `getpath`                 | Takes a keyword as input and returns a directory or file path. All functions in this "toolbox" use this function to get path names. This means that you can move these scripts to a different computer or port them to a different project, and will only have to change this file in order for everything to work (theoretically). This function depends on getroot.m Note that you will have to create this file from the example that is provided. |
 | `en_load`                 | Takes a keyword (and optionally an ID number), and loads the specified file into the MATLAB workspace. Can also start [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) from the path specified in `getpath('eeglab')`.                                                                                                                                                                                                                                |
 
-<a name="analysis-functions-project-eeg-analysis"></a>
+<a name="analysis-functions-project-analysis"></a>
 
-#### Project EEG Analysis
+#### Project Analysis
 
 These include wrappers on EEGLAB functions (mostly EEG preprocessing) and custom scripts for spectral analyses.
 
@@ -158,11 +159,11 @@ These include wrappers on EEGLAB functions (mostly EEG preprocessing) and custom
 | `en_epoch`                | Epochs an EEG struct using [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) based on portcodes which are specified with keywords. This function in particular is highly specialized for the current study, and will require lots of editing to work for a different study.                                                                                                 |
 | `en_dipfit`               | Wrapper on [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) functions for dipole fitting using the Boundary Element Model (BEM).                                                                                                                                                                                                                                           |
 
-<a name="analysis-functions-general-eeg-analysis"></a>
+<a name="analysis-functions-general-analysis"></a>
 
-#### General EEG Analysis
+#### General Analysis
 
-Some EEG-related functions for preprocessing and spectral analysis that will work outside of this project.
+Some mostly EEG-related functions for preprocessing and spectral analysis that will work outside of this project.
 
 | Function                  | Description                                                                                                                                                                                                                                       |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -175,6 +176,7 @@ Some EEG-related functions for preprocessing and spectral analysis that will wor
 | `getfft3`                 | A fancy wrapper on MATLAB's `fft` function that expects data to be channels-by-time-by-trials (e.g., EEGLAB's EEG.data).                                                                                                                          |
 | `noisefloor3`             | For each value in the data, remove the mean of surrounding values. This version expects data to be channels-by-time-by-trials (e.g., EEGLAB's EEG.data).                                                                                          |
 | `getbins3`                | Given some data and a vector of labels, get the value (or mean/max/min) of data for specified labels. This is used to get the max spectral value at a given frequency.                                                                            |
+| `findAudioMarkers`        | Look through an audio file and return the onset times in samples.                                                                                                                                                                                 |
 
 <a name="task"></a>
 
