@@ -12,10 +12,10 @@ end
 
 %% get parameters from diary
 D = en_load('diary', id);
-if isempty(D.rmevent_midi{1})
+if isempty(D.extra_midi_event{1})
     numMarkers = 60;
 else
-    numMarkers = 60 + length(D.rmevent_midi{1});
+    numMarkers = 60 + length(D.extra_midi_event{1});
 end
 if isnan(D.midi_audio_marker_threshold)
     threshold = 0.001;
@@ -39,9 +39,9 @@ times = findAudioMarkers( ...
 times = times / Fs; % convert from samples to seconds
 if ~iscolumn(times), times = transpose(times); end % make column vector
 if length(times) ~= numMarkers, error('There are an incorrect number of trials.'), end
-if ~isempty(D.rmevent_midi{1})
-    fprintf('Removing %i MIDI events...\n', length(D.rmevent_midi{1}))
-    times(D.rmevent_midi{1}) = [];
+if ~isempty(D.extra_midi_event{1})
+    fprintf('Removing %i MIDI events...\n', length(D.extra_midi_event{1}))
+    times(D.extra_midi_event{1}) = [];
 end
 
 %% epoching
