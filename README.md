@@ -44,6 +44,7 @@ The function `getpath` is used to access all required directory paths and files 
 project_folder/         set this in getroot
 ├─ analysis/            the folder from this repository
 │  └─ en_diary.csv      this file should be edited with your own data
+│  └─ en_log.csv        this file should be edited with your own data
 │
 ├─ data/  
 │  ├─ bdf/              .bdf files of raw EEG recordings  
@@ -126,7 +127,7 @@ Perform a whole section of the analysis pipeline and batch processing. These mos
 
 | Function                  | Description                                                                                                                                                                                                                                                                                           |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `en_preprocess`           | Loops through the specified IDs and runs `en_preprocess_eeg` and `en_preprocess_tapping`. All output from the command window is captured for each ID and saved as a hidden file to `getpath('eeg')`, as well as a summary file to keep track of what has been completed and if errors were present.   |
+| `en_preprocess`           | Loops through the specified IDs and runs `en_preprocess_eeg` and `en_preprocess_tapping`. All output from the command window is captured for each ID and saved as a hidden file to `getpath('eeg')`, as well as a summary file (en_log.csv) to keep track of what has been completed and if errors were present.   |
 | `en_preprocess_eeg`       | A macro that runs `en_readbdf` and a number of [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) functions to pre-process EEG data, including ICA and dipole fitting. Resultant .set files are saved to `getpath('eeg')`.                                                                              |
 | `en_preprocess_tapping`   | A macro that loads the .wav file of stimuli that was exported from Pro Tools, searches for audio onsets to get the stimulus onset times, and uses these to epoch the MIDI tapping data. MIDI data is read using MIDI Toolbox and saved as a MATLAB table.                                             |
 | `en_loop_eeg_entrainment` | Loops through specified IDs and runs `en_eeg_entrainment`.                                                                                                                                                                                                                                            |

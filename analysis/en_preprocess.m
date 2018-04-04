@@ -30,7 +30,7 @@ end
 if nargin < 2 || isempty(stims), stims = {'sync', 'mir'}; end
 if nargin < 3 || isempty(tasks), tasks = {'eeg', 'tapping'}; end
 
-master_log_filename = fullfile(getpath('analysis'), 'en_preprocess_log.csv');
+master_log_filename = fullfile(getpath('analysis'), 'en_log.csv');
 
 % make them cells so we can loop them
 stims = cellstr(stims);
