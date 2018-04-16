@@ -12,10 +12,12 @@
 %   [s, ind]  = getbins3(y, x, bins, ...)
 %
 % Input:
-%   y         = [EEGLAB data matrix] Should be channels x time x trials.
+%   y         = [EEGLAB data matrix] Should be channels x time x trials or
+%               channels x frequency x trials (for fft data).
 %
 %   x         = [numeric vector] A vector the same size as the second
 %               dimension of y that contains "labels" for each column in y.
+%               For fft data, this would be the frequency vector.
 %
 %   bins      = [vector] The labels in x that should be selected. A
 %               separate "combination" (mean, max, or min) is returned for
@@ -26,8 +28,8 @@
 %               bin that should be included in the combination. Default is
 %               0, which will simply return the value of specified bins
 %               (i.e., no "combining" will be done). If the width is too
-%               wide for the amount of data and a given bin, an error
-%               occurs.
+%               wide for the amount of data (in y) and a given bin, an
+%               error occurs.
 %
 %   'cwidth'  = [numeric] Center width that should be excluded. Enter 0 to
 %               exclude only the center bin and 1 or greater to also
