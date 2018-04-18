@@ -48,7 +48,7 @@ project_folder/         set this in getroot
 │
 ├─ data/  
 │  ├─ bdf/              .bdf files of raw EEG recordings  
-│  ├─ eeg/              .set files from en_preprocess_eeg  
+│  ├─ eeg_preprocessed/ .set files from en_preprocess_eeg  
 │  ├─ eeg_goodcomps/    .png topo- and dip-plots from en_entrainment_eeg
 │  │  └─ pmc            subfolder(s) for specific brain regions
 │  ├─ eeg_entrainment/  .csv files from en_entrainment_eeg  

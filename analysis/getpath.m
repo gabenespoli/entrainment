@@ -33,7 +33,7 @@ switch pathtype
     % eeg data
     case 'logfiles',    outpath = fullfile(getpath('data'), 'logfiles');
     case 'bdf',         outpath = fullfile(getpath('data'), 'bdf');
-    case 'eeg',         outpath = fullfile(getpath('data'), 'eeg');
+    case 'eeg',         outpath = fullfile(getpath('data'), 'eeg_preprocessed');
     case 'topoplots',   outpath = fullfile(getpath('data'), 'eeg_topoplots');
     case 'goodcomps',   outpath = fullfile(getpath('data'), 'eeg_goodcomps');
     case 'entrainment', outpath = fullfile(getpath('data'), 'eeg_entrainment');
