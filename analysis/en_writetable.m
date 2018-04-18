@@ -1,6 +1,7 @@
+%% en_writetable.m
 % concatenate csv files from many ids as a single table
 
-function T = en_getdata(ids, varargin)
+function T = en_writetable(ids, varargin)
 if nargin > 0 && ischar(ids)
     varargin = [{ids} varargin];
     ids = [];
