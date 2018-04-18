@@ -27,7 +27,7 @@ switch pathtype
     case 'plots',       outpath = fullfile(getpath('project'), 'data', 'plots');
 
     % tapping data
-    case 'tapping',     outpath = fullfile(getpath('data'), 'tapping');
+    case 'tapping',     outpath = fullfile(getpath('data'), 'tap_preprocessed');
     case 'midi',        outpath = fullfile(getpath('data'), 'midi');
 
     % eeg data
