@@ -49,9 +49,9 @@ project_folder/         set this in getroot
 ├─ data/  
 │  ├─ bdf/              .bdf files of raw EEG recordings  
 │  ├─ eeg/              .set files from en_preprocess_eeg  
-│  ├─ eeg_goodcomps/    .png topo- and dip-plots from en_eeg_entrainment  
+│  ├─ eeg_goodcomps/    .png topo- and dip-plots from en_entrainment_eeg
 │  │  └─ pmc            subfolder(s) for specific brain regions
-│  ├─ eeg_entrainment/  .csv files from en_eeg_entrainment  
+│  ├─ eeg_entrainment/  .csv files from en_entrainment_eeg  
 │  ├─ eeg_topoplots/    .fig and .png topoplots files from en_preprocess_eeg  
 │  ├─ logfiles/         .csv and .txt files should be copied from task/logfiles
 │  ├─ midi/             .mid and .wav tapping files exported from Pro Tools
@@ -91,7 +91,7 @@ The diary.csv file can be considered a sort of configuration file for the analys
 | recording_notes             | [semicolon-separated list of sentences] | Any notes from the EEG recording session that might be good to know.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | midi_audio_marker_threshold | [number]                                | The `threshold` parameter used by `findAudioMarkers` when finding event markers for epoching MIDI data. If the audio level is the same for all participants than this will not be needed. Leaving this empty will use the default value set in `en_preprocess_tapping`.                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | midi_timeBetween_secs       | [number]                                | The `timeBetween` parameter used by `findAudioMarkers` when finding event markers for epoching MIDI data. Make this shorter if the participant was really quick advancing from one trial to the next. leaving this empty will use the default value set in `en_preprocess_tapping`.                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| dipolar_comps               | [comma-separated list of numbers]       | After running `en_preprocess_eeg`, look at the topographical plots that are saved and mark down which components are dipolar. This field is used by `en_eeg_entrainment` to select good components with `select_comps`. See Delorme, Palmer, Onton, Oostenveld, & Makeig (2012; PLOS ONE) for more information.                                                                                                                                                                                                                                                                                                                                                                                                         |
+| dipolar_comps               | [comma-separated list of numbers]       | After running `en_preprocess_eeg`, look at the topographical plots that are saved and mark down which components are dipolar. This field is used by `en_entrainment_eeg` to select good components with `select_comps`. See Delorme, Palmer, Onton, Oostenveld, & Makeig (2012; PLOS ONE) for more information.                                                                                                                                                                                                                                                                                                                                                                                                         |
 
 <a name="analysis-running-the-whole-pipeline"></a>
 
@@ -100,19 +100,15 @@ The diary.csv file can be considered a sort of configuration file for the analys
 The following code will run the entire analysis pipeline from raw data files to a tabular data frame of entrainment values.
 
 ```matlab
-% 1. make a copy of getroot_example.m and rename it getroot.m
-% 2. edit getroot.m to return the absolute path to the project root
-%   (i.e., the "project_folder" in the directory structure above)
-% 3. set current folder to this analysis folder, or add it to the MATLAB path
-% 4. preprocess all EEG and tapping data, save topoplots
-en_preprocess 
-% 5. look at topographical maps saved in getpath('topoplots') and mark down component numbers that are dipolar in en_diary.csv
-% 6. find good, localized components, calculate entrainment
-en_loop_eeg_entrainment(ids);
-% 7. MIDI analysis is coming soon...
-% 8. write all data in tabular format to a csv file
-T = en_getdata(ids);
-writetable(T, 'mydata.csv');
+% setup directory structure and fill it with data files
+% make a copy of en_diary_example.csv and fill it with your id numbers, filenames, etc.
+% make a copy of getroot_example.m and rename it getroot.m
+% edit getroot.m to return the absolute path to the project root (i.e., the "project_folder" in the directory structure above)
+% set current folder to this analysis folder, or add it to the MATLAB path
+en_preprocess % preprocess all EEG and tapping data for all IDs, save topoplots
+% [optional] look at topographical maps saved in getpath('topoplots') and mark down component numbers that are dipolar in en_diary.csv
+en_entrainment % find good, localized components and calculate entrainment
+en_writetable('entrainment.csv') % write all data in tabular format to a csv file
 ```
 
 <a name="analysis-list-of-analysis-functions"></a>
@@ -127,13 +123,14 @@ Each function list is loosely in the order that they would be used in the proces
 
 Perform a whole section of the analysis pipeline and batch processing. These mostly contain calls to the other functions in the lists below.
 
-| Function                  | Description                                                                                                                                                                                                                                                                                           |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Function                  | Description                                                                                                                                                                                                                                                                                                      |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `en_preprocess`           | Loops through the specified IDs and runs `en_preprocess_eeg` and `en_preprocess_tapping`. All output from the command window is captured for each ID and saved as a .log file to `getpath('eeg')`, as well as a summary file (en_log.csv) to keep track of what has been completed and if errors were present.   |
-| `en_preprocess_eeg`       | A macro that runs `en_readbdf` and a number of [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) functions to pre-process EEG data, including ICA and dipole fitting. Resultant .set files are saved to `getpath('eeg')`.                                                                              |
-| `en_preprocess_tapping`   | A macro that loads the .wav file of stimuli that was exported from Pro Tools, searches for audio onsets to get the stimulus onset times, and uses these to epoch the MIDI tapping data. MIDI data is read using MIDI Toolbox and saved as a MATLAB table.                                             |
-| `en_loop_eeg_entrainment` | Loops through specified IDs and runs `en_eeg_entrainment`.                                                                                                                                                                                                                                            |
-| `en_eeg_entrainment`      | A macro that takes an ID or EEGLAB struct and outputs a table of entrainment values for each trial. Resultant tables are saved as .csv files in `getpath('eeg_entrainment')`.                                                                                                                         |
+| `en_preprocess_eeg`       | A macro that runs `en_readbdf` and a number of [EEGLAB](https://sccn.ucsd.edu/eeglab/index.php) functions to pre-process EEG data, including ICA and dipole fitting. Resultant .set files are saved to `getpath('eeg')`.                                                                                         |
+| `en_preprocess_tapping`   | A macro that loads the .wav file of stimuli that was exported from Pro Tools, searches for audio onsets to get the stimulus onset times, and uses these to epoch the MIDI tapping data. MIDI data is read using MIDI Toolbox and saved as a MATLAB table.                                                        |
+| `en_entrainment`          | Loops through specified IDs and runs `en_entrainment_eeg`.                                                                                                                                                                                                                                                       |
+| `en_entrainment_eeg`      | A macro that takes an ID or EEGLAB struct and outputs a table of entrainment values for each trial. Resultant tables are saved as .csv files in `getpath('eeg_entrainment')`.                                                                                                                                    |
+| `en_entrainment_tapping`  | A macro that takes an ID, filename, or table and outputs a table of entrainment values for each trial. Resultant tables are saved as .csv files in `getpath('eeg_tapping')`.                                                                                                                                     |
 
 <a name="analysis-functions-project-utilities"></a>
 
