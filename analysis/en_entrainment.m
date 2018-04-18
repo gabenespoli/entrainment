@@ -1,5 +1,5 @@
 %% en_loop_eeg_entrainment
-%   Loop many participants through en_eeg_entrainment.
+%   Loop many participants through en_entrainment_eeg.
 %
 % Usage:
 %   en_loop_eeg_entrainment(ids)
@@ -10,11 +10,11 @@
 %       getpath('eeg'). If empty ([]), all ids with a 1 in the "incl"
 %       column of getpath('diary') are used.
 %
-%   See `help en_eeg_entrainment` for descriptions of other params
+%   See `help en_entrainment_eeg` for descriptions of other params
 %       'stim', 'task', and 'region'.
 %
 % Output:
-%   Same as en_eeg_entrainment, but for each specified id.
+%   Same as en_entrainment_eeg, but for each specified id.
 
 function en_loop_eeg_entrainment(ids, varargin)
 
@@ -60,7 +60,7 @@ for i = 1:length(ids)
     for j = 1:length(regions)
         region = regions{j};
 
-        en_eeg_entrainment(id, ...
+        en_entrainment_eeg(id, ...
             'stim',     stim, ...
             'trig',     task, ...
             'region',   region);

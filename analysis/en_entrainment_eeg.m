@@ -1,11 +1,11 @@
-%% en_eeg_entrainment
+%% en_entrainment_eeg
 %   Calculate entrainment of comps in a brain region. Saves topo and dip
 %   plots and writes data to a csv file.
 %
 % Usage:
-%   T = en_eeg_entrainment(EEG)
-%   T = en_eeg_entrainment(EEG, 'param', value, etc.)
-%   [T, fftdata, freqs] = en_eeg_entrainment(...)
+%   T = en_entrainment_eeg(EEG)
+%   T = en_entrainment_eeg(EEG, 'param', value, etc.)
+%   [T, fftdata, freqs] = en_entrainment_eeg(...)
 %
 % Input:
 %   EEG = [struct|numeric] EEGLAB struct with ICA and dipole information,
@@ -41,7 +41,7 @@
 % input can be a preprocessed EEG struct (with ICA and dipfit)
 %   or a numeric ID number
 
-function [T, fftdata, freqs] = en_eeg_entrainment(EEG, varargin)
+function [T, fftdata, freqs] = en_entrainment_eeg(EEG, varargin)
 
 % defaults
 region = 'pmc'; % pmc = 6, aud = [22 41 42]
