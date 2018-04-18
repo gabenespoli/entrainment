@@ -22,19 +22,19 @@
 function varargout = en_load(filetype, id)
 %% parse input
 if nargin < 2, id = []; end
+stim = '';
+task = '';
 if ischar(id)
     % get stim and task from id
     C = regexp(id, '_', 'split');
     idStr = C{1};
     id = str2num(idStr);
-    if length(C) == 3
+    if length(C) > 1
         stim = C{2};
-        task = C{3};
-    else
-        stim = '';
-        task = '';
     end
-
+    if length(C) > 2
+        task = C{3};
+    end
 else
     idStr = num2str(id);
 end
@@ -74,6 +74,14 @@ switch lower(filetype)
         varargout{1} = pop_loadset(fullfile(getpath('eeg'), ...
             [stim, '_', task], ...
             [idStr, '.set']));
+
+    case 'tap'
+        if isempty(stim)
+            disp('Using default stim=sync')
+            stim = 'sync';
+        end
+        tmp = load(fullfile(getpath('tapping'), stim, [idStr, '.mat']));
+        varargout{1} = tmp.TAP;
 
     %% logfiles
     case {'logfile','logfiles','log'}
