@@ -42,6 +42,8 @@ D = en_load('diary', id);
 %   keep
 
 expectedEvent = nan(1, numEvents); % a position for each expected event
+    % each position contains the index of the corresponding event
+    %   in actualEvent
 missedEvent = D.missed_eeg_event{1}; % expected events that were missed
 expectedInd = 1; % eventindices
 
