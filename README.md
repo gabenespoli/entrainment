@@ -176,7 +176,7 @@ Some mostly EEG-related functions for preprocessing and spectral analysis that w
 | `getfft3`                 | A fancy wrapper on MATLAB's `fft` function that expects data to be channels-by-time-by-trials (e.g., EEGLAB's EEG.data).                                                                                                                          |
 | `noisefloor3`             | For each value in the data, remove the mean of surrounding values. This version expects data to be channels-by-time-by-trials (e.g., EEGLAB's EEG.data).                                                                                          |
 | `getbins3`                | Given some data and a vector of labels, get the value (or mean/max/min) of data for specified labels. This is used to get the max spectral value at a given frequency.                                                                            |
-| `findAudioMarkers`        | Look through an audio file and return the onset times in samples.                                                                                                                                                                                 |
+| `findAudioMarkers`        | Look through an audio file and return the onset times in samples. This file is adapted from [PHZLAB](https://github.com/gabenespoli/phzlab).                                                                                                      |
 
 <a name="task"></a>
 
