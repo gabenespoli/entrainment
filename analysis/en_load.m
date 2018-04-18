@@ -147,6 +147,7 @@ switch lower(filetype)
         D.extra_eeg_event  = csv2vec(D.extra_eeg_event);
         D.missed_eeg_event = csv2vec(D.missed_eeg_event);
         D.extra_midi_event = csv2vec(D.extra_midi_event);
+        D.missed_midi_event = csv2vec(D.missed_midi_event);
         D.dipolar_comps    = csv2vec(D.dipolar_comps);
 
         if ~isempty(id)
