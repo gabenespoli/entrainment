@@ -36,17 +36,17 @@ D = en_load('diary', id);
 % EEG = pop_epoch(EEG, syncPortcodes, [5 31], 'eventindices', 1:30)
 
 % step through expected and actual events simultaneously
-% note: it is possible to have the same event in extra_eeg_event and
-%   missed_eeg_event; this would be in the case that a trial was repeated,
+% note: it is possible to have the same event in extraEvent and
+%   missedEvent; this would be in the case that a trial was repeated,
 %   but the portcode that was sent is for the trial that you don't want to
 %   keep
 
 expectedEvent = nan(1, numEvents); % a position for each expected event
-missed_eeg_event = D.missed_eeg_event{1}; % expected events that were missed
+missedEvent = D.missed_eeg_event{1}; % expected events that were missed
 expectedInd = 1; % eventindices
 
 actualEvent = 1:length(EEG.event); % actual events that were sent
-extra_eeg_event = D.extra_eeg_event{1}; % extra events that were sent
+extraEvent = D.extra_eeg_event{1}; % extra events that were sent
 actualInd = 1; % EEG.event event indices
 
 while expectedInd <= numEvents
@@ -55,12 +55,12 @@ while expectedInd <= numEvents
     do_continue = false;
 
     % skip over the actual event that was extra
-    if ismember(actualInd, extra_eeg_event)
+    if ismember(actualInd, extraEvent)
         actualInd = actualInd + 1;
         do_continue = true;
     end
     % skip over the expected event that wasn't sent
-    if ismember(expectedInd, missed_eeg_event)
+    if ismember(expectedInd, missedEvent)
         expectedInd = expectedInd + 1;
         do_continue = true;
     end
