@@ -22,7 +22,7 @@ eventchans = d.eventchans;
 
 % load .bdf files into EEGLAB .set files
 % merge all .bdf files for this id if there are multiple
-for i = length(bdffiles)
+for i = 1:length(bdffiles)
     bdffile = fullfile(getpath('bdf'), [bdffiles{i}, '.bdf']);
     TMP = pop_readbdf( ...
         bdffile, ...        % filename
