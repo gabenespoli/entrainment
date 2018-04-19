@@ -1,4 +1,5 @@
 function TAP = en_preprocess_tapping(id, stim, do_save, numMarkersPrompt)
+% numMarkersPrompt: 0 to cancel, 1 to prompt, 2 to continue
 
 if nargin < 2 || isempty(stim)
     stim = 'sync';
@@ -82,35 +83,32 @@ while expectedInd <= numEvents
     actualInd = actualInd + 1;
 end
 
-% if length(times) ~= numEvents, error('There are an incorrect number of trials.'), end
-% if ~isempty(D.extra_midi_event{1})
-%     fprintf('Removing %i MIDI events...\n', length(D.extra_midi_event{1}))
-%     times(D.extra_midi_event{1}) = [];
-% end
-
-% make a vector the same length as times, where each position is the
-%   corresponding trial number
-trial = 1:numEvents;
-trial(isnan(expectedEvent)) = [];
-
 %% epoching
 % make one row per trial instead of one row per tap
 % add columns for stim and trial number
-for i = 1:length(times)
+for i = 1:length(expectedEvent) % this should be 1:numEvents
+    % i is the trial id number
+    timesInd = expectedEvent(i);
+
+    if isnan(timesInd)
+        % can't epoch events that were missed
+        continue
+    end
+
     % get inds of M that match the current time
-    if i < length(times)
-        ind = M.onset >= times(i) & M.onset < times(i+1);
+    if timesInd < length(times)
+        ind = M.onset >= times(timesInd) & M.onset < times(timesInd+1);
     else
-        ind = M.onset >= times(i);
+        ind = M.onset >= times(timesInd);
     end
 
     % start this row of the table and add stim and trial columns
     % remember that sync and mir are always in the same order
     %   so sync = 1:30 and mir = 31:60
-    TMP = table(trial(i), 'VariableNames', {'trial'});
-    if ismember(trial(i), 1:30)
+    TMP = table(i, 'VariableNames', {'trial'});
+    if ismember(i, 1:30)
         TMP.stim = {'sync'};
-    elseif ismember(trial(i), 31:60)
+    elseif ismember(i, 31:60)
         TMP.stim = {'mir'};
         TMP.trial(1) = TMP.trial(1) - 30;
     else
