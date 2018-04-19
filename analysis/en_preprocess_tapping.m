@@ -12,6 +12,8 @@ if nargin < 4 || isempty(numMarkersPrompt)
 end
 numEvents = 60;
 
+fprintf('\nPreprocessing tapping data for id %i...\n', id)
+
 %% load midi and diary data
 [M, y, Fs] = en_load('midi', id);
 D = en_load('diary', id);
