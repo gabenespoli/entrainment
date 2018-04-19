@@ -88,6 +88,7 @@ end
 %% epoching
 % make one row per trial instead of one row per tap
 % add columns for stim and trial number
+init_OUT = true;
 for i = 1:length(expectedEvent) % this should be 1:numEvents
     % i is the trial id number
     timesInd = expectedEvent(i);
@@ -123,7 +124,8 @@ for i = 1:length(expectedEvent) % this should be 1:numEvents
         TMP.(names{j}) = {M.(names{j})(ind)};
     end
 
-    if i == 1
+    if init_OUT
+        init_OUT = false;
         OUT = TMP;
     else
         OUT = [OUT; TMP]; %#ok<AGROW>
