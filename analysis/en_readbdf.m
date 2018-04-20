@@ -34,6 +34,12 @@ for i = 1:length(bdffiles)
         EEG = TMP;
     else
         EEG = pop_mergeset(EEG, TMP);
+        fprintf(['Removing boundary event and converting ', ...
+            'EEG.event.type to numeric...'])
+        EEG.event(ismember({EEG.event.type}, 'boundary')) = [];
+        for j = 1:length(EEG.event)
+            EEG.event(j).type = str2num(EEG.event(j).type);
+        end
     end
 
 end
