@@ -21,7 +21,7 @@
 %
 %   'rv' = [numeric between 0 and 1] Residual variance threshold for
 %       selecting components. This should probably be the same or smaller
-%       than what was used for en_eeg_preprocess.
+%       than what was used for en_preprocess_eeg.
 %
 %   'width' = [numeric (int)] Number of bins on either side of center bin
 %       to include when selecting the max peak for a given frequency.
