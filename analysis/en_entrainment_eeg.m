@@ -79,7 +79,9 @@ if ischar(region)
         otherwise, error('Invalid string for region input.')
     end
 elseif isnumeric(region)
-    if region == 6,                             regionStr = 'pmc';
+    if region == 4,                             regionStr = 'mot';
+    elseif region == 6,                         regionStr = 'pmc';
+    elseif all(ismember(region, [4 6])),        regionStr = 'pmm'; 
     elseif all(ismember(region, [22 41 42])),   regionStr = 'aud';
     else,                                       regionStr = 'other';
     end
