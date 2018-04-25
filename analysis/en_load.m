@@ -64,16 +64,15 @@ switch lower(filetype)
 
     case 'eeg'
         if isempty(stim)
-            disp('Using default stim=sync')
+            disp('Using default: stim = ''sync''')
             stim = 'sync';
         end
         if isempty(task)
-            disp('Using default task=eeg')
-            stim = 'mir';
+            disp('Using default: task = ''eeg''')
+            task = 'eeg';
         end
-        varargout{1} = pop_loadset(fullfile(getpath('eeg'), ...
-            [stim, '_', task], ...
-            [idStr, '.set']));
+        filename = fullfile(getpath('eeg'), [stim, '_', task], [idStr, '.set']);
+        varargout{1} = pop_loadset(filename);
 
     case 'tap'
         if isempty(stim)
