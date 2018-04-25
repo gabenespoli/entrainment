@@ -3,9 +3,9 @@
 %   plots and writes data to a csv file.
 %
 % Usage:
-%   T = en_entrainment_eeg(EEG)
-%   T = en_entrainment_eeg(EEG, 'param', value, etc.)
-%   [T, fftdata, freqs] = en_entrainment_eeg(...)
+%   EN = en_entrainment_eeg(EEG)
+%   EN = en_entrainment_eeg(EEG, 'param', value, etc.)
+%   [EN, fftdata, freqs] = en_entrainment_eeg(...)
 %
 % Input:
 %   EEG = [struct|numeric] EEGLAB struct with ICA and dipole information,
@@ -27,7 +27,7 @@
 %       to include when selecting the max peak for a given frequency.
 %
 % Output:
-%   T = [table] Data from logfile, stiminfo, and the entrainment analysis
+%   EN = [table] Data from logfile, stiminfo, and the entrainment analysis
 %       in a single MATLAB table. This table is also written as a csv to
 %       getpath('entrainment').
 %
@@ -41,7 +41,7 @@
 % input can be a preprocessed EEG struct (with ICA and dipfit)
 %   or a numeric ID number
 
-function [T, fftdata, freqs] = en_entrainment_eeg(EEG, varargin)
+function [EN, fftdata, freqs] = en_entrainment_eeg(EEG, varargin)
 
 % defaults
 region = 'pmc'; % pmc = 6, aud = [22 41 42]
@@ -93,12 +93,12 @@ elseif ~isstruct(EEG)
 end
 
 %% get logfile and stiminfo
-T = en_load('logstim', EEG.setname); % setname should be id
-T.id = repmat(EEG.setname, height(T), 1);
-T.comp = zeros(height(T), 1);
-T.en = zeros(height(T), 1);
-T.Properties.VariableNames{end} = regionStr;
-T.Properties.UserData.filename = fullfile(getpath('entrainment'), ...
+EN = en_load('logstim', EEG.setname); % setname should be id
+EN.id = repmat(EEG.setname, height(EN), 1);
+EN.comp = zeros(height(EN), 1);
+EN.en = zeros(height(EN), 1);
+EN.Properties.VariableNames{end} = regionStr;
+EN.Properties.UserData.filename = fullfile(getpath('entrainment'), ...
     [stim, '_', task, '_', regionStr, '_', EEG.setname, '.csv']);
 
 %% filter comps by region, rv, dipolarity
@@ -107,7 +107,7 @@ comps = select_comps(EEG, rv, region, d.dipolar_comps{1});
 
 if isempty(comps)
     % if no comps are selected, return the table with all zeros
-    writetable(T, T.Properties.UserData.filename)
+    writetable(EN, EN.Properties.UserData.filename)
     return
 end
 
@@ -136,9 +136,9 @@ for i = 1:length(en) % loop trials
         'func',  'mean');
 end
 [en, comps_ind] = max(en, [], 1); % take max of all comps
-T.(regionStr) = transpose(en);
-T.comp = transpose(comps(comps_ind));
+EN.(regionStr) = transpose(en);
+EN.comp = transpose(comps(comps_ind));
 
-writetable(T, T.Properties.UserData.filename)
+writetable(EN, EN.Properties.UserData.filename)
 
 end
