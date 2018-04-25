@@ -60,7 +60,7 @@ if isstruct(EEG)
 
 elseif iscell(EEG)
     for i = 1:length(EEG)
-        ind = ismember(d(:,1), EEG{i});
+        ind = ismember(d(:,1), upper(EEG{i}));
         if sum(ind) < 1
             warning('No channel match.')
         end
