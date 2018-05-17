@@ -1,71 +1,165 @@
-%% en_loop_eeg_entrainment
-%   Loop many participants through en_entrainment_eeg.
+%% en_entrainment
+% Loop many participants and run en_entrainment_eeg and
+%   en_entrainment_tapping. Saves text files with all command window output
+%   to getpath('entrainment'). Also reads from and/or updates the
+%   processing log (getpath('proclog')).
 %
 % Usage:
-%   en_loop_eeg_entrainment(ids)
-%   en_loop_eeg_entrainment(ids, 'param', value, etc.)
+%   en_entrainment(ids, stim, task)
 %
 % Input:
-%   ids = [numeric] List of IDs whose data will be loaded from
-%       getpath('eeg'). If empty ([]), all ids with a 1 in the "incl"
-%       column of getpath('diary') are used.
+%   ids = [numeric] id numbers to calculate entrainment on. Default is
+%       empty ([]) which will include all participants marked as 'incl' in
+%       the diary file.
 %
-%   See `help en_entrainment_eeg` for descriptions of other params
-%       'stim', 'task', and 'region'.
+%       If the function is called with no inputs at all, it will run all
+%       ids which are a) marked as 'incl' in the diary file and b) not
+%       marked with a 1 in the log (i.e., all that hasn't been completed
+%       yet).
 %
-% Output:
-%   Same as en_entrainment_eeg, but for each specified id.
+%   stim = ['sync' or 'mir']
+%
+%   task = ['eeg' or 'tapping']
+%
+%   en_load('proclog') = [string] CSV file to save a summary of what has
+%       been completed. This file marks 1 for completed without errors, 0
+%       if there were errors, and NaN if the file id hasn't been touched
+%       yet. Put this file in your Dropbox (or similar) to easily keep
+%       track of long batch processing jobs.
 
-function en_loop_eeg_entrainment(ids, varargin)
-
-% if ids is actually a parameter (i.e., the ids var was left out entirely,
-%   then add it to varargin; ids will have already been set below
-if nargin > 0 && ischar(ids)
-    varargin = [{ids} varargin];
-    ids = [];
+function varargout = en_entrainment(ids, stims, tasks)
+if nargin == 0
+    check_log = true; % only process files that haven't already be done
+else
+    check_log = false; % force re-preprocess all ids
 end
-
-% if no ids given, use all marked as incl in diary
-if nargin < 1 || isempty(ids) || ischar(ids)
+if nargin < 1 || isempty(ids)
+    % get ids marked as included
     d = en_load('diary', 'incl');
     ids = d.id;
 end
+if nargin < 2 || isempty(stims), stims = {'sync', 'mir'}; end
+if nargin < 3 || isempty(tasks), tasks = {'eeg', 'tapping'}; end
 
-% defaults
-stim = 'sync';
-task = 'eeg';
-regions = {'pmc', 'mot', 'pmm', 'aud'};
+% make them cells so we can loop them
+stims = cellstr(stims);
+tasks = cellstr(tasks);
 
-% user-defined
-for i = 1:2:length(varargin)
-    val = varargin{i+1};
-    switch lower(varargin{i})
-        case {'stim', 'stimtype'},                      if ~isempty(val), stim = val; end
-        case {'task', 'tasktype', 'trig', 'trigtype'},  if ~isempty(val), task = val; end
-        case {'regions', 'region'},                     if ~isempty(val), regions = val; end
-    end
-end
+% make sure toolboxes are loaded
+en_load('eeglab')
+en_load('miditoolbox')
 
-if ~iscell(regions)
-    regions = cellstr(regions);
-end
+startTime = clock;
+startTimeStr = datestr(startTime, 'yyyy-mm-dd_HH-MM-SS');
+timeLog = cell(0);
 
-% loop ids
 for i = 1:length(ids)
     id = ids(i);
 
-    fprintf('\nCalculating neural entrainment for id %i...\n', id)
+    for currentStim = 1:length(stims)
+        stim = stims{currentStim};
 
-    % loop regions
-    for j = 1:length(regions)
-        region = regions{j};
+        for currentTask = 1:length(tasks)
+            task = tasks{currentTask};
+            timeLogInd = length(timeLog) + 1;
 
-        en_entrainment_eeg(id, ...
-            'stim',     stim, ...
-            'trig',     task, ...
-            'region',   region);
+            if check_log && already_been_done(id, stim, task)
+                % skip this file if it has already been done
+                continue
+            end
 
+                % start diary file to save command window output
+                diaryFilename = fullfile( ...
+                    getpath('entrainment'), ...
+                    [stim, '_', task], ...
+                    [num2str(id), '.log']);
+                diary(diaryFilename)
+
+                fprintf('Diary filename:    %s\n', diaryFilename)
+                fprintf('Participant ID:    %i\n', id)
+                fprintf('Stimulus set:      %s\n', stim)
+                fprintf('Task:              %s\n', task)
+                fprintf('Loop started:      %s\n', startTimeStr)
+                fprintf('This ID started:   %s\n', datestr(now, 'yyyy-mm-dd_HH-MM-SS'));
+                startTimeID = clock;
+
+                err = []; % reset the error container
+                try
+                    en_entrainment_eeg(id, stim, task);
+                    en_entrainment_tapping(id, stim);
+                    timeLog{timeLogInd} = '  ';
+                    write_proclog(id, stim, task, 1)
+
+                catch err
+                    timeLog{timeLogInd} = '! ';
+                    write_proclog(id, stim, task, 0)
+
+                    % display the error without terminating the loop
+                    disp(err)
+                    for j = 1:length(err.stack)
+                        disp(err.stack(j))
+                    end
+
+                    % return err if output arg requested
+                    if nargout > 0
+                        varargout{1} = err;
+                    end
+
+                end
+
+                % save and print the elapsed time for this id
+                timeLog{timeLogInd} = [timeLog{timeLogInd}, getElapsedTime(startTimeID)];
+                fprintf('%s\n\n', timeLog{timeLogInd})
+
+                diary off
+
+                % adjust diary filename to indicate errors
+                [pathstr, name, ext] = fileparts(diaryFilename);
+                errorFilename = fullfile(pathstr, [name, '_ERROR', ext]);
+                if ~isempty(err)
+                    % if there were errors, use the error filename instead
+                    movefile(diaryFilename, errorFilename)
+                elseif exist(errorFilename, 'file')
+                    % if there were no errors, delete previous diary that had errors
+                    delete(errorFilename)
+                end
+
+        end
     end
 end
 
+end
+
+function str = getElapsedTime(startTime)
+% startTime is the output of the clock function
+startTime = datevec(datenum(clock - startTime));
+ind = find(startTime == 0, 1, 'last') + 1;
+if isempty(ind), ind = 1; end
+switch ind
+    case 1, str = 'years'; return
+    case 2, units = 'months';   x = 12;
+    case 3, units = 'days';     x = 30.436875;
+    case 4, units = 'hours';    x = 24;
+    case 5, units = 'minutes';  x = 60;
+    case 6, str = [num2str(startTime(ind)), ' seconds']; return
+end
+% approximate time to make it readable
+t = startTime(ind) + startTime(ind + 1) / x;
+str = [num2str(t), ' ', units];
+end
+ 
+function write_proclog(id, stim, task, val)
+filename = getpath('proclog');
+T = readtable(filename);
+T{T.id==id,['en_',stim,'_',task]} = val;
+writetable(T, filename)
+end
+
+function val = already_been_done(id, stim, task)
+filename = getpath('proclog');
+T = readtable(filename);
+val = false;
+if T{T.id==id,['en_',stim,'_',task]} == 1
+    val = true;
+end
 end
