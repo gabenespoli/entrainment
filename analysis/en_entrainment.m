@@ -27,7 +27,7 @@
 %       yet. Put this file in your Dropbox (or similar) to easily keep
 %       track of long batch processing jobs.
 
-function varargout = en_entrainment(ids, stims, tasks)
+function varargout = en_entrainment(ids, stims, tasks, regions)
 if nargin == 0
     check_log = true; % only process files that haven't already be done
 else
@@ -40,10 +40,12 @@ if nargin < 1 || isempty(ids)
 end
 if nargin < 2 || isempty(stims), stims = {'sync', 'mir'}; end
 if nargin < 3 || isempty(tasks), tasks = {'eeg', 'tapping'}; end
+if nargin < 4 || isempty(regions), regions = {'pmc', 'mot', 'pmm', 'aud'}; end
 
 % make them cells so we can loop them
 stims = cellstr(stims);
 tasks = cellstr(tasks);
+regions = cellstr(regions);
 
 % make sure toolboxes are loaded
 en_load('eeglab')
@@ -85,8 +87,13 @@ for i = 1:length(ids)
 
                 err = []; % reset the error container
                 try
-                    en_entrainment_eeg(id, stim, task);
-                    en_entrainment_tapping(id, stim);
+                    EEG = en_load('eeg', id);
+                    for k = 1:length(regions)
+                        region = regions{k};
+                        fprintf('\nDoing region: %s\n', region)
+                        en_entrainment_eeg(EEG, 'stim', stim, 'task', task, 'region', region);
+                    end
+                    % en_entrainment_tapping(id, stim);
                     timeLog{timeLogInd} = '  ';
                     write_proclog(id, stim, task, 1)
 
