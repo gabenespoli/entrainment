@@ -104,8 +104,8 @@ EN.Properties.UserData.filename = fullfile(getpath('entrainment'), ...
     [stim, '_', task, '_', regionStr, '_', EEG.setname, '.csv']);
 
 %% filter comps by region, rv, dipolarity
-d = en_load('diary', str2num(EEG.setname)); % EEG.setname should be the ID
-comps = select_comps(EEG, rv, region, d.dipolar_comps{1});
+D = en_load('diary', str2num(EEG.setname)); % EEG.setname should be the ID
+comps = select_comps(EEG, rv, region, D.dipolar_comps{1});
 
 if isempty(comps)
     % if no comps are selected, return the table with all zeros
