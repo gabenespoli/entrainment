@@ -89,14 +89,23 @@ end
 
 % get preprocessed EEG struct
 if isnumeric(EEG)
+    id = EEG;
+    idStr = num2str(EEG);
     EEG = en_load('eeg', EEG);
-elseif ~isstruct(EEG)
+elseif isstruct(EEG)
+    idStr = EEG.setname;
+    id = str2num(EEG.setname); % EEG.setname should be the ID
+else
     error('Input must be an EEG struct or an ID number.')
 end
 
-%% get logfile and stiminfo
-EN = en_load('logstim', EEG.setname); % setname should be id
-EN.id = repmat(EEG.setname, height(EN), 1);
+%% load required files
+D = en_load('diary', id); 
+L = en_load('logstim', [idStr, '_', stim, '_', task]); % setname should be id
+
+% make output table
+EN = L;
+EN.id = repmat(idStr, height(EN), 1);
 EN.comp = zeros(height(EN), 1);
 EN.en = zeros(height(EN), 1);
 EN.Properties.VariableNames{end} = regionStr;
@@ -104,7 +113,6 @@ EN.Properties.UserData.filename = fullfile(getpath('entrainment'), ...
     [stim, '_', task], [idStr, '_', regionStr, '.csv']);
 
 %% filter comps by region, rv, dipolarity
-D = en_load('diary', str2num(EEG.setname)); % EEG.setname should be the ID
 comps = select_comps(EEG, rv, region, D.dipolar_comps{1});
 
 if isempty(comps)
