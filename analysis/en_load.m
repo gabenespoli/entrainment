@@ -138,6 +138,15 @@ switch lower(filetype)
         S.portcode = [];
         S.stim = [];
         L = [L, S];
+
+        % restrict to certain block
+        if ~isempty(stim)
+            L = L(L.stim == stim, :);
+        end
+        if ~isempty(task)
+            L = L(L.task == task, :);
+        end
+
         varargout{1} = L;
 
     %% diary
