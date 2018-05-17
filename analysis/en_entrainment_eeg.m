@@ -101,7 +101,7 @@ EN.comp = zeros(height(EN), 1);
 EN.en = zeros(height(EN), 1);
 EN.Properties.VariableNames{end} = regionStr;
 EN.Properties.UserData.filename = fullfile(getpath('entrainment'), ...
-    [stim, '_', task, '_', regionStr, '_', EEG.setname, '.csv']);
+    [stim, '_', task], [idStr, '_', regionStr, '.csv']);
 
 %% filter comps by region, rv, dipolarity
 D = en_load('diary', str2num(EEG.setname)); % EEG.setname should be the ID
