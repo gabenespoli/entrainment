@@ -47,7 +47,7 @@ end
 comps = intersect(ind_region, ind_rv);
 
 % apply manual indices filter
-if ~isempty(ind)
+if ~isempty(ind) && ~isnan(ind)
     comps = intersect(comps, ind);
 end
 
