@@ -128,15 +128,18 @@ end
 
 [fftdata, freqs] = noisefloor3(yfft, [2 2], f);
 
-en = zeros(size(fftdata, 1), length(S.tempo));
-for i = 1:length(en) % loop trials
+% loop trials
+en = zeros(size(fftdata, 1), height(EN));
+
+for i = 1:height(EN)
     en(:, i) = getbins3( ...
         fftdata(:, :, i), ...
         freqs, ...
-        S.tempo(i), ...
+        EN.tempo(i), ...
         'width', binwidth, ...
         'func',  'mean');
 end
+
 [en, comps_ind] = max(en, [], 1); % take max of all comps
 EN.(regionStr) = transpose(en);
 EN.comp = transpose(comps(comps_ind));
