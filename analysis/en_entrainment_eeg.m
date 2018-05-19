@@ -26,6 +26,10 @@
 %   'width' = [numeric (int)] Number of bins on either side of center bin
 %       to include when selecting the max peak for a given frequency.
 %
+%   'harms' = [numeric] Harmonics of the tempo to calculate entrainment.
+%       One entrainment value is found for each harmonic. Default is
+%       [0.5 1 2 3 4 5 6 7 8 9 10].
+%
 % Output:
 %   EN = [table] Data from logfile, stiminfo, and the entrainment analysis
 %       in a single MATLAB table. This table is also written as a csv to
@@ -55,6 +59,7 @@ binwidth = 1; % number of bins on either side of tempo bin
 % binwidth = 2 means 5 bins are 0.0078 * 5 = 0.0391 Hz wide
 % binwidth = 3 means 7 bins are 0.0078 * 7 = 0.0546 Hz wide -- this is too
 %   wide; tempos will run into one another
+harms = [0.5 1 2 3 4 5 6 7 8 9 10];
 
 % user-defined
 for i = 1:2:length(varargin)
@@ -65,6 +70,7 @@ for i = 1:2:length(varargin)
         case 'task',                if ~isempty(val), task = val; end
         case 'rv',                  if ~isempty(val), rv = val; end
         case {'width', 'binwidth'}, if ~isempty(val), binwidth = val; end
+        case 'harms',               if ~isempty(val), harms = val; end
     end
 end
 
@@ -137,20 +143,29 @@ end
 [fftdata, freqs] = noisefloor3(yfft, [2 2], f);
 
 % loop trials
-en = zeros(size(fftdata, 1), height(EN));
+% en is comps x harms x trials
+en = zeros(size(fftdata, 1), length(harms), height(EN));
 
 for i = 1:height(EN)
-    en(:, i) = getbins3( ...
+    en(:, :, i) = getbins3( ...
         fftdata(:, :, i), ...
         freqs, ...
-        EN.tempo(i), ...
+        harms * EN.tempo(i), ...
         'width', binwidth, ...
         'func',  'mean');
 end
 
-[en, comps_ind] = max(en, [], 1); % take max of all comps
-EN.(regionStr) = transpose(en);
-EN.comp = transpose(comps(comps_ind));
+% take max of all comps, convert to harms x trials
+[en, comps_ind] = max(en, [], 1); 
+en = squeeze(en);
+comps_ind = squeeze(comps_ind);
+
+% put vals into EN table
+for i = 1:length(harms)
+    name = [regionStr, strrep(num2str(harms(i)), '.', '')];
+    EN.(name) = transpose(en(i, :));
+    EN.([name, '_comp']) = transpose(comps(comps_ind(i, :)));
+end
 
 writetable(EN, EN.Properties.UserData.filename)
 
