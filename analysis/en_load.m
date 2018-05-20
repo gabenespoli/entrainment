@@ -24,7 +24,7 @@ function varargout = en_load(filetype, id)
 if nargin < 2, id = []; end
 stim = '';
 task = '';
-if ischar(id)
+if ischar(id) && ~strcmp(id, 'incl')
     % get stim and task from id
     C = regexp(id, '_', 'split');
     idStr = C{1};
