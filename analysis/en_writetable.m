@@ -43,7 +43,7 @@ for i = 1:length(ids)
             tmp_id = tmp;
         else
             if all(tmp.portcode == tmp_id.portcode)
-                tmp_id = [tmp_id, tmp(:, region)]; %#ok<AGROW>
+                tmp_id = join(tmp_id, tmp);
             else
                 error(['Portcodes don''t match for id ', num2str(id), '.'])
             end
