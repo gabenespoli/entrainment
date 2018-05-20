@@ -112,53 +112,53 @@ L = en_load('logstim', [idStr, '_', stim, '_', task]); % setname should be id
 % make output table
 EN = L;
 EN.id = repmat(idStr, height(EN), 1);
-EN.comp = zeros(height(EN), 1);
-EN.en = zeros(height(EN), 1);
-EN.Properties.VariableNames{end} = regionStr;
 EN.Properties.UserData.filename = fullfile(getpath('entrainment'), ...
     [stim, '_', task], [idStr, '_', regionStr, '.csv']);
 
 %% filter comps by region, rv, dipolarity
 comps = select_comps(EEG, rv, region, D.dipolar_comps{1});
 
-if isempty(comps)
-    % if no comps are selected, return the table with all zeros
-    writetable(EN, EN.Properties.UserData.filename)
-    return
-end
-
-% dtplot(EEG, comps, fullfile(getpath('goodcomps'), regionStr)); % save plots of good ICs
-
 %% if there are some good comps, plot and calculate entrainment 
-[yfft, f] = getfft3( ...
-    EEG.data(comps, :, :), ...
-    EEG.srate, ...
-    'spectrum',     'amplitude', ...
-    'nfft',         nfft, ...
-    'detrend',      false, ...
-    'wintype',      'hanning', ...
-    'ramp',         [], ...
-    'dim',          2); % should the the time dimension
+if ~isempty(comps)
 
-[fftdata, freqs] = noisefloor3(yfft, [2 2], f);
+    % dtplot(EEG, comps, fullfile(getpath('goodcomps'), regionStr)); % save plots of good ICs
 
-% loop trials
-% en is comps x harms x trials
-en = zeros(size(fftdata, 1), length(harms), height(EN));
+    [yfft, f] = getfft3( ...
+        EEG.data(comps, :, :), ...
+        EEG.srate, ...
+        'spectrum',     'amplitude', ...
+        'nfft',         nfft, ...
+        'detrend',      false, ...
+        'wintype',      'hanning', ...
+        'ramp',         [], ...
+        'dim',          2); % should the the time dimension
 
-for i = 1:height(EN)
-    en(:, :, i) = getbins3( ...
-        fftdata(:, :, i), ...
-        freqs, ...
-        harms * EN.tempo(i), ...
-        'width', binwidth, ...
-        'func',  'mean');
+    [fftdata, freqs] = noisefloor3(yfft, [2 2], f);
+
+    % loop trials
+    % en is comps x harms x trials
+    en = zeros(length(comps), length(harms), height(EN));
+
+    for i = 1:height(EN)
+        en(:, :, i) = getbins3( ...
+            fftdata(:, :, i), ...
+            freqs, ...
+            harms * EN.tempo(i), ...
+            'width', binwidth, ...
+            'func',  'mean');
+    end
+
+    % take max of all comps, convert to harms x trials
+    [en, comps_ind] = max(en, [], 1); 
+    en = squeeze(en);
+    comps_ind = squeeze(comps_ind);
+
+else
+    en = zeros(length(harms), height(EN));
+    comps_ind = ones(size(en));
+    comps = 0;
+
 end
-
-% take max of all comps, convert to harms x trials
-[en, comps_ind] = max(en, [], 1); 
-en = squeeze(en);
-comps_ind = squeeze(comps_ind);
 
 % put vals into EN table
 for i = 1:length(harms)
