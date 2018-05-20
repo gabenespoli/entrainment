@@ -65,4 +65,7 @@ for i = 1:length(cats)
 end
 T.rhythm = reordercats(T.rhythm, {'simple', 'optimal', 'complex'});
 
+% save a csv
+writetable(T, ['~/projects/en/stats/en_', datestr(now, 'yyyy-mm-dd_HH-MM-SS'), '.csv'])
+
 end
