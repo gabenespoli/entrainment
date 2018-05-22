@@ -28,7 +28,7 @@
 %
 %   'harms' = [numeric] Harmonics of the tempo to calculate entrainment.
 %       One entrainment value is found for each harmonic. Default is
-%       [0.5 1 2 3 4 5 6 7 8 9 10].
+%       [0.5 1 2 3 4 5 6 7 8].
 %
 % Output:
 %   EN = [table] Data from logfile, stiminfo, and the entrainment analysis
@@ -59,7 +59,7 @@ binwidth = 1; % number of bins on either side of tempo bin
 % binwidth = 2 means 5 bins are 0.0078 * 5 = 0.0391 Hz wide
 % binwidth = 3 means 7 bins are 0.0078 * 7 = 0.0546 Hz wide -- this is too
 %   wide; tempos will run into one another
-harms = [0.5 1 2 3 4 5 6 7 8 9 10];
+harms = [0.5 1 2 3 4 5 6 7 8];
 
 % user-defined
 for i = 1:2:length(varargin)
