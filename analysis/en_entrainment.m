@@ -40,7 +40,7 @@ if nargin < 1 || isempty(ids)
 end
 if nargin < 2 || isempty(stims), stims = {'sync', 'mir'}; end
 if nargin < 3 || isempty(tasks), tasks = {'eeg', 'tapping'}; end
-if nargin < 4 || isempty(regions), regions = {'pmc', 'mot', 'pmm', 'aud'}; end
+if nargin < 4 || isempty(regions), regions = {'aud', 'pmc', 'mot'}; end
 
 % make them cells so we can loop them
 stims = cellstr(stims);
