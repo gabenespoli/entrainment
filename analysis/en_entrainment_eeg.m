@@ -33,7 +33,23 @@
 % Output:
 %   EN = [table] Data from logfile, stiminfo, and the entrainment analysis
 %       in a single MATLAB table. This table is also written as a csv to
-%       getpath('entrainment').
+%       getpath('entrainment'). Columns should be as follows:
+%
+%           id
+%           stim
+%           task
+%           trial
+%           timestamp
+%           filepath
+%           filename
+%           portcode
+%           excerpt
+%           rhythm
+%           tempo_bpm
+%           tempo
+%           harm
+%           region
+%           region_comp
 %
 %   fftdata = [numeric] The fft data matrix (comps x frequency x trial).
 %
@@ -161,10 +177,17 @@ else
 end
 
 % put vals into EN table
+EN_bak = EN; % save meta data
 for i = 1:length(harms)
-    name = [regionStr, strrep(num2str(harms(i)), '.', '')];
-    EN.(name) = transpose(en(i, :));
-    EN.([name, '_comp']) = transpose(comps(comps_ind(i, :)));
+    EN_tmp = EN_bak;
+    EN_tmp.(regionStr) = transpose(en(i, :));
+    EN_tmp.([regionStr, '_comp']) = transpose(comps(comps_ind(i, :)));
+
+    if i == 1
+        EN = EN_tmp;
+    else
+        EN = [EN; EN_tmp];
+    end
 end
 
 writetable(EN, EN.Properties.UserData.filename)
