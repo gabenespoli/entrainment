@@ -66,6 +66,7 @@ end
 T.rhythm = reordercats(T.rhythm, {'simple', 'optimal', 'complex'});
 
 % save a csv
-writetable(T, ['~/projects/en/stats/en_', datestr(now, 'yyyy-mm-dd_HH-MM-SS'), '.csv'])
+% writetable(T, ['~/projects/en/stats/en_', stim, '_', task, datestr(now, 'yyyy-mm-dd_HH-MM-SS'), '.csv'])
+writetable(T, ['~/projects/en/stats/en_', stim, '_', task, datestr(now, 'yyyy-mm-dd_HH-MM-SS'), '.csv'])
 
 end
