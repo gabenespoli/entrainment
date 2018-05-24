@@ -44,8 +44,8 @@ for i = 1:length(ids)
             tmp_id = tmp;
         else
             if all(tmp_id.portcode == tmp.portcode)
-                tmp_id.(region) = tmp.(region);
                 tmp_id.([region,'_comp']) = tmp.([region,'_comp']);
+                tmp_id.(region) = tmp.(region);
             else
                 error(['Portcodes don''t match for id ', num2str(id), '.'])
             end

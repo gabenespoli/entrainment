@@ -180,8 +180,8 @@ end
 EN_bak = EN; % save meta data
 for i = 1:length(harms)
     EN_tmp = EN_bak;
-    EN_tmp.(regionStr) = transpose(en(i, :));
     EN_tmp.([regionStr, '_comp']) = transpose(comps(comps_ind(i, :)));
+    EN_tmp.(regionStr) = transpose(en(i, :));
 
     if i == 1
         EN = EN_tmp;
