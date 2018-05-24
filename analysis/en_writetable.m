@@ -16,7 +16,7 @@ end
 % defaults
 stim = 'sync';
 task = 'eeg';
-regions = {'mot', 'pmc', 'pmm', 'aud'};
+regions = {'aud', 'mot', 'pmc'};
 
 for i = 1:2:length(varargin)
     param = varargin{i};
@@ -33,6 +33,7 @@ if ~iscell(regions), regions = cellstr(regions); end
 for i = 1:length(ids)
     id = ids(i);
     idStr = num2str(id);
+    fprintf('  Collecting id %i\n', id)
 
     for j = 1:length(regions)
         region = regions{j};
@@ -42,8 +43,9 @@ for i = 1:length(ids)
         if j == 1
             tmp_id = tmp;
         else
-            if all(tmp.portcode == tmp_id.portcode)
-                tmp_id = join(tmp_id, tmp);
+            if all(tmp_id.portcode == tmp.portcode)
+                tmp_id.(region) = tmp.(region);
+                tmp_id.([region,'_comp']) = tmp.([region,'_comp']);
             else
                 error(['Portcodes don''t match for id ', num2str(id), '.'])
             end
