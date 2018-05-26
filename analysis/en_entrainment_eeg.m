@@ -177,11 +177,13 @@ else
 end
 
 % put vals into EN table
-EN_bak = EN; % save meta data
+metadata = EN; % save meta data
 for i = 1:length(harms)
-    EN_tmp = EN_bak;
-    EN_tmp.([regionStr, '_comp']) = transpose(comps(comps_ind(i, :)));
-    EN_tmp.(regionStr) = transpose(en(i, :));
+    harmonic = repmat(harms(i), height(metadata), 1);
+    tmp = table(harmonic, 'VariableNames', {'harmonic'});
+    tmp.([regionStr, '_comp']) = transpose(comps(comps_ind(i, :)));
+    tmp.(regionStr) = transpose(en(i, :));
+    EN_tmp = [metadata tmp];
 
     if i == 1
         EN = EN_tmp;
