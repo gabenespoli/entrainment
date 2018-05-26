@@ -48,7 +48,7 @@ end
 % create output container
 y = nan(size(x));
 
-disp('Removing spectral noise floor (this may take a while)...')
+fprintf('Removing spectral noise floor (this may take a while)... ')
 for comp = 1:size(x, 1)
 
     for trial = 1:size(x, 3) % loop trials
@@ -58,6 +58,7 @@ for comp = 1:size(x, 1)
         end
     end
 end
+fprintf('Done.\n')
 
 % set negative values to zero
 y(y < 0) = 0;
