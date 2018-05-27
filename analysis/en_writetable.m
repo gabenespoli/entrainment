@@ -43,11 +43,12 @@ for i = 1:length(ids)
         if j == 1
             tmp_id = tmp;
         else
-            if all(tmp_id.portcode == tmp.portcode)
+            if all(tmp_id.portcode == tmp.portcode) && ...
+                all(tmp_id.harmonic == tmp.harmonic)
                 tmp_id.([region,'_comp']) = tmp.([region,'_comp']);
                 tmp_id.(region) = tmp.(region);
             else
-                error(['Portcodes don''t match for id ', num2str(id), '.'])
+                error(['Portcodes or harmonics don''t match for id ', num2str(id), '.'])
             end
         end
     end
