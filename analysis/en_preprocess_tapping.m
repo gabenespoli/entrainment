@@ -1,5 +1,15 @@
 function TAP = en_preprocess_tapping(id, stim, do_save, numMarkersPrompt)
-% numMarkersPrompt: 0 to cancel, 1 to prompt, 2 to continue
+% Usage:
+%   TAP = en_preprocess_tapping(id, stim, do_save, numMarkersPrompt)
+%
+% Input:
+%   id: numeric, required
+%   stim: 'sync' or 'mir', default 'sync'
+%   do_save: boolean, default true
+%   numMarkersPrompt: 0 to cancel, 1 to prompt, 2 to continue, default 0
+%
+% Output:
+%   TAP: table, each row is a trial
 
 if nargin < 2 || isempty(stim)
     stim = 'sync';
@@ -12,7 +22,7 @@ if nargin < 4 || isempty(numMarkersPrompt)
 end
 numEvents = 60;
 
-fprintf('\nPreprocessing tapping data for id %i...\n', id)
+fprintf('\nPreprocessing tapping data for id %i, %s trials...\n', id, stim)
 
 %% load midi and diary data
 [M, y, Fs] = en_load('midi', id);
