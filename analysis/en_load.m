@@ -74,7 +74,7 @@ switch lower(filetype)
         filename = fullfile(getpath('eeg'), [stim, '_', task], [idStr, '.set']);
         varargout{1} = pop_loadset(filename);
 
-    case 'tap'
+    case {'tap', 'tapping'}
         if isempty(stim)
             disp('Using default stim=sync')
             stim = 'sync';
