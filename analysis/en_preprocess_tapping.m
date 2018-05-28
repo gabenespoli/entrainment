@@ -97,7 +97,7 @@ end
 
 %% epoching
 % make one row per trial instead of one row per tap
-% add columns for stim and trial number
+% add columns for stim, trial number, and trial start time
 init_OUT = true;
 for i = 1:length(expectedEvent) % this should be 1:numEvents
     % i is the trial id number
@@ -115,7 +115,7 @@ for i = 1:length(expectedEvent) % this should be 1:numEvents
         ind = M.onset >= times(timesInd);
     end
 
-    % start this row of the table and add stim and trial columns
+    % start this row of the table and add stim, trial, and start time columns
     % remember that sync and mir are always in the same order
     %   so sync = 1:30 and mir = 31:60
     TMP = table(i, 'VariableNames', {'trial'});
@@ -127,6 +127,7 @@ for i = 1:length(expectedEvent) % this should be 1:numEvents
     else
         error('Too many trials.')
     end
+    TMP.start = times(i);
 
     % add the rest of M by trials (mutiple taps into one table row)
     names = M.Properties.VariableNames;
@@ -145,7 +146,7 @@ M = OUT;
 M.stim = categorical(M.stim);
 
 % reorder and restrict to a few needed columns only
-M = M(:, {'stim', 'trial', 'onset', 'duration', 'velocity'});
+M = M(:, {'stim', 'trial', 'start', 'onset', 'duration', 'velocity'});
 
 M = M(M.stim==stim, :);
 M(:, 'stim') = [];
