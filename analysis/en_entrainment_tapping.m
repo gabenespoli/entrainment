@@ -1,8 +1,65 @@
-function en_entrainment_tapping(ids)
+function EN = en_entrainment_tapping(TAP, stim)
+% Usage:
+%   EN = en_entrainment_tapping(ids, stim)
+%
+% Input:
+%   TAP: numeric
+%   stim: 'sync' or 'mir', default 'sync'
+%
+% Output:
+%   EN = [table]
+%
+
+if nargin < 2 || isempty(stim)
+    stim = 'sync';
+end
+
+stimLength = 30; % in seconds
+
+% get preprocessed TAP table
+if isnumeric(TAP)
+    % id = TAP; % unneeded
+    idStr = num2str(TAP);
+    TAP = en_load('tapping', TAP);
+elseif istable(TAP)
+    id = TAP.id(1);
+    if ~all(TAP.id == id)
+        error('All rows in TAP must be from the same id.')
+    end
+    idStr = num2str(id);
+else
+    error('Input must be an TAP struct or an ID number.')
+end
+% remove unneeded columns
+TAP(:, {'timestamp', 'filename', 'filepath', 'excerpt'}) = [];
+
+% generate stimulus beat onset times
+S = en_load('stiminfo');
+S.beats = cell(height(S), 1);
+for i = 1:height(S)
+    numBeats = S.tempo(i) * stimLength;
+    S.beats{i} = (1 / S.tempo(i)) * transpose(0:numBeats - 1);
+end
+
+% add beats to TAP table, taking start times into account
+TAP.beats = cell(height(TAP), 1);
+for i = 1:height(TAP)
+    TAP.beats{i} = S.beats{S.portcode==TAP.portcode(i)} + TAP.start(i);
+end
+
 % Fitch & Rosenfeld (2007)
 %   - align each tap with the closest beat
 %   - add nans for missing values
 %   - calculate [mean] asynchrony
+
+
+
+
+% make output table
+EN = L;
+EN.id = repmat(idStr, height(EN), 1);
+EN.Properties.UserData.filename = fullfile(getpath('entrainment'), ...
+    [stim, '_', task], [idStr, '_', regionStr, '.csv']);
 
 end
 
