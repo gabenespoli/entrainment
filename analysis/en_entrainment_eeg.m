@@ -113,7 +113,7 @@ end
 if isnumeric(EEG)
     id = EEG;
     idStr = num2str(EEG);
-    EEG = en_load('eeg', EEG);
+    EEG = en_load('eeg', [idStr, '_', stim, '_', task]);
 elseif isstruct(EEG)
     idStr = EEG.setname;
     id = str2num(EEG.setname); % EEG.setname should be the ID
