@@ -85,15 +85,19 @@ for i = 1:length(cats)
 end
 df.rhythm = reordercats(df.rhythm, {'simple', 'optimal', 'complex'});
 
-% normalize eeg entrainment data by id
+% add cols with eeg entrainment data normalized by id
 ids = unique(df.id);
+for i = 1:length(regions)
+    region = regions{i};
+    df.([region, '_norm']) = nan(height(df), 1);
+end
 for i = 1:length(ids)
     id = ids(i);
     for j = 1:length(regions)
         region = regions{j};
         x = df.(region)(df.id==id);
         x_norm = (x - mean(x)) / std(x);
-        df.(region)(df.id==id) = x_norm;
+        df.([region, '_norm'])(df.id==id) = x_norm;
     end
 end
 
