@@ -189,6 +189,7 @@ switch lower(filetype)
                 find(ismember(S.portcode, x)), ...
                 id, 'UniformOutput', false));
             S = S(ind, :);
+            S.excerpt = categorical(S.excerpt);
             S.rhythm = categorical(S.rhythm);
         end
         varargout{1} = S;
