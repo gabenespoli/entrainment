@@ -90,7 +90,7 @@ for i = 1:length(ids)
                     EEG = en_load('eeg', id);
                     for k = 1:length(regions)
                         region = regions{k};
-                        fprintf('\nDoing region: %s\n', region)
+                        fprintf('\n  Doing region: %s\n', region)
                         en_entrainment_eeg(EEG, 'stim', stim, 'task', task, 'region', region);
                     end
                     % en_entrainment_tapping(id, stim);
