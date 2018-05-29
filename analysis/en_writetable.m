@@ -1,5 +1,12 @@
 %% en_writetable.m
 % concatenate csv files from many ids as a single table
+%
+% Input:
+%   ids
+%   'regions':
+%   'stim':
+%   'task':
+%   'save': boolean, whether to save a csv, default true
 
 function df = en_writetable(ids, varargin)
 if nargin > 0 && ischar(ids)
