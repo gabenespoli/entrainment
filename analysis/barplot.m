@@ -39,7 +39,7 @@
 % 
 % Written by Gabriel A. Nespoli 2016-05-01. Revised 2017-02-22.
 
-function [y,stdError,h] = barplot(d,grpVar,datVar,varargin)
+function varargout = barplot(d, grpVar, datVar, varargin)
 
 ax = gca;
 fig = gcf;
@@ -174,6 +174,12 @@ if ~isempty(filename)
             savefig(filename{i})
         end
     end
+end
+
+if nargout > 0
+    varargout{1} = y;
+    varargout{2} = stdError;
+    varargout{3} = h;
 end
 
 end
