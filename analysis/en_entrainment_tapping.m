@@ -1,20 +1,24 @@
-function EN = en_entrainment_tapping(TAP, stim)
+function EN = en_entrainment_tapping(TAP, stim, matchwarn)
 % Usage:
 %   EN = en_entrainment_tapping(TAP, stim)
 %
 % Input:
 %   TAP: TAP table or numeric id
 %   stim: 'sync' or 'mir', default 'sync'
+%   matchwarm: warn if multiple taps are matched to the same beat
 %
 % Output:
 %   EN = [table]
 %
 
+stimLength = 40; % in seconds; make longer than stim to capture all beats
+
 if nargin < 2 || isempty(stim)
     stim = 'sync';
 end
-
-stimLength = 30; % in seconds
+if nargin < 3 || isempty(matchwarn)
+    matchwarn = true;
+end
 
 % get preprocessed TAP table
 if isnumeric(TAP)
@@ -64,7 +68,7 @@ for i = 1:height(TAP)
     for j = 1:length(taps)
         [~, ind(j)] = min(abs(taps(j) - allbeats));
         % make sure ind is different than the previous
-        if j > 1 && ind(j) <= ind(j-1)
+        if matchwarn && (j > 1 && ind(j) <= ind(j-1))
             warning('Two taps might be matched to the same beat.')
         end
         beats(j) = allbeats(ind(j));
