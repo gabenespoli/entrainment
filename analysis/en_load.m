@@ -122,7 +122,7 @@ switch lower(filetype)
 
         % reorder columns
         T = T(:, {'id', 'stim', 'task', 'trial', 'timestamp', ...
-                  'filepath', 'filename', 'portcode'});
+                  'filepath', 'filename', 'portcode', 'move'});
 
         varargout{1} = T;
 
