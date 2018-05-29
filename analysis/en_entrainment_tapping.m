@@ -1,9 +1,9 @@
 function EN = en_entrainment_tapping(TAP, stim)
 % Usage:
-%   EN = en_entrainment_tapping(ids, stim)
+%   EN = en_entrainment_tapping(TAP, stim)
 %
 % Input:
-%   TAP: numeric
+%   TAP: TAP table or numeric id
 %   stim: 'sync' or 'mir', default 'sync'
 %
 % Output:
@@ -35,31 +35,51 @@ TAP(:, {'timestamp', 'filename', 'filepath', 'excerpt'}) = [];
 
 % generate stimulus beat onset times
 S = en_load('stiminfo');
-S.beats = cell(height(S), 1);
+S.allbeats = cell(height(S), 1);
 for i = 1:height(S)
     numBeats = S.tempo(i) * stimLength;
-    S.beats{i} = (1 / S.tempo(i)) * transpose(0:numBeats - 1);
+    S.allbeats{i} = (1 / S.tempo(i)) * transpose(0:numBeats - 1);
 end
 
-% add beats to TAP table, taking start times into account
-TAP.beats = cell(height(TAP), 1);
+% add allbeats to TAP table, taking start times into account
+TAP.allbeats = cell(height(TAP), 1);
 for i = 1:height(TAP)
-    TAP.beats{i} = S.beats{S.portcode==TAP.portcode(i)} + TAP.start(i);
+    TAP.allbeats{i} = S.allbeats{S.portcode==TAP.portcode(i)} + TAP.start(i);
 end
 
 % Fitch & Rosenfeld (2007)
 %   - align each tap with the closest beat
 %   - add nans for missing values
 %   - calculate [mean] asynchrony
+TAP.beats = cell(height(TAP), 1);
+EN = TAP(:, {'id', 'stim', 'task', 'trial', 'portcode'});
+EN.asynchrony = nan(height(TAP), 1);
+EN.duration = nan(height(TAP), 1);
+EN.velocity = nan(height(TAP), 1);
+for i = 1:height(TAP)
+    taps = TAP.onset{i};
+    allbeats = TAP.allbeats{i};
+    beats = nan(size(taps));
+    ind = nan(size(taps));
+    for j = 1:length(taps)
+        [~, ind(j)] = min(abs(taps(j) - allbeats));
+        % make sure ind is different than the previous
+        if j > 1 && ind(j) <= ind(j-1)
+            warning('Two taps might be matched to the same beat.')
+        end
+        beats(j) = allbeats(ind(j));
+    end
+    TAP.beats{i} = beats;
+    EN.asynchrony(i) = mean(beats - taps);
+    EN.duration(i) = mean(TAP.duration{i});
+    EN.velocity(i) = mean(TAP.velocity{i});
+end
 
 
+EN.Properties.UserData.filename = fullfile(getpath('taptrainment'), ...
+    stim, [idStr, '.csv']);
 
-
-% make output table
-EN = L;
-EN.id = repmat(idStr, height(EN), 1);
-EN.Properties.UserData.filename = fullfile(getpath('entrainment'), ...
-    [stim, '_', task], [idStr, '_', regionStr, '.csv']);
+writetable(EN, EN.Properties.UserData.filename)
 
 end
 
