@@ -30,7 +30,9 @@ elseif istable(TAP)
 else
     error('Input must be an TAP struct or an ID number.')
 end
-% remove unneeded columns
+% make output table and remove unneeded columns
+EN = TAP;
+EN(:, {'onset', 'duration', 'velocity'}) = [];
 TAP(:, {'timestamp', 'filename', 'filepath', 'excerpt'}) = [];
 
 % generate stimulus beat onset times
@@ -52,7 +54,6 @@ end
 %   - add nans for missing values
 %   - calculate [mean] asynchrony
 TAP.beats = cell(height(TAP), 1);
-EN = TAP(:, {'id', 'stim', 'task', 'trial', 'portcode'});
 EN.asynchrony = nan(height(TAP), 1);
 EN.duration = nan(height(TAP), 1);
 EN.velocity = nan(height(TAP), 1);
