@@ -188,7 +188,7 @@ for i = 1:length(harms)
     if i == 1
         EN = EN_tmp;
     else
-        EN = [EN; EN_tmp];
+        EN = [EN; EN_tmp]; %#ok<AGROW>
     end
 end
 
