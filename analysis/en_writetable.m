@@ -1,7 +1,7 @@
 %% en_writetable.m
 % concatenate csv files from many ids as a single table
 
-function T = en_writetable(ids, varargin)
+function df = en_writetable(ids, varargin)
 if nargin > 0 && ischar(ids)
     varargin = [{ids} varargin];
     ids = [];
@@ -56,9 +56,9 @@ for i = 1:length(ids)
     end
 
     if i == 1
-        T = tmp_id;
+        df = tmp_id;
     else
-        T = [T; tmp_id]; %#ok<AGROW>
+        df = [df; tmp_id]; %#ok<AGROW>
     end
 
 end
@@ -66,9 +66,9 @@ end
 % make some fields categorical
 cats = {'stim', 'task', 'rhythm', 'excerpt'};
 for i = 1:length(cats)
-    T.(cats{i}) = categorical(T.(cats{i}));
+    df.(cats{i}) = categorical(df.(cats{i}));
 end
-T.rhythm = reordercats(T.rhythm, {'simple', 'optimal', 'complex'});
+df.rhythm = reordercats(df.rhythm, {'simple', 'optimal', 'complex'});
 
 % save a csv
 % writetable(T, ['~/projects/en/stats/en_', stim, '_', task, datestr(now, 'yyyy-mm-dd_HH-MM-SS'), '.csv'])
