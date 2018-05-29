@@ -41,8 +41,8 @@
 
 function varargout = barplot(d, grpVar, datVar, varargin)
 
-ax = gca;
-fig = gcf;
+ax = [];
+fig = [];
 
 plotSpec = '';
 plotOrder = [];
@@ -100,6 +100,8 @@ labels = labels(plotOrder);
 plotSpec = getPlotSpec(d,plotSpec,length(labels));
 
 %figure
+if isempty(fig), fig = figure; end
+if isempty(ax), ax = gca; end
 for i = 1:length(labels)
     
     ind = d.(grpVar) == labels(i); % get indices of grpvar to average for current bar
