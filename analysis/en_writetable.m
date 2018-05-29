@@ -14,9 +14,10 @@ if nargin < 1 || isempty(ids) || ischar(ids)
 end
 
 % defaults
+regions = {'aud', 'mot', 'pmc'};
 stim = 'sync';
 task = 'eeg';
-regions = {'aud', 'mot', 'pmc'};
+do_save = true;
 
 for i = 1:2:length(varargin)
     param = varargin{i};
@@ -26,6 +27,7 @@ for i = 1:2:length(varargin)
         case {'region', 'regions'}, regions = val;
         case 'stim',                stim = val;
         case {'task','trig'},       task = val;
+        case {'do_save', 'save'},   do_save = val;
     end
 end
 if ~iscell(regions), regions = cellstr(regions); end
@@ -72,4 +74,9 @@ T.rhythm = reordercats(T.rhythm, {'simple', 'optimal', 'complex'});
 % writetable(T, ['~/projects/en/stats/en_', stim, '_', task, datestr(now, 'yyyy-mm-dd_HH-MM-SS'), '.csv'])
 writetable(T, ['~/projects/en/stats/en_', stim, '_', task, '_', datestr(now, 'yyyy-mm-dd_HH-MM-SS'), '.csv'])
 
+% save a csv
+if do_save
+    % writetable(df, ['~/projects/en/stats/en_', stim, '_', task, datestr(now, 'yyyy-mm-dd_HH-MM-SS'), '.csv'])
+    writetable(df, ['~/projects/en/stats/en_', stim, '_', task, '_', datestr(now, 'yyyy-mm-dd_HH-MM-SS'), '.csv'])
+end
 end
