@@ -121,8 +121,7 @@ switch lower(filetype)
         T.portcode = cell2mat(T.portcode);
 
         % reorder columns
-        T = T(:, {'id', 'stim', 'task', 'trial', 'timestamp', ...
-                  'filepath', 'filename', 'portcode', 'move'});
+        T = T(:, {'id', 'stim', 'task', 'trial', 'portcode', 'move'});
 
         varargout{1} = T;
 
