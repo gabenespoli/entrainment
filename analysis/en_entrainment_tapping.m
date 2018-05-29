@@ -33,7 +33,6 @@ end
 % make output table and remove unneeded columns
 EN = TAP;
 EN(:, {'onset', 'duration', 'velocity'}) = [];
-TAP(:, {'timestamp', 'filename', 'filepath', 'excerpt'}) = [];
 
 % generate stimulus beat onset times
 S = en_load('stiminfo');
