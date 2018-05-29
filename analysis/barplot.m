@@ -37,7 +37,7 @@
 %   stdError      = [numeric] Standard error of each mean.
 %   h             = [axis handle]
 % 
-% Written by Gabriel A. Nespoli 2016-05-01. Revised 2017-02-22.
+% Written by Gabriel A. Nespoli 2016-05-01. Revised 2018-05-29.
 
 function varargout = barplot(d, grpVar, datVar, varargin)
 
@@ -103,31 +103,31 @@ plotSpec = getPlotSpec(d,plotSpec,length(labels));
 if isempty(fig), fig = figure; end
 if isempty(ax), ax = gca; end
 for i = 1:length(labels)
-    
+
     ind = d.(grpVar) == labels(i); % get indices of grpvar to average for current bar
     temp = d.(datVar)(ind); % get values to average for current bar
-    
+
     if rmnans, temp(isnan(temp)) = []; end
     if rmzeros, temp(temp == 0) = []; end
-    
+
     stdError(i) = ste(temp);
     y(i) = mean(temp);
-    
-    h = bar(ax,i,y(i)); % plot the current bar
+
+    h = bar(ax, i, y(i)); % plot the current bar
     if i == 1, hold on, end
-    
+
     if ~isempty(plotSpec{i})
         if isnumeric(plotSpec{i})
             set(h,'FaceColor',plotSpec{i})
-            
+
         elseif ischar(plotSpec{i})
             set(h,'FaceColor',plotSpec{i}(1))
-            
+
             if length(plotSpec{i}) > 2 && strcmp(plotSpec{i}(2:3),'--')
                 currentColor = get(h,'FaceColor') + 0.8;
                 currentColor(currentColor > 1) = 1;
                 set(h,'FaceColor',currentColor)
-                
+
             elseif length(plotSpec{i}) > 1 && strcmp(plotSpec{i}(2),'-')
                 currentColor = get(h,'FaceColor') + 0.5;
                 currentColor(currentColor > 1) = 1;
