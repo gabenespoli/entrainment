@@ -28,6 +28,7 @@ switch pathtype
 
     % tapping data
     case 'tapping',     outpath = fullfile(getpath('data'), 'tap_preprocessed');
+    case 'taptrainment',outpath = fullfile(getpath('data'), 'tap_entrainment');
     case 'midi',        outpath = fullfile(getpath('data'), 'midi');
 
     % eeg data
