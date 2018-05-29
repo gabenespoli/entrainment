@@ -7,6 +7,12 @@
 %   'stim':
 %   'task':
 %   'save': boolean, whether to save a csv, default true
+%
+% Output:
+%   df: table with data
+%   also writes a csv file if save is specified
+%   note that entrainment is normalized by id ((val - mean) / std)
+
 
 function df = en_writetable(ids, varargin)
 if nargin > 0 && ischar(ids)
@@ -77,9 +83,17 @@ for i = 1:length(cats)
 end
 df.rhythm = reordercats(df.rhythm, {'simple', 'optimal', 'complex'});
 
-% save a csv
-% writetable(T, ['~/projects/en/stats/en_', stim, '_', task, datestr(now, 'yyyy-mm-dd_HH-MM-SS'), '.csv'])
-writetable(T, ['~/projects/en/stats/en_', stim, '_', task, '_', datestr(now, 'yyyy-mm-dd_HH-MM-SS'), '.csv'])
+% normalize eeg entrainment data by id
+ids = unique(df.id);
+for i = 1:length(ids)
+    id = ids(i);
+    for j = 1:length(regions)
+        region = regions{j};
+        x = df.(region)(df.id==id);
+        x_norm = (x - mean(x)) / std(x);
+        df.(region)(df.id==id) = x_norm;
+    end
+end
 
 % save a csv
 if do_save
