@@ -103,7 +103,7 @@ end
 
 % save a csv
 if do_save
-    writetable(df, ['~/projects/en/stats/en_', stim, '_', task, '_', ...
+    writetable(df, ['~/projects/en/tables/en_', stim, '_', task, '_', ...
         datestr(now, 'yyyy-mm-dd_HH-MM-SS'), '.csv'])
 end
 end

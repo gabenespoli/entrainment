@@ -51,7 +51,7 @@ df.rhythm = reordercats(df.rhythm, {'simple', 'optimal', 'complex'});
 
 % save a csv
 if do_save
-    writetable(df, ['~/projects/en/stats/ent_', stim, '_', ...
+    writetable(df, ['~/projects/en/tables/ent_', stim, '_', ...
         datestr(now, 'yyyy-mm-dd_HH-MM-SS'), '.csv'])
 end
 
