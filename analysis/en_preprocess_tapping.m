@@ -127,7 +127,7 @@ for i = 1:length(expectedEvent) % this should be 1:numEvents
     else
         error('Too many trials.')
     end
-    TMP.start = times(i);
+    TMP.start = times(timesInd);
 
     % add the rest of M by trials (mutiple taps into one table row)
     names = M.Properties.VariableNames;
