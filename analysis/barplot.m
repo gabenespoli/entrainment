@@ -1,9 +1,9 @@
 %BARPLOT  Plots a bar graph with standard error bars from a table variable
 %   and corresponding grouping variable.
 % 
-% USAGE
-%   [y,stdError] = barplot(d,grpVar,datVar)
-%   [y,stdError] = barplot(d,grpVar,datVar,'Param1',Value1,etc.)
+% Usage:
+%   [y, stdError] = barplot(d, grpVar, datVar)
+%   [y, stdError] = barplot(d, grpVar, datVar, 'Param1', Value1, etc.)
 % 
 % INPUT
 %   d             = [table] Data to average and plot.
