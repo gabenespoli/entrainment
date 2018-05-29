@@ -63,11 +63,13 @@ for i = 1:length(ids)
                 tmp_id.([region,'_comp']) = tmp.([region,'_comp']);
                 tmp_id.(region) = tmp.(region);
             else
-                error(['Portcodes or harmonics don''t match for id ', num2str(id), '.'])
+                error(['Portcodes or harmonics don''t match for id ', ...
+                    num2str(id), '.'])
             end
         end
     end
 
+    % add current id to master table
     if i == 1
         df = tmp_id;
     else
@@ -97,7 +99,7 @@ end
 
 % save a csv
 if do_save
-    % writetable(df, ['~/projects/en/stats/en_', stim, '_', task, datestr(now, 'yyyy-mm-dd_HH-MM-SS'), '.csv'])
-    writetable(df, ['~/projects/en/stats/en_', stim, '_', task, '_', datestr(now, 'yyyy-mm-dd_HH-MM-SS'), '.csv'])
+    writetable(df, ['~/projects/en/stats/en_', stim, '_', task, '_', ...
+        datestr(now, 'yyyy-mm-dd_HH-MM-SS'), '.csv'])
 end
 end
