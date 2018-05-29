@@ -20,7 +20,7 @@ stimLength = 30; % in seconds
 if isnumeric(TAP)
     % id = TAP; % unneeded
     idStr = num2str(TAP);
-    TAP = en_load('tapping', TAP);
+    TAP = en_load('tapping', [idStr, '_', stim]);
 elseif istable(TAP)
     id = TAP.id(1);
     if ~all(TAP.id == id)
