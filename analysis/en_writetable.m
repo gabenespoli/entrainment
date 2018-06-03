@@ -96,7 +96,14 @@ for i = 1:length(ids)
     for j = 1:length(regions)
         region = regions{j};
         x = df.(region)(df.id==id);
-        x_norm = (x - mean(x)) / std(x);
+        if all(x == 0)
+            x_norm = x;
+        else
+            x_norm = (x - mean(x)) / std(x);
+        end
+        if any(isnan(x_norm))
+            fprintf('! There are some nans for id %i and region %s.\n', id, region)
+        end
         df.([region, '_norm'])(df.id==id) = x_norm;
     end
 end
