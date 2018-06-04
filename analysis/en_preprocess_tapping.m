@@ -151,7 +151,7 @@ M = M(:, {'stim', 'trial', 'start', 'onset', 'duration', 'velocity'});
 M = M(M.stim==stim, :);
 M(:, 'stim') = [];
 
-%% join data with logfile
+%% join data with logfile and stimulus info
 L = en_load('logstim', id);
 L = L(L.stim==stim & L.task=='tapping', :);
 
