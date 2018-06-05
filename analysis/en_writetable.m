@@ -1,11 +1,15 @@
 %% en_writetable.m
 % concatenate csv files from many ids as a single table
 %
+% Usage:
+%   df = en_writetable(ids)
+%   df = en_writetable(ids, 'param', val, etc.)
+%
 % Input:
-%   ids
-%   'regions':
-%   'stim':
-%   'task':
+%   ids: numeric, default all incl in diary
+%   'regions': default {'aud', 'mot', 'pmc'}
+%   'stim': 'sync' (default) or 'mir'
+%   'task': 'eeg' (default) or 'tapping'
 %   'save': boolean, whether to save a csv, default true
 %
 % Output:
