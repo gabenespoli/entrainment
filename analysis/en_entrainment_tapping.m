@@ -1,11 +1,12 @@
-function EN = en_entrainment_tapping(TAP, stim, matchwarn)
+function EN = en_entrainment_tapping(TAP, stim, do_save, matchwarn)
 % Usage:
-%   EN = en_entrainment_tapping(TAP, stim)
+%   EN = en_entrainment_tapping(TAP, stim, do_save, matchwarn)
 %
 % Input:
 %   TAP: TAP table or numeric id
 %   stim: 'sync' or 'mir', default 'sync'
-%   matchwarm: warn if multiple taps are matched to the same beat
+%   do_save: save a csv. default true
+%   matchwarn: warn if multiple taps are matched to the same beat
 %
 % Output:
 %   EN = [table]
@@ -16,8 +17,11 @@ stimLength = 40; % in seconds; make longer than stim to capture all beats
 if nargin < 2 || isempty(stim)
     stim = 'sync';
 end
-if nargin < 3 || isempty(matchwarn)
-    matchwarn = true;
+if nargin < 3 || isempty(do_save)
+    do_save = true;
+end
+if nargin < 4 || isempty(matchwarn)
+    matchwarn = false;
 end
 
 % get preprocessed TAP table
@@ -79,9 +83,13 @@ for i = 1:height(TAP)
     EN.velocity(i) = mean(TAP.velocity{i});
 end
 
+if do_save
+    EN.Properties.UserData.filename = fullfile(getpath('taptrainment'), ...
+        stim, [idStr, '.csv']);
+    writetable(EN, EN.Properties.UserData.filename)
+end
 
-EN.Properties.UserData.filename = fullfile(getpath('taptrainment'), ...
-    stim, [idStr, '.csv']);
+end
 
 writetable(EN, EN.Properties.UserData.filename)
 
