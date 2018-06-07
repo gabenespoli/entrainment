@@ -83,11 +83,11 @@ for i = 1:length(ids)
 end
 
 % make some fields categorical
-cats = {'stim', 'task', 'rhythm', 'excerpt'};
+cats = {'stim', 'task', 'syncopation_degree', 'excerpt'};
 for i = 1:length(cats)
     df.(cats{i}) = categorical(df.(cats{i}));
 end
-df.rhythm = reordercats(df.rhythm, {'simple', 'optimal', 'complex'});
+df.syncopation_degree = reordercats(df.syncopation_degree, {'low', 'moderate', 'high'});
 
 % add cols with eeg entrainment data normalized by id
 ids = unique(df.id);
