@@ -94,6 +94,7 @@ ids = unique(df.id);
 for i = 1:length(regions)
     region = regions{i};
     df.([region, '_norm']) = nan(height(df), 1);
+    df.([region, '_normmax']) = nan(height(df), 1);
 end
 for i = 1:length(ids)
     id = ids(i);
@@ -102,13 +103,16 @@ for i = 1:length(ids)
         x = df.(region)(df.id==id);
         if all(x == 0)
             x_norm = x;
+            x_normmax = x;
         else
             x_norm = (x - mean(x)) / std(x);
+            x_normmax = x / max(x);
         end
-        if any(isnan(x_norm))
+        if any(isnan(x_norm)) || any(isnan(x_normmax))
             fprintf('! There are some nans for id %i and region %s.\n', id, region)
         end
         df.([region, '_norm'])(df.id==id) = x_norm;
+        df.([region, '_normmax'])(df.id==id) = x_normmax;
     end
 end
 
