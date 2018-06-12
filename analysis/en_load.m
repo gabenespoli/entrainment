@@ -58,6 +58,10 @@ switch lower(filetype)
         % also return audio marker file if requested
         if nargout > 1
             [y, Fs] = audioread(fullfile(getpath('midi'), [idStr, '.wav']));
+            if size(y, 2) > 1 % force mono
+                fprintf('Loading stereo file as mono...')
+                y = y(:, 1);
+            end
             varargout{2} = y;
             varargout{3} = Fs;
         end
