@@ -94,7 +94,11 @@ switch lower(filetype)
 
         for i = 1:length(fnames)
             fname = fnames{i};
-            TMP = readtable(fname);
+            if exist(fname, 'file')
+                TMP = readtable(fname);
+            else
+                fprintf('! File ''%s'' doesn''t exist.\n', fname)
+            end
             if i == 1
                 T = TMP;
             else
