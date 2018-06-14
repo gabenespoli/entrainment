@@ -93,7 +93,6 @@ for i = 1:length(ids)
                         fprintf('\n  Doing region: %s\n', region)
                         en_entrainment_eeg(EEG, 'stim', stim, 'task', task, 'region', region);
                     end
-                    en_entrainment_tapping(id, stim);
                     timeLog{timeLogInd} = '  ';
                     write_proclog(id, stim, task, 1)
 

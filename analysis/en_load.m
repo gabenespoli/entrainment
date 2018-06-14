@@ -60,7 +60,7 @@ switch lower(filetype)
         if nargout > 1
             [y, Fs] = audioread(fullfile(getpath('midi'), [idStr, '.wav']));
             if size(y, 2) > 1 % force mono
-                fprintf('Loading stereo file as mono...')
+                fprintf('Loading stereo file as mono...\n')
                 y = y(:, 1);
             end
             varargout{2} = y;
