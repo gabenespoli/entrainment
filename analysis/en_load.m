@@ -18,6 +18,7 @@
 %   L       = en_load('log', id)
 %   S       = en_load('stiminfo')
 %   EEG     = en_load('eeg', id)
+%   BDF     = en_load('bdf', id)
 
 function varargout = en_load(filetype, id)
 %% parse input
@@ -77,6 +78,9 @@ switch lower(filetype)
         end
         filename = fullfile(getpath('eeg'), [stim, '_', task], [idStr, '.set']);
         varargout{1} = pop_loadset(filename);
+
+    case 'bdf'
+        varargout{1} = en_readbdf(id);
 
     case {'tap', 'tapping'}
         if isempty(stim)
