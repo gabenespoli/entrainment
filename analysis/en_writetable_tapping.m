@@ -43,11 +43,22 @@ for i = 1:length(ids)
 end
 
 % make some fields categorical
-cats = {'stim', 'task', 'rhythm', 'excerpt'};
-for i = 1:length(cats)
-    df.(cats{i}) = categorical(df.(cats{i}));
+if strcmp(stim, 'sync')
+    cats = {'stim', 'task', 'syncopation_degree', 'excerpt'};
+    for i = 1:length(cats)
+        df.(cats{i}) = categorical(df.(cats{i}));
+    end
+    df.syncopation_degree = reordercats(df.syncopation_degree, {'low', 'moderate', 'high'});
+
+elseif strcmp(stim, 'mir')
+    df.syncopation_degree = [];
+    df.syncopation_index = [];
+    df.excerpt = [];
+    cats = {'stim', 'task'};
+    for i = 1:length(cats)
+        df.(cats{i}) = categorical(df.(cats{i}));
+    end
 end
-df.rhythm = reordercats(df.rhythm, {'simple', 'optimal', 'complex'});
 
 % save a csv
 if do_save

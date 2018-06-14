@@ -202,7 +202,7 @@ switch lower(filetype)
                 id, 'UniformOutput', false));
             S = S(ind, :);
             S.excerpt = categorical(S.excerpt);
-            S.rhythm = categorical(S.rhythm);
+            S.syncopation_degree = categorical(S.syncopation_degree);
         end
         varargout{1} = S;
 
