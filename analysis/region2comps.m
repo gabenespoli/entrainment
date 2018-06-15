@@ -3,7 +3,7 @@
 %
 % Usage:
 %     comps = region2comps(EEG, region)
-%     comps = region2comps(EEG, region, 'Param1', 'Value1', ...)
+%     [comps, cubesizes] = region2comps(EEG, region, cubesize)
 %
 % Input:
 %     EEG         = EEGLAB data structure.
@@ -14,38 +14,28 @@
 %                   be found at http://www.talairach.org/labels.html under
 %                   "Level 5: Cell Type".
 %
-%     'rv'        = Only return components with a residual variance below
-%                   this percentage. Enter 0 to return all components
-%                   regardless of residual variance. Enter a number
-%                   between 0 and 100. Default 0.
-%
-%     'cubesize'  = Number or numeric vector specifying cubsizes to pass
-%                   to tal2region.m. Default [0:5]. If a vector, each
-%                   cubsize is searched, and the smallest value is
-%                   returned. This effectively gives the distance of
-%                   each component to the region.
+%     cubesize    = Number or numeric vector specifying cubsizes to pass
+%                   to tal2region.m. If a vector, each cubsize is
+%                   searched, and the smallest value is returned. This
+%                   effectively gives the distance of each component to
+%                   the region. Default 0:5 searches all distances.
 %
 % Output:
-%     comps = Numeric vector list of component numbers.
+%     comps = Numeric vector list of component numbers (indices).
 %
 %     cubesizes = Numeric vector list of smallest cubsize for each comp.
 %
 % Written by Gabriel A. Nespoli 2016-04-25. Revised 2018-06-13.
 
-function [comps, cubesizes] = region2comps(EEG, region, varargin)
+function [comps, cubesizes] = region2comps(EEG, region, cubesize, bkwdcmp)
 
 if nargin == 0 && nargout == 0, help region2comps, return, end
+if nargin < 3 || isempty(cubesize), cubesize = 0:5; end
 
-% defaults
-rv_threshold = 0;
-cubesize = 0:5;
-
-% user-defined
-for i = 1:2:length(varargin)
-    switch lower(varargin{i})
-        case 'rv',          rv_threshold = varargin{i+1};        
-        case 'cubesize',    cubesize = varargin{i+1};
-    end
+% backwards-compatibility with parameter-value pairs
+% i.e., comps = region2comps(EEG, region, 'cubesize', cubesize)
+if ischar(cubesize) && strcmpi(cubesize, 'cubesize')
+    cubesize = bkwdcmp;
 end
 
 % check input
@@ -104,14 +94,6 @@ for j = 1:length(cubesize)
         indComps = unique([indComps; ind]);
     end
     comps = compsGood(indComps);
-
-    % restrict to comps below a certain residual variance
-    if rv_threshold ~= 0
-        rv = {EEG.dipfit.model(compsGood).rv}';
-        rv = cat(1, rv{:});
-        rv = rv(indComps);
-        comps = comps(rv < rv_threshold / 100);
-    end
 
     cubesizes = repmat(cubesize(j), size(comps));
 
