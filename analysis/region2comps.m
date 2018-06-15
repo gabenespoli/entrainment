@@ -90,8 +90,6 @@ end
 
 % loop all cubesizes
 for j = 1:length(cubesize)
-    fprintf('Searching with a cubesize of %i...\n', cubesize(j))
-
     % ------------ this needs attention since tal2region was changed ---------
     % get regions for each comp with specified cubesize (tal2region)
     locs = tal2region(coords, cubesize(j));

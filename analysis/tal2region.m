@@ -67,7 +67,10 @@ switch cubesize
 end
 
 % run from system command line (i.e., terminal)
-if verbose, fprintf('Querying talairach.org database...'), end
+if verbose
+    fprintf(['  Querying talairach.org database ', ...
+            'with a cubesize of %i...'], cubesize)
+end
 [~,~] = system(com);
 if verbose, fprintf(' Done.\n'), end
 
