@@ -2,7 +2,7 @@
 %   Get component numbers filtered by region and residual variance.
 %
 % Usage:
-%   comps = en_select_comps(EEG, rv, region, ind)
+%   comps = select_comps(EEG, rv, region, ind)
 %
 % Input:
 %   EEG = [struct] A preprocessed EEGLAB structure with ICA weights and
@@ -20,13 +20,16 @@
 %
 % Output:
 %   comps = [numeric] List of component numbers that matched all criteria.
+%
+%   cubesizes = [numeric] List of cubesizes corresponding to each comp.
 
-function comps = select_comps(EEG, rv, region, ind)
+function [comps, cubesizes] = select_comps(EEG, rv, region, ind)
 
 % defaults
 if nargin < 2, rv = []; end
 if nargin < 3, region = []; end
 if nargin < 4, ind = []; end
+% TODO: catch if dipole fitting hasn't been done yet
 allinds = 1:length(EEG.dipfit.model);
 
 % filter comps by residual variance
@@ -38,17 +41,22 @@ end
 
 % filter comps by region (Broadmann area)
 if ~isempty(region)
-    ind_region = transpose(region2comps(EEG, region));
+    [ind_region, cubesizes] = region2comps(EEG, region);
+    ind_region = transpose(ind_region);
+    cubesizes = transpose(cubesizes);
 else
     ind_region = allinds;
+    cubesizes = [];
 end
 
 % apply rv and region filters 
-comps = intersect(ind_region, ind_rv);
+[comps, iA] = intersect(ind_region, ind_rv);
+cubesizes = cubesizes(iA);
 
 % apply manual indices filter
 if ~isempty(ind) && ~isnan(ind)
-    comps = intersect(comps, ind);
+    [comps, iA] = intersect(comps, ind);
+    cubesizes = cubesizes(iA);
 end
 
 end
