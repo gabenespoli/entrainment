@@ -40,7 +40,7 @@ if nargin < 1 || isempty(ids)
 end
 if nargin < 2 || isempty(stims), stims = {'sync', 'mir'}; end
 if nargin < 3 || isempty(tasks), tasks = {'eeg', 'tapping'}; end
-if nargin < 4 || isempty(regions), regions = {'aud', 'pmc', 'mot'}; end
+if nargin < 4 || isempty(regions), regions = {'aud', 'pmc'}; end
 
 % make them cells so we can loop them
 stims = cellstr(stims);
@@ -57,6 +57,7 @@ timeLog = cell(0);
 
 for i = 1:length(ids)
     id = ids(i);
+    idStr = num2str(id);
 
     for currentStim = 1:length(stims)
         stim = stims{currentStim};
@@ -64,71 +65,77 @@ for i = 1:length(ids)
         for currentTask = 1:length(tasks)
             task = tasks{currentTask};
             timeLogInd = length(timeLog) + 1;
+            err = []; % reset the error container
 
             if check_log && already_been_done(id, stim, task)
                 % skip this file if it has already been done
                 continue
             end
 
-                % start diary file to save command window output
-                diaryFilename = fullfile( ...
-                    getpath('entrainment'), ...
-                    [stim, '_', task], ...
-                    [num2str(id), '.log']);
-                diary(diaryFilename)
+            % start diary file to save command window output
+            diaryFilename = fullfile( ...
+                getpath('entrainment'), ...
+                [stim, '_', task], ...
+                [idStr, '.log']);
+            diary(diaryFilename)
 
-                fprintf('Diary filename:    %s\n', diaryFilename)
-                fprintf('Participant ID:    %i\n', id)
-                fprintf('Stimulus set:      %s\n', stim)
-                fprintf('Task:              %s\n', task)
-                fprintf('Loop started:      %s\n', startTimeStr)
-                fprintf('This ID started:   %s\n', datestr(now, 'yyyy-mm-dd_HH-MM-SS'));
-                startTimeID = clock;
+            fprintf('Diary filename:    %s\n', diaryFilename)
+            fprintf('Participant ID:    %i\n', id)
+            fprintf('Stimulus set:      %s\n', stim)
+            fprintf('Task:              %s\n', task)
+            fprintf('Loop started:      %s\n', startTimeStr)
+            fprintf('This ID started:   %s\n', datestr(now, 'yyyy-mm-dd_HH-MM-SS'));
+            startTimeID = clock;
 
-                err = []; % reset the error container
-                try
-                    EEG = en_load('eeg', id);
-                    for k = 1:length(regions)
-                        region = regions{k};
-                        fprintf('\n  Doing region: %s\n', region)
-                        en_entrainment_eeg(EEG, 'stim', stim, 'task', task, 'region', region);
-                    end
-                    timeLog{timeLogInd} = '  ';
-                    write_proclog(id, stim, task, 1)
+            % actually calculate entrainment
+            try
+                name = [idStr, '_', stim, '_', task];
+                L = en_load('logstim', name);
+                EEG = en_load('eeg', name);
+                EN = eeg_entrainment(EEG, L.tempo, 'region', regions);
+                EN = join(EN, L, 'Keys', 'trial');
+                % TODO: reorder columns of EN to be more human-readable
 
-                catch err
-                    timeLog{timeLogInd} = '! ';
-                    write_proclog(id, stim, task, 0)
+                filename = fullfile(getpath('entrainment'), ...
+                    [stim, '_', task], [idStr, '.csv']);
+                writetable(EN, filename);
 
-                    % display the error without terminating the loop
-                    disp(err)
-                    for j = 1:length(err.stack)
-                        disp(err.stack(j))
-                    end
+                timeLog{timeLogInd} = '  ';
+                write_proclog(id, stim, task, 1)
 
-                    % return err if output arg requested
-                    if nargout > 0
-                        varargout{1} = err;
-                    end
+            catch err
+                timeLog{timeLogInd} = '! ';
+                write_proclog(id, stim, task, 0)
 
+                % display the error without terminating the loop
+                disp(err)
+                for j = 1:length(err.stack)
+                    disp(err.stack(j))
                 end
 
-                % save and print the elapsed time for this id
-                timeLog{timeLogInd} = [timeLog{timeLogInd}, getElapsedTime(startTimeID)];
-                fprintf('%s\n\n', timeLog{timeLogInd})
-
-                diary off
-
-                % adjust diary filename to indicate errors
-                [pathstr, name, ext] = fileparts(diaryFilename);
-                errorFilename = fullfile(pathstr, [name, '_ERROR', ext]);
-                if ~isempty(err)
-                    % if there were errors, use the error filename instead
-                    movefile(diaryFilename, errorFilename)
-                elseif exist(errorFilename, 'file')
-                    % if there were no errors, delete previous diary that had errors
-                    delete(errorFilename)
+                % return err if output arg requested
+                if nargout > 0
+                    varargout{1} = err;
                 end
+
+            end
+
+            % save and print the elapsed time for this id
+            timeLog{timeLogInd} = [timeLog{timeLogInd}, getElapsedTime(startTimeID)];
+            fprintf('%s\n\n', timeLog{timeLogInd})
+
+            diary off
+
+            % adjust diary filename to indicate errors
+            [pathstr, name, ext] = fileparts(diaryFilename);
+            errorFilename = fullfile(pathstr, [name, '_ERROR', ext]);
+            if ~isempty(err)
+                % if there were errors, use the error filename instead
+                movefile(diaryFilename, errorFilename)
+            elseif exist(errorFilename, 'file')
+                % if there were no errors, delete previous diary that had errors
+                delete(errorFilename)
+            end
 
         end
     end
