@@ -257,9 +257,16 @@ for h = 1:length(harms) % loop harmonics
     % add cols for each region for comp, cubesize, and entrainment
     for r = 1:length(regionStr)
         % transpose and squeeze here make sure it's a column
-        tmp.([regionStr{r}, '_comp'])     = transpose(comps(comps_ind(r, h, :)));
-        tmp.([regionStr{r}, '_distance']) = transpose(cubesizes(comps_ind(r, h, :)));
-        tmp.(regionStr{r})                = squeeze(en_region(r, h, :));
+        compname = [regionStr{r}, '_comp'];
+        distname = [regionStr{r}, '_distance'];
+        if any(comps_ind(r, h, :)) == 0
+            tmp.(compname) = zeros(size(EEG.icaact, 3), 1);
+            tmp.(distname) = nan(size(EEG.icaact, 3), 1);
+        else
+            tmp.(compname) = transpose(comps(comps_ind(r, h, :)));
+            tmp.(distname) = transpose(cubesizes(comps_ind(r, h, :)));
+        end
+        tmp.(regionStr{r}) = squeeze(en_region(r, h, :));
     end
 
     % add to master table
