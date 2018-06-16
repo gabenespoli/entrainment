@@ -186,8 +186,8 @@ comps = cell2mat(comps);
 cubesizes = cell2mat(cubesizes);
 
 %% if there are some good comps, plot and calculate entrainment 
-% region x harms x trials
-en_region = zeros(length(regionStr), length(harms), size(EEG.icaact, 3));
+% trials x harms x region
+en_region = zeros(size(EEG.icaact, 3), length(harms), length(regionStr));
 if ~isempty(comps)
 
     % save plots of good ICs
@@ -205,12 +205,12 @@ if ~isempty(comps)
         'dim',          2); % should the the time dimension
     [fftdata, freqs] = noisefloor3(yfft, [2 2], f);
 
-    % en is comps x harms x trials
-    en = zeros(length(comps), length(harms), size(EEG.icaact, 3));
+    % en_comps is comps x harms x trials
+    en_comps = zeros(length(comps), length(harms), size(EEG.icaact, 3));
 
     % loop trials and get entrainment for all comps and harms
     for i = 1:size(EEG.icaact, 3)
-        en(:, :, i) = getbins3( ...
+        en_comps(:, :, i) = getbins3( ...
             fftdata(:, :, i), ...
             freqs, ...
             harms * tempo(i), ...
@@ -218,39 +218,51 @@ if ~isempty(comps)
             'func',  'mean');
     end
 
-    % get max entrainment for each region
-    % containers are region x harms x trials
+    % make en_comps more similar to en_region, like this:
+    % en_region: trials x harms x region
+    % en_comps:  trials x harms x comps
+    en_comps = permute(en_comps, [3 2 1]);
+
+    % make container for comps_ind
     comps_ind = zeros(size(en_region));
+
+    % get max entrainment for each region
     for i = 1:length(regionStr)
-        ind = strcmp(regions, regionStr{i}); % inds of comps for this regions
+        ind = strcmp(regions, regionStr{i}); % inds of comps for this region
+
         if any(ind)
             % save original indices, because once we use ind and pass it
             %   to the max function, the tmp_ind we get back will be
             %   relative to what was passed to max
             orig_ind = find(ind);
+
             % tmp/tmp_ind are 1 x harms x trials
-            [tmp, tmp_ind] = max(en(ind, :, :), [], 1);
+            % tmp/tmp_ind are trials x harms (x 1 which used to be comps)
+            [tmp, tmp_ind] = max(en_comps(:, :, ind), [], 3);
             tmp_ind = orig_ind(tmp_ind);
+
         else % if no comps for this region, make all zeros
-            tmp = zeros(size(en_region(1, :, :)));
+            tmp = zeros(size(en_region(:, :, 1)));
             tmp_ind = zeros(size(tmp));
+            % inds can't be 0, this will be caught when putting vals in EN
         end
-        en_region(i, :, :) = tmp;       % region x harms x trials
-        comps_ind(i, :, :) = tmp_ind;   % region x harms x trials
+
+        en_region(:, :, i) = tmp;       % trials x harms x region
+        comps_ind(:, :, i) = tmp_ind;   % trials x harms x region
     end
 
 else % no comps were found at all
     % these values will put zeros for comp and NaN for cubesize
     % en_region is already defined as all zeros, so entrainment will be 0
-    comps_ind = ones(size(en_region));
     comps = 0;
     cubesizes = NaN;
+    comps_ind = ones(size(en_region));
 
 end
 
 % put vals into EN table
 for h = 1:length(harms) % loop harmonics
-    trial = transpose(1:size(EEG.icaact, 3));
+    trial = transpose(1:size(EEG.icaact, 3)); % number trials sequentially
     harmonic = repmat(harms(h), [size(EEG.icaact, 3), 1]);
     tmp = table(trial, harmonic, 'VariableNames', {'trial', 'harmonic'});
 
@@ -259,14 +271,15 @@ for h = 1:length(harms) % loop harmonics
         % transpose and squeeze here make sure it's a column
         compname = [regionStr{r}, '_comp'];
         distname = [regionStr{r}, '_distance'];
-        if any(comps_ind(r, h, :)) == 0
+        if any(comps_ind(:, h, r)) == 0
+            % if there were no comps for a region
             tmp.(compname) = zeros(size(EEG.icaact, 3), 1);
             tmp.(distname) = nan(size(EEG.icaact, 3), 1);
         else
-            tmp.(compname) = transpose(comps(comps_ind(r, h, :)));
-            tmp.(distname) = transpose(cubesizes(comps_ind(r, h, :)));
+            tmp.(compname) = comps(comps_ind(:, h, r));
+            tmp.(distname) = cubesizes(comps_ind(:, h, r));
         end
-        tmp.(regionStr{r}) = squeeze(en_region(r, h, :));
+        tmp.(regionStr{r}) = en_region(:, h, r);
     end
 
     % add to master table
