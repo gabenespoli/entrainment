@@ -60,14 +60,17 @@
 %       Default is empty to not write a file.
 %
 % Output:
-%   EN = [table] Data from logfile, stiminfo, and the entrainment analysis
-%       in a single MATLAB table. This table is also written as a csv to
-%       getpath('entrainment'). Columns should be as follows:
+%   EN = [table] Columns should be as follows:
 %
 %           trial
-%           harm
-%           region
-%           region_comp
+%           harmonic
+%           region1_comp
+%           region1_distance (i.e., smallest cubesize)
+%           region1
+%           region2_comp
+%           region2_distance
+%           region2
+%           etc.
 %
 %   fftdata = [numeric] The fft data matrix (comps x frequency x trial).
 %
