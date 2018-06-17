@@ -182,10 +182,11 @@ regions = {};
 for r = 1:length(comps)
     regions = [regions, repmat(regionStr(r), size(comps{r}))]; %#okAGROW
 end
-comps = cell2mat(comps);
-cubesizes = cell2mat(cubesizes);
+% make them column vectors for easier filling of EN table at end
+comps = transpose(cell2mat(comps));
+cubesizes = transpose(cell2mat(cubesizes));
 
-%% if there are some good comps, plot and calculate entrainment 
+%% calculate entrainment
 % trials x harms x region
 en_region = zeros(size(EEG.icaact, 3), length(harms), length(regionStr));
 if ~isempty(comps)
