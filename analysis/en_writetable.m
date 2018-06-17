@@ -31,7 +31,7 @@ if nargin < 1 || isempty(ids) || ischar(ids)
 end
 
 % defaults
-regions = {'aud', 'mot', 'pmc'};
+regions = {'aud', 'pmc'};
 stim = 'sync';
 task = 'eeg';
 do_save = true;
@@ -53,25 +53,26 @@ for i = 1:length(ids)
     id = ids(i);
     idStr = num2str(id);
     fprintf('  Collecting id %i\n', id)
+    fname = fullfile(getpath('entrainment'), ...
+        [stim, '_', task], [idStr, '.csv']);
+    tmp_id = readtable(fname);
 
-    for j = 1:length(regions)
-        region = regions{j};
-        fname = fullfile(getpath('entrainment'), ...
-            [stim, '_', task], [idStr, '_', region, '.csv']);
-        tmp = readtable(fname);
-        if j == 1
-            tmp_id = tmp;
-        else
-            if all(tmp_id.portcode == tmp.portcode) && ...
-                all(tmp_id.harmonic == tmp.harmonic)
-                tmp_id.([region,'_comp']) = tmp.([region,'_comp']);
-                tmp_id.(region) = tmp.(region);
-            else
-                error(['Portcodes or harmonics don''t match for id ', ...
-                    num2str(id), '.'])
-            end
-        end
-    end
+    % for j = 1:length(regions)
+    %     region = regions{j};
+    %     if j == 1
+    %         tmp_id = tmp;
+    %     else
+    %         if all(tmp_id.portcode == tmp.portcode) && ...
+    %             all(tmp_id.harmonic == tmp.harmonic)
+    %             tmp_id.([region,'_comp']) = tmp.([region,'_comp']);
+    %             tmp_id.([region,'_distance']) = tmp.([region,'_distance']);
+    %             tmp_id.(region) = tmp.(region);
+    %         else
+    %             error(['Portcodes or harmonics don''t match for id ', ...
+    %                 num2str(id), '.'])
+    %         end
+    %     end
+    % end
 
     % add current id to master table
     if i == 1
