@@ -39,7 +39,7 @@ if nargin < 1 || isempty(ids)
     ids = d.id;
 end
 if nargin < 2 || isempty(stims), stims = {'sync', 'mir'}; end
-if nargin < 3 || isempty(tasks), tasks = {'eeg', 'tapping'}; end
+if nargin < 3 || isempty(tasks), tasks = {'eeg'}; end
 
 % make them cells so we can loop them
 stims = cellstr(stims);
