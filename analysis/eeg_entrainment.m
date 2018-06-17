@@ -126,7 +126,7 @@ else
     regionStr = {regionStr};
 end
 
-%% filter comps by region and rv
+%% get comps localized to regions
 % loop regions and get all comps localized to each
 comps = cell(size(region));
 cubesizes = cell(size(region));
@@ -261,6 +261,7 @@ else % no comps were found at all
 
 end
 
+%% make output table
 % put vals into EN table
 for h = 1:length(harms) % loop harmonics
     trial = transpose(1:size(EEG.icaact, 3)); % number trials sequentially
