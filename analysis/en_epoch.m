@@ -1,7 +1,7 @@
 %% en_epoch
 % EEG = en_epoch(EEG, stim, task [, timelim])
 
-function EEG = en_epoch(EEG, stim, task, timelim)
+function [EEG, logfile_ind] = en_epoch(EEG, stim, task, timelim)
 
 if ~ismember(lower(stim), {'sync', 'mir'})
     error('Invalid stim.')
@@ -101,6 +101,7 @@ end
 % remove nans (probably due to some missed portcodes)
 nanind = isnan(eventindices);
 eventindices(nanind) = [];
+logfile_ind = find(~nanind);
 
 % get actual values of events
 portcodes = transpose([EEG.event.type]);

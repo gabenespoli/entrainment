@@ -90,9 +90,18 @@ for i = 1:length(ids)
             % actually calculate entrainment
             try
                 name = [idStr, '_', stim, '_', task];
+
+                % make sure list of tempos is same length as number of trials
+                % TODO: this is a slow hack, becuase it has reload the original bdf
+                % en_epoch probably needs to save logfile_ind to a file for this to work smoothly
                 L = en_load('logstim', name);
+                BDF = en_load('bdf', id);
+                [~, logfile_ind] = en_epoch(BDF, stim, task);
+                L = L(logfile_ind, :);
+
                 EEG = en_load('eeg', name);
                 EN = eeg_entrainment(EEG, L.tempo, 'region', regions);
+                EN.trial = L.trial(EN.trial); % relabel EN trials to match logfile_ind
                 EN = join(EN, L, 'Keys', 'trial');
                 % TODO: reorder columns of EN to be more human-readable
 
