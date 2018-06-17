@@ -5,7 +5,8 @@
 %   (getpath('proclog')).
 %
 % Usage:
-%   en_preprocess(ids, stim, task)
+%   en_preprocess
+%   en_preprocess(ids, stim, task, check_log)
 %
 % Input:
 %   ids = [numeric] id numbers to run preprocessing on. Default is empty 
@@ -21,16 +22,20 @@
 %
 %   task = ['eeg' or 'tapping']
 %
+%   check_log = [boolean] Check en_log.csv and only preprocessed files that
+%       haven't been done yet. If zero input args are given, default true.
+%       If input args are given, default false.
+%
 %   en_load('proclog') = [string] CSV file to save a summary of what has
 %       been completed. This file marks 1 for completed without errors, 0
 %       if there were errors, and NaN if the file id hasn't been touched
 %       yet. Put this file in your Dropbox (or similar) to easily keep
 %       track of long batch processing jobs.
 
-function varargout = en_preprocess(ids, stims, tasks)
+function varargout = en_preprocess(ids, stims, tasks, check_log)
 if nargin == 0
     check_log = true; % only process files that haven't already be done
-else
+elseif nargin < 4
     check_log = false; % force re-preprocess all ids
 end
 if nargin < 1 || isempty(ids)
