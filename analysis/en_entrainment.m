@@ -49,7 +49,6 @@ regions = cellstr(regions);
 
 % make sure toolboxes are loaded
 en_load('eeglab')
-en_load('miditoolbox')
 
 startTime = clock;
 startTimeStr = datestr(startTime, 'yyyy-mm-dd_HH-MM-SS');
@@ -73,6 +72,7 @@ for i = 1:length(ids)
             end
 
             % start diary file to save command window output
+            fprintf('\n')
             diaryFilename = fullfile( ...
                 getpath('entrainment'), ...
                 [stim, '_', task], ...
