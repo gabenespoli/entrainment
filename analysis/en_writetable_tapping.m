@@ -62,8 +62,10 @@ end
 
 % save a csv
 if do_save
-    writetable(df, ['~/projects/en/tables/ent_', stim, '_', ...
-        datestr(now, 'yyyy-mm-dd_HH-MM-SS'), '.csv'])
+    fname = ['~/projects/en/tables/ent_', stim, '_', ...
+        datestr(now, 'yyyy-mm-dd_HH-MM-SS'), '.csv'];
+    writetable(df, fname)
+    fprintf('Save file to %s\n', fname)
 end
 
 end
