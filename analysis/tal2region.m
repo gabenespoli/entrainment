@@ -45,8 +45,10 @@ currentFolder = cd;
 cd(fileparts(mfilename('fullpath')))
 
 % write coords to temporary text file
-name = tempname;
-fid = fopen(name,'w');
+% name = tempname;
+name = 'tal2region_data';
+txtname = [name, '.txt'];
+fid = fopen(txtname,'w');
 temp = transpose(coords); % transpose so that it can be written element-wise
 fprintf(fid,repmat('%f\t%f\t%f\n', 1, size(coords, 1)), temp(:));
 fclose(fid);
@@ -54,12 +56,11 @@ fclose(fid);
 % create system command & format for reading output
 switch cubesize
     case 0
-        com = ['java -cp talairach.jar org.talairach.ExcelToTD 4, ', name];
+        cubestr = '4';
         formatStr = '%f%f%f%s%s%s%s%s';
         
     case {1,2,3,4,5}
-        com = ['java -cp talairach.jar org.talairach.ExcelToTD 3:', ...
-            num2str(cubesize * 2 + 1), ', ',name];
+        cubestr = ['3:', num2str(cubesize * 2 + 1)];
         formatStr = '%f%f%f%d%s%s%s%s%s%s';
         
     otherwise
@@ -71,22 +72,28 @@ if verbose
     fprintf(['  Querying talairach.org database ', ...
             'with a cubesize of %i...'], cubesize)
 end
-[~,~] = system(com);
+com = ['java -cp talairach.jar org.talairach.ExcelToTD ', cubestr, ', ', txtname];
+[status, result] = system(com);
 if verbose, fprintf(' Done.\n'), end
+if status, disp(result), end
 
 % read coords from text file
-fid = fopen([name, '.td']);
+tdname = [name, '.txt.td'];
+if ~exist(tdname, 'file')
+    error('td file doesn''t exist')
+end
+fid = fopen(tdname);
 out = textscan(fid, formatStr, 'delimiter', '\t');
 fclose(fid);
 
 % delete temporary files
-if isunix
-    delcom = 'rm ';
-elseif ispc
-    delcom = 'del ';
-end
-system([delcom, name]);
-system([delcom, name, '.td']);
+% if isunix
+    % delcom = 'rm ';
+% elseif ispc
+    % delcom = 'del ';
+% end
+% system([delcom, txtname]);
+% system([delcom, tdname]);
 
 % switch back to original current folder
 cd(currentFolder) 
