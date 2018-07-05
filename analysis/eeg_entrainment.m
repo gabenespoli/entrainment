@@ -45,6 +45,9 @@
 %       selecting components. This should probably be the same or smaller
 %       than what was used for en_preprocess_eeg. Default 0.15.
 %
+%   'cubesize' = [numeric between 0 and 5] Cubesize to use when searching 
+%       for regions. See docs for tal2region.m. Default 1:5.
+%
 %   'nfft'  = [numeric] Number of points in the FFT. Default 2^16, which
 %       gives each frequency bin a width of 0.0078 Hz.
 %
@@ -83,6 +86,7 @@ function [EN, fftdata, freqs] = eeg_entrainment(EEG, tempo, varargin)
 region = {'aud', 'pmc'}; % pmc = 6, aud = [22 41 42]
 tieWarning = 2;
 rv = 0.15;
+cubesize = 1:5;
 nfft = 2^16; % 2^16 = bin width of 0.0078 Hz
 binwidth = 1; % number of bins on either side of tempo bin
 % tempos are 0.1 Hz apart, so half-width max is 0.05
@@ -100,6 +104,7 @@ for i = 1:2:length(varargin)
         case {'region', 'regions'}, if ~isempty(val), region = val; end
         case 'tiewarning',          if ~isempty(val), tieWarning = val; end
         case 'rv',                  if ~isempty(val), rv = val; end
+        case 'cubesize',            if ~isempty(val), cubesize = val; end
         case 'nfft',                if ~isempty(val), nfft = val; end
         case {'width', 'binwidth'}, if ~isempty(val), binwidth = val; end
         case 'harms',               if ~isempty(val), harms = val; end
@@ -132,7 +137,7 @@ comps = cell(size(region));
 cubesizes = cell(size(region));
 for i = 1:length(region)
     fprintf('Searching in region %s...\n', regionStr{i})
-    [comps{i}, cubesizes{i}] = select_comps(EEG, rv, region{i});
+    [comps{i}, cubesizes{i}] = select_comps(EEG, rv, region{i}, [], cubesize);
 end
 
 % remove comps that are closer to a different region

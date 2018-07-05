@@ -14,11 +14,7 @@
 %                   be found at http://www.talairach.org/labels.html under
 %                   "Level 5: Cell Type".
 %
-%     cubesize    = Number or numeric vector specifying cubsizes to pass
-%                   to tal2region.m. If a vector, each cubsize is
-%                   searched, and the smallest value is returned. This
-%                   effectively gives the distance of each component to
-%                   the region. Default 0:5 searches all distances.
+%     cubesize    = [0:5] See tal2region.m. Default 0.
 %
 % Output:
 %     comps = Numeric vector list of component numbers (indices).
@@ -27,10 +23,10 @@
 %
 % Written by Gabriel A. Nespoli 2016-04-25. Revised 2018-06-13.
 
-function [comps, cubesizes] = region2comps(EEG, region, cubesize, bkwdcmp)
+function [comps, cubesizes, coords] = region2comps(EEG, region, cubesize, bkwdcmp)
 
 if nargin == 0 && nargout == 0, help region2comps, return, end
-if nargin < 3 || isempty(cubesize), cubesize = 0:5; end
+if nargin < 3 || isempty(cubesize), cubesize = 0; end
 
 % backwards-compatibility with parameter-value pairs
 % i.e., comps = region2comps(EEG, region, 'cubesize', cubesize)
