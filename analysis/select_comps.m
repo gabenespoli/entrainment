@@ -20,7 +20,10 @@
 %
 %   cubesize = [0:5] See tal2region.m. Default 0.
 %
-%   cubesizes = [numeric] List of cubesizes corresponding to each comp.
+% Output:
+%   comps = See region2comps.m.
+%   cubesizes = See region2comps.m
+%   coords = See region2comps.m
 
 function [comps, cubesizes, coords] = select_comps(EEG, rv, region, ind, cubesize)
 
@@ -41,22 +44,25 @@ end
 
 % filter comps by region (Broadmann area)
 if ~isempty(region)
-    [ind_region, cubesizes] = region2comps(EEG, region, cubesize);
+    [ind_region, cubesizes, coords] = region2comps(EEG, region, cubesize);
     ind_region = transpose(ind_region);
     cubesizes = transpose(cubesizes);
 else
     ind_region = allinds;
     cubesizes = [];
+    coords = [];
 end
 
 % apply rv and region filters 
 [comps, iA] = intersect(ind_region, ind_rv);
 cubesizes = cubesizes(iA);
+coords = coords(iA,:);
 
 % apply manual indices filter
 if ~isempty(ind) && ~isnan(ind)
     [comps, iA] = intersect(comps, ind);
     cubesizes = cubesizes(iA);
+    coords = coords(iA,:);
 end
 
 end

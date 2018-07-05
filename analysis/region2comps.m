@@ -14,12 +14,22 @@
 %                   be found at http://www.talairach.org/labels.html under
 %                   "Level 5: Cell Type".
 %
-%     cubesize    = [0:5] See tal2region.m. Default 0.
+%     cubesize    = [0:5] See tal2region.m. While the cubesize input for
+%       tal2region must be a single number, this value can be multiple
+%       numbers. In this case, all specified cubesizes are searched, and
+%       the smallest corresponding cubsize is returned. Note that
+%       a cubesize of 0 should always be used on its own, since it will
+%       return the closest grey matter, even if this grey matter is
+%       further away than the largest cubesize. Default 0.
 %
 % Output:
-%     comps = Numeric vector list of component numbers (indices).
+%   comps = Numeric vector list of component numbers (indices).
 %
-%     cubesizes = Numeric vector list of smallest cubsize for each comp.
+%   cubesizes = Numeric vector list of smallest cubsize for each comp.
+%
+%   coords = Numeric comps-by-3 matrix of Talairach coordinates for each
+%       comp. coords(:,1) is the x coordinate, coords(:,2) is y,
+%       coords(:,3) is z.
 %
 % Written by Gabriel A. Nespoli 2016-04-25. Revised 2018-06-13.
 
@@ -32,6 +42,9 @@ if nargin < 3 || isempty(cubesize), cubesize = 0; end
 % i.e., comps = region2comps(EEG, region, 'cubesize', cubesize)
 if ischar(cubesize) && strcmpi(cubesize, 'cubesize')
     cubesize = bkwdcmp;
+end
+if length(cubesize) > 1 && ismember(0, cubesize)
+    error('Cubesize of zero should only be used on its own.')
 end
 
 % check input
@@ -60,10 +73,11 @@ if ~isnumeric(cubesize) || ~all(ismember(cubesize, 0:5))
     error('Problem with CUBESIZE input.')
 end
 
-% get coords for all comps
-coords = {EEG.dipfit.model.posxyz}';
-compsGood = find(~cellfun(@isempty, coords)); % non-empty coords
-coords = cat(1, coords{:});
+% remove comps with empty coords
+% we can't submit empty rows to tal2region.m
+allCoords = {EEG.dipfit.model.posxyz}';
+compsCoordsInd = find(~cellfun(@isempty, allCoords));
+coords = cat(1, allCoords{:}); % make comps-by-3 array, remove empty rows
 
 % make sure coords are talairach
 switch EEG.dipfit.coordformat
@@ -75,30 +89,31 @@ switch EEG.dipfit.coordformat
 end
 
 % loop all cubesizes
-for j = 1:length(cubesize)
-    % ------------ this needs attention since tal2region was changed ---------
+for c = 1:length(cubesize)
+    % ------------ this needs attention since tal2region was changed -----
     % get regions for each comp with specified cubesize (tal2region)
-    locs = tal2region(coords, cubesize(j));
-    names = locs.cellType;
+    locs = tal2region(coords, cubesize(c));
+    names = locs.cellType; % same length as coords and compsCoordsInd
 
-    % ------------------------------------------------------------------------
+    % --------------------------------------------------------------------
 
     % find comps localized to specified Brodmann area(s)
-    indComps = [];
-    for i = 1:length(region)
-        ind = find(cellfun(@(x) ismember(region{i}, x), names));
-        indComps = unique([indComps; ind]);
+    ind = [];
+    for r = 1:length(region)
+        tmp = find(cellfun(@(x) ismember(region{r}, x), names));
+        ind = unique([ind; tmp]);
     end
-    comps = compsGood(indComps);
+    % comps (and allComps) is same size as allCoords, not coords
+    comps = compsCoordsInd(ind);
 
-    cubesizes = repmat(cubesize(j), size(comps));
+    cubesizes = repmat(cubesize(c), size(comps));
 
-    if j == 1
+    if c == 1
         allComps = comps;
         allCubesizes = cubesizes;
     else
-        allComps = [allComps; comps]; %#okAGROW
-        allCubesizes = [allCubesizes; cubesizes]; %#okAGROW
+        allComps = [allComps; comps]; %#ok<AGROW>
+        allCubesizes = [allCubesizes; cubesizes]; %#ok<AGROW>
     end
 
 end
@@ -109,5 +124,9 @@ cubesizes = nan(size(comps));
 for i = 1:length(comps)
     cubesizes(i) = min(allCubesizes(allComps == comps(i)));
 end
+
+% get coords for chosen comps
+coords = allCoords(comps);
+coords = cat(1, coords{:});
 
 end

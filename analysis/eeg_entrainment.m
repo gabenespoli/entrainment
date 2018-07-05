@@ -68,11 +68,12 @@
 %           trial
 %           harmonic
 %           region1_comp
-%           region1_distance (i.e., smallest cubesize)
+%           region1_x (Talairach coordinates)
+%           region1_y
+%           region1_z
+%           region1_distance (i.e., smallest cubesize in mm)
 %           region1
 %           region2_comp
-%           region2_distance
-%           region2
 %           etc.
 %
 %   fftdata = [numeric] The fft data matrix (comps x frequency x trial).
@@ -135,9 +136,10 @@ end
 % loop regions and get all comps localized to each
 comps = cell(size(region));
 cubesizes = cell(size(region));
+coords = cell(size(region));
 for i = 1:length(region)
     fprintf('Searching in region %s...\n', regionStr{i})
-    [comps{i}, cubesizes{i}] = select_comps(EEG, rv, region{i}, [], cubesize);
+    [comps{i}, cubesizes{i}, coords{i}] = select_comps(EEG, rv, region{i}, [], cubesize);
 end
 
 % remove comps that are closer to a different region
@@ -160,14 +162,19 @@ for r = 1:length(region)
         if any(ind)
             % if other comps are closer, mark this one for removal
             if any(other_cubesizes(ind) < cubesizes{r}(c))
+                % fprintf('Removing comp %i from region ''%s''...\n', ...
+                    % comps{r}(c), region)
                 rmind = [rmind c]; %#okAGROW
             end
         end
     end
 
     % remove comps from this region that are closer to other regions
-    comps{r}(rmind) = [];
-    cubesizes{r}(rmind) = [];
+    if rmind
+        comps{r}(rmind) = [];
+        cubesizes{r}(rmind) = [];
+        coords{r}(rmind,:) = [];
+    end
 end
 
 % warn if a single comp is assigned to multiple regions
@@ -190,6 +197,11 @@ end
 % make them column vectors for easier filling of EN table at end
 comps = transpose(cell2mat(comps));
 cubesizes = transpose(cell2mat(cubesizes));
+coords = cellfun(@transpose, coords, 'UniformOutput', false);
+coords = transpose(cell2mat(coords));
+
+% TODO: change any cubesize of 0 to a distance of NaN
+% cubesize of 0 returns closest gray matter, we don't know the distance
 
 %% calculate entrainment
 % trials x harms x region
@@ -262,6 +274,7 @@ else % no comps were found at all
     % en_region is already defined as all zeros, so entrainment will be 0
     comps = 0;
     cubesizes = NaN;
+    coords = NaN;
     comps_ind = ones(size(en_region));
 
 end
@@ -277,13 +290,22 @@ for h = 1:length(harms) % loop harmonics
     for r = 1:length(regionStr)
         % transpose and squeeze here make sure it's a column
         compname = [regionStr{r}, '_comp'];
+        xname    = [regionStr{r}, '_x'];
+        yname    = [regionStr{r}, '_y'];
+        zname    = [regionStr{r}, '_z'];
         distname = [regionStr{r}, '_distance'];
         if any(comps_ind(:, h, r)) == 0
             % if there were no comps for a region
             tmp.(compname) = zeros(size(EEG.icaact, 3), 1);
+            tmp.(xname)    = nan(size(EEG.icaact, 3), 1);
+            tmp.(yname)    = nan(size(EEG.icaact, 3), 1);
+            tmp.(zname)    = nan(size(EEG.icaact, 3), 1);
             tmp.(distname) = nan(size(EEG.icaact, 3), 1);
         else
             tmp.(compname) = comps(comps_ind(:, h, r));
+            tmp.(xname)    = coords(comps_ind(:, h, r), 1);
+            tmp.(yname)    = coords(comps_ind(:, h, r), 2);
+            tmp.(zname)    = coords(comps_ind(:, h, r), 3);
             tmp.(distname) = cubesizes(comps_ind(:, h, r));
         end
         tmp.(regionStr{r}) = en_region(:, h, r);
@@ -329,6 +351,8 @@ if ischar(region)
         case 'mot', region = 4;          % primary motor
         case 'som', region = [1 2 3];    % somatosensory
         case 'pfc', region = [9 46];     % dlpfc, more or less
+        case 'ifg', region = 47;         % Vuust2006 polyrhythms;
+        case 'b40', region = 40;         % Vuust2006 polyrhythms
         otherwise
             error([region ' is not a valid region string.'])
     end
