@@ -188,28 +188,32 @@ if length(unique(cell2mat(comps))) < length(cell2mat(comps))
      end
 end
 
-% make comps and cubesizes single vectors, and make a corresponding
-%   cell array with region strings (call regions)
-regions = {};
-for r = 1:length(comps)
-    regions = [regions, repmat(regionStr(r), size(comps{r}))]; %#okAGROW
-end
-% make them column vectors for easier filling of EN table at end
-comps = transpose(cell2mat(comps));
-cubesizes = transpose(cell2mat(cubesizes));
-coords = cellfun(@transpose, coords, 'UniformOutput', false);
-coords = transpose(cell2mat(coords));
-
 % TODO: change any cubesize of 0 to a distance of NaN
 % cubesize of 0 returns closest gray matter, we don't know the distance
 
 %% calculate entrainment
 % trials x harms x region
 en_region = zeros(size(EEG.icaact, 3), length(harms), length(regionStr));
-if ~isempty(comps)
+if ~all(cellfun(@isempty, comps))
+
+    % make comps and cubesizes single vectors, and make a corresponding
+    %   cell array with region strings (call regions)
+    regions = {};
+    for r = 1:length(comps)
+        regions = [regions, repmat(regionStr(r), size(comps{r}))]; %#okAGROW
+    end
+    % make them column vectors for easier filling of EN table at end
+    comps = transpose(cell2mat(comps));
+    cubesizes = transpose(cell2mat(cubesizes));
+    coords = cellfun(@transpose, coords, 'UniformOutput', false);
+    coords = transpose(cell2mat(coords));
 
     % save plots of good ICs
-    % dtplot(EEG, comps, fullfile(getpath('goodcomps'), regionStr));
+    try
+        dtplot(EEG, comps, fullfile(getpath('goodcomps'), regionStr));
+    catch
+        disp('dip and topo plots could not be produced')
+    end
 
     % do fft of all comps
     [yfft, f] = getfft3( ...
@@ -274,7 +278,7 @@ else % no comps were found at all
     % en_region is already defined as all zeros, so entrainment will be 0
     comps = 0;
     cubesizes = NaN;
-    coords = NaN;
+    coords = [NaN NaN NaN];
     comps_ind = ones(size(en_region));
 
 end
