@@ -12,9 +12,9 @@
 %
 %   comps = [numeric] List of component numbers to plot.
 %
-%   savedir = [string] Folder to save plots. If empty (''), plots are
-%       displayed and not saved. Otherwise plots are saved as both a .fig
-%       and a .png.
+%   savedir = [string] Folder to save plots. If empty ('') or not
+%       specified, plots are displayed and not saved. Otherwise plots are
+%       saved as both a .fig and a .png.
 %
 % Output:
 %   topofig = Figure handle for the topoplot.
@@ -54,17 +54,20 @@ else
 end
 
 %% dipplot
+opts = { ...
+    'normlen',      'off', ...
+    'mri',          getpath('mrifile')};
+
+
 if strcmp(do_gui, 'off')
     dipfig = figure;
 end
 pop_dipplot(EEG, ...
     comps, ...
-    'mri',          getpath('mrifile'), ...
     'projlines',    'on', ...
     'view',         [0.5 -0.5 0.5], ...
-    'num',          'on', ...
     'gui',          do_gui, ...
-    'normlen',      'on');
+    opts{:});
 if strcmp(do_gui, 'on')
     dipfig = gcf;
 end
@@ -78,12 +81,31 @@ else
     close(dipfig)
 end
 
+pop_dipplot(EEG, ...
+    comps, ...
+    'summary',      'on', ...
+    'axistight',    'on', ...
+    opts{:});
+dipsumfig = gcf;
+
+if isempty(savedir)
+    % arrange figures so they aren't overlapping
+    dipsumfig.Position(1) = dipsumfig.Position(1) + dipsumfig.Position(3) / 2;
+else
+    % save figures instead of plotting them
+    print(fullfile(savedir,   [EEG.setname, '_dip_summary.png']), '-dpng')
+    close(dipsumfig)
+end
+
 %% output figure handles
 if nargout > 0
     varargout{1} = topofig;
 end
 if nargout > 1
     varargout{2} = dipfig;
+end
+if nargout > 2
+    varargout{3} = dipsumfig;
 end
 
 end
