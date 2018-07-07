@@ -8,14 +8,13 @@
 % Input:
 %     EEG         = EEGLAB data structure.
 %
-%     region      = Numeric vector specifying the Brodmann area(s) of
-%                   interest, or cell array of strings specifying the cell
-%                   types of interest (a list of available cell types can
-%                   be found at http://www.talairach.org/labels.html under
-%                   "Level 5: Cell Type".
+%     region = Numeric vector specifying the Brodmann area(s) of interest,
+%       or cell array of strings specifying the cell types of interest
+%       (a list of available cell types can be found at
+%       http://www.talairach.org/labels.html under "Level 5: Cell Type".
 %
-%     cubesize    = [0:5] See tal2region.m. While the cubesize input for
-%       tal2region must be a single number, this value can be multiple
+%     cubesize = [0:5] See tal2region.m. While the cubesize input for
+%       tal2region.m must be a single number, this value can be multiple
 %       numbers. In this case, all specified cubesizes are searched, and
 %       the smallest corresponding cubsize is returned. Note that
 %       a cubesize of 0 should always be used on its own, since it will
