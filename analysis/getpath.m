@@ -24,7 +24,7 @@ switch pathtype
 
     % data folder
     case 'data',        outpath = fullfile(getpath('project'), 'data');
-    case 'plots',       outpath = fullfile(getpath('project'), 'data', 'plots');
+    case 'plots',       outpath = fullfile(getpath('project'), 'plots');
 
     % tapping data
     case 'tapping',     outpath = fullfile(getpath('data'), 'tap_preprocessed');
