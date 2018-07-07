@@ -18,7 +18,7 @@
 %   ind = [numeric] List of indices to use when filtering by region and
 %       residual variance. Default [] (empty; don't filter by indices).
 %
-%   cubesize = [0:5] See tal2region.m. Default 0.
+%   cubesize = [0:5] See tal2region.m. Default 1:5.
 %
 % Output:
 %   comps = See region2comps.m.
@@ -31,7 +31,7 @@ function [comps, cubesizes, coords] = select_comps(EEG, rv, region, ind, cubesiz
 if nargin < 2 || isempty(rv), rv = []; end
 if nargin < 3 || isempty(region), region = []; end
 if nargin < 4 || isempty(ind), ind = []; end
-if nargin < 5 || isempty(cubesize), cubesize = 0; end
+if nargin < 5 || isempty(cubesize), cubesize = 1:5; end
 % TODO: catch if dipole fitting hasn't been done yet
 allinds = 1:length(EEG.dipfit.model);
 

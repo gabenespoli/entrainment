@@ -20,7 +20,7 @@
 %       the smallest corresponding cubsize is returned. Note that
 %       a cubesize of 0 should always be used on its own, since it will
 %       return the closest grey matter, even if this grey matter is
-%       further away than the largest cubesize. Default 0.
+%       further away than the largest cubesize. Default 1:5.
 %
 % Output:
 %   comps = Numeric vector list of component numbers (indices).
@@ -36,7 +36,7 @@
 function [comps, cubesizes, coords] = region2comps(EEG, region, cubesize, bkwdcmp)
 
 if nargin == 0 && nargout == 0, help region2comps, return, end
-if nargin < 3 || isempty(cubesize), cubesize = 0; end
+if nargin < 3 || isempty(cubesize), cubesize = 1:5; end
 
 % backwards-compatibility with parameter-value pairs
 % i.e., comps = region2comps(EEG, region, 'cubesize', cubesize)

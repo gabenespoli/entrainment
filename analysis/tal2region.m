@@ -18,7 +18,7 @@
 %                   matter regardless of cube size. Note that cubesize is
 %                   +/-, so for e.g. a cubesize of 2 will return labels
 %                   contained within a cube that is 5 x 5 x 5 mm.
-%                   Default 0.
+%                   You cannot specify more than one cubesize. Default 0.
 %
 % Output:
 %     region      = [struct] Structure with fields corresponding to the
