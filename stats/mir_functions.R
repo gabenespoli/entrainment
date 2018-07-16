@@ -79,15 +79,6 @@ mir.load.tapping <- function(fname) {
 mir.add.mir <- function(df, folder) {
   mir <- data.table(read.csv(paste(folder, "features.csv", sep="")))
   df <- merge(df, mir, by="portcode")
-  # mir <- data.table(read.csv(paste(folder, "mir_features.csv", sep="")))
-  # shakeit <- data.table(read.csv(paste(folder, "shakeit_features.csv", sep="")))
-  # remove unneeded columns
-  # mir[, c("filepath", "filename"):=NULL]
-  # shakeit[, c("filename", "dateExtracted"):=NULL]
-
-  # merge features with data
-  # df <- merge(df, shakeit, by="portcode")
-  # df <- merge(df, mir, by="portcode")
   return(df)
 }
 
