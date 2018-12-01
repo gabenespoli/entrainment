@@ -1,6 +1,6 @@
 %% en_entrainment
 % Loop many participants and run en_entrainment_eeg and
-%   en_entrainment_tapping. Saves text files with all command window output
+%    Saves text files with all command window output
 %   to getpath('entrainment'). Also reads from and/or updates the
 %   processing log (getpath('proclog')).
 %
