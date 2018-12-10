@@ -142,10 +142,29 @@ set(ax,'XTick',1:length(labels),'XTickLabel',cellstr(labels))
 errorbar(ax,1:length(labels),y,stdError,'.k');
 
 if ~isempty(sigstarVars)
-    if     length(sigstarVars) < 2, sigstarVars = {sigstarVars{1} [] [] fontsize};
-    elseif length(sigstarVars) < 3, sigstarVars = {sigstarVars{1} sigstarVars{2} [] fontsize};
-    elseif length(sigstarVars) < 4, sigstarVars = {sigstarVars{1} sigstarVars{2} sigstarVars{3} fontsize};
+    if islogical(sigstarVars) && sigstarVars
+        pairs = cell(size(labels));
+        pvals = nan(size(labels));
+        for i = 1:length(labels)
+            ind1 = i;
+            if i == length(labels), ind2 = 1; else, ind2 = i+1; end
+            pairs{i} = [ind1 ind2];
+            cat1 = labels(ind1);
+            cat2 = labels(ind2);
+            data1 = d.(datVar)(d.(grpVar)==cat1);
+            data2 = d.(datVar)(d.(grpVar)==cat2);
+            [~, pvals(i)] = ttest2(data1, data2);
+        end
+        sigstarVars = {pairs pvals [] fontsize};
+
+    elseif length(sigstarVars) < 2
+        sigstarVars = {sigstarVars{1} [] [] fontsize};
+    elseif length(sigstarVars) < 3
+        sigstarVars = {sigstarVars{1} sigstarVars{2} [] fontsize};
+    elseif length(sigstarVars) < 4
+        sigstarVars = {sigstarVars{1} sigstarVars{2} sigstarVars{3} fontsize};
     end
+
     sigstar(sigstarVars{:})
 end
 
