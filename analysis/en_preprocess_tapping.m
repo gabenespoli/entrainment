@@ -90,7 +90,9 @@ while expectedInd <= numEvents
         continue
     end
 
-    expectedEvent(expectedInd) = actualEvent(actualInd);
+    if actualInd <= length(actualEvent)
+        expectedEvent(expectedInd) = actualEvent(actualInd);
+    end
     expectedInd = expectedInd + 1;
     actualInd = actualInd + 1;
 end
