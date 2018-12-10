@@ -68,7 +68,9 @@ else
     error('Problem with REGION input.')
 end
 
-if ~isnumeric(cubesize) || ~all(ismember(cubesize, 0:5))
+if ~isnumeric(cubesize) || ...
+    ~all(ismember(cubesize, 0:5)) || ...
+    (length(cubesize) > 1 && ismember(0, cubesize))
     error('Problem with CUBESIZE input.')
 end
 
