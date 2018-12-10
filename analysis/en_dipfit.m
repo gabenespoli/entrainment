@@ -5,6 +5,8 @@ function EEG = en_dipfit(EEG, chans, rv, hc)
 %   and interactive fine fit. I think this uses a radius of 85
 %   (circumference of about 53.4).
 
+% TODO: get voxel size of dipole model, save it somewhere
+
 if nargin < 2 || isempty(chans)
     chans = 1:size(EEG.icaact,1);
 end
