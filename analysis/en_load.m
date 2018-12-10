@@ -68,6 +68,7 @@ switch lower(filetype)
         end
 
     case 'eeg'
+        en_load('eeglab')
         if isempty(stim)
             disp('Using default: stim = ''sync''')
             stim = 'sync';
