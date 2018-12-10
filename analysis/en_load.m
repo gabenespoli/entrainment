@@ -210,10 +210,18 @@ switch lower(filetype)
     case 'eeglab' % add eeglab to path and start eeglab
         eeglabdir = getpath('eeglab');
         if ~isOnPath(eeglabdir)
-            addpath(eeglabdir) % add path to eeglab root
-            disp('Added EEGLAB to the MATLAB path.')
-            % start eeglab normally because it will add other paths
-            eeglab
+            if exist(eeglabdir, 'dir')
+                addpath(eeglabdir) % add path to eeglab root
+                disp('Added EEGLAB to the MATLAB path.')
+                % start eeglab normally because it will add other paths
+                eeglab
+            else
+                fprintf('The folder ''%s'' doesn''t exist. You can\n', ...
+                        'a) Download eeglab and put it''s folder there, or\n', ...
+                        'b) Change the folder that is specified in\n', ...
+                        '''getpath.m.''')
+                error('getpath(''eeglab'') doesn''t exist')
+            end
         elseif isempty(id) % be verbose if id arg is given
             disp('EEGLAB is already on the MATLAB path.')
             disp('Type `eeglab` or `eeglab redraw` in the command window to force restart it.')
