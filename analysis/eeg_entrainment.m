@@ -209,8 +209,9 @@ if ~all(cellfun(@isempty, comps))
     coords = transpose(cell2mat(coords));
 
     % save plots of good ICs
+    % TODO: this isn't general use, needs to move to en_entrainment.m
     try
-        dtplot(EEG, comps, fullfile(getpath('goodcomps'), regionStr));
+        dtplot(EEG, comps, fullfile(getpath('goodcomps'), [stim,'_',task]));
     catch
         disp('dip and topo plots could not be produced')
     end
