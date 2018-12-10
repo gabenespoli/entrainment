@@ -1,4 +1,4 @@
-# Neural Entrainment Scripts
+# Neural Entrainment Toolbox
 
 These MATLAB scripts were used for a project measuring neural entrainment using EEG. I have put them here with the hope that they will be useful to others interested in analyzing EEG data. They can be used as a template for another analysis or for inspiration. Many of the scripts can be used outside of this project (see the [General EEG Analysis](#analysis-functions-general-analysis) section).
 
