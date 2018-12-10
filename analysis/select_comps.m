@@ -43,6 +43,8 @@ else
 end
 
 % filter comps by region (Broadmann area)
+% TODO: add SMA as possible region, use tal coords from Mayka2006
+% Mayka2006: Three-dimensional locations and boundaries of motor and premotor cortices as defined by functional brain imaging: A meta-analysis
 if ~isempty(region)
     [ind_region, cubesizes, coords] = region2comps(EEG, region, cubesize);
     ind_region = transpose(ind_region);
