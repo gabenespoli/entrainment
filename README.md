@@ -185,4 +185,4 @@ Please see the documentation included in each of the functions in the task folde
 
 ## MATLAB
 
-These scripts were written using MATLAB R2017a and EEGLAB 14.1.1.
+These scripts were written using MATLAB R2017a, EEGLAB 14.1.1, and MIDI Toolbox 1.1.
